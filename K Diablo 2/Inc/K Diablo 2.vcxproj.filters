@@ -1,0 +1,282 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="K Diablo 2">
+      <UniqueIdentifier>{a6091c7d-24bb-48d0-8a5a-14a76f5f1319}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Core">
+      <UniqueIdentifier>{2fe2884e-b40e-4e5e-bbf1-27aa4e1d9318}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="K Diablo 2\Base">
+      <UniqueIdentifier>{9f9dc07a-f6fa-461a-b0da-8c687a9c8256}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="K Diablo 2\Resource">
+      <UniqueIdentifier>{60f50e44-ab63-4977-81fa-c0b3d097ac95}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Core\01. Timer">
+      <UniqueIdentifier>{f5b06d4f-3939-4137-b4f6-7ccdda7f62cb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Core\02. Math">
+      <UniqueIdentifier>{f823cf4b-43eb-49c6-919f-9982d2977728}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Core\03. Physics">
+      <UniqueIdentifier>{fcc3ec86-ee43-402a-9690-f5fe5c387c85}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. Input">
+      <UniqueIdentifier>{ad3ce1e0-af8b-4c7f-b8b7-f6244fafc606}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03. Camera">
+      <UniqueIdentifier>{fc848502-5c28-426f-b8e5-66bbd01b65ae}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="04. Scene">
+      <UniqueIdentifier>{9d8c194d-0404-4fa4-b61c-204bc013f633}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="05. Object">
+      <UniqueIdentifier>{d5b97ab7-9fc5-412f-9644-976379138294}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="06. Collision">
+      <UniqueIdentifier>{ecac5739-b827-4424-ba2e-49f7d706b78c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="07. Path">
+      <UniqueIdentifier>{52a1415b-46d5-4c47-84a0-7012481e4485}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="08. Texture">
+      <UniqueIdentifier>{6f317303-4912-41dd-94a2-3453cb9f6160}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="09. Animation">
+      <UniqueIdentifier>{95c3f2e2-a84a-4c24-83e2-1932b3c9b265}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="10. Audio">
+      <UniqueIdentifier>{78ae0ec9-12bc-45f3-89e5-084c69c9826b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="04. Scene\01. SceneComponent">
+      <UniqueIdentifier>{5d5271d4-bf7b-4ad0-b134-0ed37a69d145}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="04. Scene\02. Layer">
+      <UniqueIdentifier>{5ce2a6d2-0425-4266-b96c-8e2fbffa08a0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="05. Object\01. Stage">
+      <UniqueIdentifier>{6593b5e5-fa33-41e9-a3d5-40a871be0607}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="05. Object\02. Character">
+      <UniqueIdentifier>{7b82e5f6-2b1d-4f3c-a106-b34b4fa1f3fe}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="05. Object\03. Missile">
+      <UniqueIdentifier>{04b6e719-9404-4d52-bfcf-ceb853ee8f41}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="05. Object\04. Item">
+      <UniqueIdentifier>{00c03620-cacc-4e7e-9e1d-c295ab0fb30a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="05. Object\05. Effect">
+      <UniqueIdentifier>{fb33daa6-1b0f-4b91-8612-6257f7180ac7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="05. Object\06. UI">
+      <UniqueIdentifier>{385f15f6-b782-4e95-9fcf-f068322e5a23}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="11. Video">
+      <UniqueIdentifier>{2ae27d2b-4034-4d25-9584-94c525466d13}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="stdafx.cpp">
+      <Filter>K Diablo 2\Base</Filter>
+    </ClCompile>
+    <ClCompile Include="core.cpp">
+      <Filter>01. Core</Filter>
+    </ClCompile>
+    <ClCompile Include="timer.cpp">
+      <Filter>01. Core\01. Timer</Filter>
+    </ClCompile>
+    <ClCompile Include="math.cpp">
+      <Filter>01. Core\02. Math</Filter>
+    </ClCompile>
+    <ClCompile Include="type.cpp">
+      <Filter>K Diablo 2\Base</Filter>
+    </ClCompile>
+    <ClCompile Include="physics.cpp">
+      <Filter>01. Core\03. Physics</Filter>
+    </ClCompile>
+    <ClCompile Include="path_manager.cpp">
+      <Filter>07. Path</Filter>
+    </ClCompile>
+    <ClCompile Include="tag.cpp">
+      <Filter>K Diablo 2\Base</Filter>
+    </ClCompile>
+    <ClCompile Include="texture.cpp">
+      <Filter>08. Texture</Filter>
+    </ClCompile>
+    <ClCompile Include="texture_manager.cpp">
+      <Filter>08. Texture</Filter>
+    </ClCompile>
+    <ClCompile Include="audio_manager.cpp">
+      <Filter>10. Audio</Filter>
+    </ClCompile>
+    <ClCompile Include="animation_clip.cpp">
+      <Filter>09. Animation</Filter>
+    </ClCompile>
+    <ClCompile Include="animation_manager.cpp">
+      <Filter>09. Animation</Filter>
+    </ClCompile>
+    <ClCompile Include="scene.cpp">
+      <Filter>04. Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="scene_manager.cpp">
+      <Filter>04. Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="scene_component.cpp">
+      <Filter>04. Scene\01. SceneComponent</Filter>
+    </ClCompile>
+    <ClCompile Include="layer.cpp">
+      <Filter>04. Scene\02. Layer</Filter>
+    </ClCompile>
+    <ClCompile Include="object_manager.cpp">
+      <Filter>05. Object</Filter>
+    </ClCompile>
+    <ClCompile Include="object.cpp">
+      <Filter>05. Object</Filter>
+    </ClCompile>
+    <ClCompile Include="animation.cpp">
+      <Filter>09. Animation</Filter>
+    </ClCompile>
+    <ClCompile Include="logo_scene.cpp">
+      <Filter>04. Scene\01. SceneComponent</Filter>
+    </ClCompile>
+    <ClCompile Include="input_manager.cpp">
+      <Filter>02. Input</Filter>
+    </ClCompile>
+    <ClCompile Include="camera_manager.cpp">
+      <Filter>03. Camera</Filter>
+    </ClCompile>
+    <ClCompile Include="collision_manager.cpp">
+      <Filter>06. Collision</Filter>
+    </ClCompile>
+    <ClCompile Include="collider.cpp">
+      <Filter>06. Collision</Filter>
+    </ClCompile>
+    <ClCompile Include="K Diablo 2.cpp">
+      <Filter>K Diablo 2</Filter>
+    </ClCompile>
+    <ClCompile Include="video_manager.cpp">
+      <Filter>11. Video</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="stdafx.h">
+      <Filter>K Diablo 2\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="core.h">
+      <Filter>01. Core</Filter>
+    </ClInclude>
+    <ClInclude Include="singleton.h">
+      <Filter>K Diablo 2\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="enum.h">
+      <Filter>K Diablo 2\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="resource.h">
+      <Filter>K Diablo 2\Resource</Filter>
+    </ClInclude>
+    <ClInclude Include="timer.h">
+      <Filter>01. Core\01. Timer</Filter>
+    </ClInclude>
+    <ClInclude Include="math.h">
+      <Filter>01. Core\02. Math</Filter>
+    </ClInclude>
+    <ClInclude Include="type.h">
+      <Filter>K Diablo 2\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="physics.h">
+      <Filter>01. Core\03. Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="path_manager.h">
+      <Filter>07. Path</Filter>
+    </ClInclude>
+    <ClInclude Include="tag.h">
+      <Filter>K Diablo 2\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="texture_manager.h">
+      <Filter>08. Texture</Filter>
+    </ClInclude>
+    <ClInclude Include="texture.h">
+      <Filter>08. Texture</Filter>
+    </ClInclude>
+    <ClInclude Include="audio_manager.h">
+      <Filter>10. Audio</Filter>
+    </ClInclude>
+    <ClInclude Include="animation_manager.h">
+      <Filter>09. Animation</Filter>
+    </ClInclude>
+    <ClInclude Include="animation_clip.h">
+      <Filter>09. Animation</Filter>
+    </ClInclude>
+    <ClInclude Include="scene_manager.h">
+      <Filter>04. Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="scene.h">
+      <Filter>04. Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="scene_component.h">
+      <Filter>04. Scene\01. SceneComponent</Filter>
+    </ClInclude>
+    <ClInclude Include="layer.h">
+      <Filter>04. Scene\02. Layer</Filter>
+    </ClInclude>
+    <ClInclude Include="object_manager.h">
+      <Filter>05. Object</Filter>
+    </ClInclude>
+    <ClInclude Include="object.h">
+      <Filter>05. Object</Filter>
+    </ClInclude>
+    <ClInclude Include="animation.h">
+      <Filter>09. Animation</Filter>
+    </ClInclude>
+    <ClInclude Include="logo_scene.h">
+      <Filter>04. Scene\01. SceneComponent</Filter>
+    </ClInclude>
+    <ClInclude Include="input_manager.h">
+      <Filter>02. Input</Filter>
+    </ClInclude>
+    <ClInclude Include="camera_manager.h">
+      <Filter>03. Camera</Filter>
+    </ClInclude>
+    <ClInclude Include="collision_manager.h">
+      <Filter>06. Collision</Filter>
+    </ClInclude>
+    <ClInclude Include="collider.h">
+      <Filter>06. Collision</Filter>
+    </ClInclude>
+    <ClInclude Include="video_manager.h">
+      <Filter>11. Video</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="singleton.inl">
+      <Filter>K Diablo 2\Base</Filter>
+    </None>
+    <None Include="scene_manager.inl">
+      <Filter>04. Scene</Filter>
+    </None>
+    <None Include="scene.inl">
+      <Filter>04. Scene</Filter>
+    </None>
+    <None Include="object_manager.inl">
+      <Filter>05. Object</Filter>
+    </None>
+    <None Include="input_manager.inl">
+      <Filter>02. Input</Filter>
+    </None>
+    <None Include="object.inl">
+      <Filter>05. Object</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="icon1.ico">
+      <Filter>K Diablo 2\Resource</Filter>
+    </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="K Diablo 2.rc">
+      <Filter>K Diablo 2\Resource</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+</Project>
