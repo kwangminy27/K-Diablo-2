@@ -160,6 +160,7 @@
     <ClCompile Include="animation_manager.cpp" />
     <ClCompile Include="audio_manager.cpp" />
     <ClCompile Include="camera_manager.cpp" />
+    <ClCompile Include="circle_collider.cpp" />
     <ClCompile Include="collider.cpp" />
     <ClCompile Include="collision_manager.cpp" />
     <ClCompile Include="core.cpp" />
@@ -172,6 +173,9 @@
     <ClCompile Include="object_manager.cpp" />
     <ClCompile Include="path_manager.cpp" />
     <ClCompile Include="physics.cpp" />
+    <ClCompile Include="pixel_collider.cpp" />
+    <ClCompile Include="point_collider.cpp" />
+    <ClCompile Include="rect_collider.cpp" />
     <ClCompile Include="scene.cpp" />
     <ClCompile Include="scene_component.cpp" />
     <ClCompile Include="scene_manager.cpp" />
@@ -192,6 +196,7 @@
     <ClInclude Include="animation_manager.h" />
     <ClInclude Include="audio_manager.h" />
     <ClInclude Include="camera_manager.h" />
+    <ClInclude Include="circle_collider.h" />
     <ClInclude Include="collider.h" />
     <ClInclude Include="collision_manager.h" />
     <ClInclude Include="core.h" />
@@ -204,6 +209,9 @@
     <ClInclude Include="object_manager.h" />
     <ClInclude Include="path_manager.h" />
     <ClInclude Include="physics.h" />
+    <ClInclude Include="pixel_collider.h" />
+    <ClInclude Include="point_collider.h" />
+    <ClInclude Include="rect_collider.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="scene.h" />
     <ClInclude Include="scene_component.h" />

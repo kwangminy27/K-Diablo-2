@@ -35,7 +35,7 @@ enum class ANIMATION_OPTION
 
 enum class OBJECT
 {
-	NONE
+	UI
 };
 
 enum class COLLIDER

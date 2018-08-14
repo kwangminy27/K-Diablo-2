@@ -56,7 +56,7 @@ protected:
 
 	std::shared_ptr<Collider> collider_nullptr_{};
 
-	OBJECT type_{ OBJECT::NONE };
+	OBJECT type_{};
 	TYPE::Point position_{};
 	TYPE::Point size_{};
 	TYPE::Point pivot_{};

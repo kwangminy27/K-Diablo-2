@@ -159,6 +159,18 @@
     <ClCompile Include="video_manager.cpp">
       <Filter>11. Video</Filter>
     </ClCompile>
+    <ClCompile Include="circle_collider.cpp">
+      <Filter>06. Collision</Filter>
+    </ClCompile>
+    <ClCompile Include="pixel_collider.cpp">
+      <Filter>06. Collision</Filter>
+    </ClCompile>
+    <ClCompile Include="point_collider.cpp">
+      <Filter>06. Collision</Filter>
+    </ClCompile>
+    <ClCompile Include="rect_collider.cpp">
+      <Filter>06. Collision</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -247,6 +259,18 @@
     </ClInclude>
     <ClInclude Include="video_manager.h">
       <Filter>11. Video</Filter>
+    </ClInclude>
+    <ClInclude Include="rect_collider.h">
+      <Filter>06. Collision</Filter>
+    </ClInclude>
+    <ClInclude Include="circle_collider.h">
+      <Filter>06. Collision</Filter>
+    </ClInclude>
+    <ClInclude Include="pixel_collider.h">
+      <Filter>06. Collision</Filter>
+    </ClInclude>
+    <ClInclude Include="point_collider.h">
+      <Filter>06. Collision</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
