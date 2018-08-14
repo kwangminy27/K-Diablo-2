@@ -9,6 +9,8 @@ class Animation
 public:
 	int current_x() const;
 	int current_y() const;
+	int GetFrameWidth() const;
+	int GetFrameHeight() const;
 
 	void set_default_clip(std::string const& _tag);
 	void set_current_clip(std::string const& _tag);

@@ -151,9 +151,11 @@ void Core::_Update(float _time)
 	auto const& scene_manager = SceneManager::GetSingleton();
 
 	scene_manager->Update(_time);
-	scene_manager->LateUpdate(_time);
 
 	CameraManager::GetSingleton()->Update(_time);
+
+	scene_manager->LateUpdate(_time);
+
 	AudioManager::GetSingleton()->Update();
 }
 

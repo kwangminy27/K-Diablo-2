@@ -17,6 +17,16 @@ int Animation::current_y() const
 	return current_y_;
 }
 
+int Animation::GetFrameWidth() const
+{
+	return current_clip_->animation_clip_info_.frame_width;
+}
+
+int Animation::GetFrameHeight() const
+{
+	return current_clip_->animation_clip_info_.frame_height;
+}
+
 void Animation::set_default_clip(string const& _tag)
 {
 	default_clip_ = _FindAnimationClip(_tag);

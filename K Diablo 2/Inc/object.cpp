@@ -1,8 +1,11 @@
 #include "stdafx.h"
 #include "object.h"
 
+#include "camera_manager.h"
 #include "texture_manager.h"
+#include "texture.h"
 #include "animation.h"
+#include "collider.h"
 
 using namespace std;
 using namespace TYPE;
@@ -127,10 +130,17 @@ void Object::_Input(float _time)
 
 void Object::_Update(float _time)
 {
+	if (animation_)
+		animation_->_Update(_time);
 }
 
 void Object::_LateUpdate(float _time)
 {
+	for (auto const& collider : collider_list_)
+	{
+		if (collider->enablement())
+			collider->_Update(_time);
+	}
 }
 
 void Object::_Collision(float _time)
@@ -139,6 +149,36 @@ void Object::_Collision(float _time)
 
 void Object::_Render(HDC _device_context, float _time)
 {
+	Point camera_position = CameraManager::GetSingleton()->position();
+
+	int left = static_cast<int>(position_.x - camera_position.x - size_.x * pivot_.x);
+	int top = static_cast<int>(position_.y - camera_position.y - size_.y * pivot_.y);
+	int width = static_cast<int>(size_.x);
+	int height = static_cast<int>(size_.y);
+
+	if (is_color_key_)
+	{
+		if (animation_)
+		{
+			width = static_cast<int>(animation_->GetFrameWidth());
+			height = static_cast<int>(animation_->GetFrameHeight());
+
+			int frame_left = static_cast<int>(animation_->current_x_ * width);
+			int frame_top = static_cast<int>(animation_->current_y_ * height);
+
+			TransparentBlt(_device_context, left, top, width, height, texture_->memory_device_context(), frame_left, frame_top, width, height, color_key_);
+		}
+		else
+			TransparentBlt(_device_context, left, top, width, height, texture_->memory_device_context(), 0, 0, texture_->width(), texture_->height(), color_key_);
+	}
+	else
+		BitBlt(_device_context, left, top, width, height, texture_->memory_device_context(), 0, 0, SRCCOPY);
+
+	for (auto const& collider : collider_list_)
+	{
+		if (collider->enablement())
+			collider->_Render(_device_context, _time);
+	}
 }
 
 bool Object::_AddAnimationClip(string const& _tag)
