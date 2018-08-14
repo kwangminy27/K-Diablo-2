@@ -106,7 +106,7 @@ void CircleCollider::_Render(HDC _device_context, float _time)
 #endif
 }
 
-unique_ptr<Collider, function<void(Collider*)>> CircleCollider::_Clone()
+unique_ptr<Collider, function<void(Collider*)>> CircleCollider::_Clone() const
 {
 	return unique_ptr<Collider, function<void(Collider*)>>{new CircleCollider, [](Collider* _p) {
 		dynamic_cast<CircleCollider*>(_p)->_Release();

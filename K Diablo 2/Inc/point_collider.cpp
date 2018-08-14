@@ -106,7 +106,7 @@ void PointCollider::_Render(HDC _device_context, float _time)
 #endif
 }
 
-unique_ptr<Collider, function<void(Collider*)>> PointCollider::_Clone()
+unique_ptr<Collider, function<void(Collider*)>> PointCollider::_Clone() const
 {
 	return unique_ptr<Collider, function<void(Collider*)>>{new PointCollider(*this), [](Collider* _p) {
 		dynamic_cast<PointCollider*>(_p)->_Release();

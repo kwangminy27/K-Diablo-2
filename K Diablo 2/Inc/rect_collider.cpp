@@ -106,7 +106,7 @@ void RectCollider::_Render(HDC _device_context, float _time)
 #endif
 }
 
-unique_ptr<Collider, function<void(Collider*)>> RectCollider::_Clone()
+unique_ptr<Collider, function<void(Collider*)>> RectCollider::_Clone() const
 {
 	return unique_ptr<Collider, function<void(Collider*)>>{new RectCollider, [](Collider* _p) {
 		dynamic_cast<RectCollider*>(_p)->_Release();

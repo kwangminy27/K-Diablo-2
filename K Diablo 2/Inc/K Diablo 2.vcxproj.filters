@@ -171,6 +171,9 @@
     <ClCompile Include="rect_collider.cpp">
       <Filter>06. Collision</Filter>
     </ClCompile>
+    <ClCompile Include="ui.cpp">
+      <Filter>05. Object\06. UI</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -271,6 +274,9 @@
     </ClInclude>
     <ClInclude Include="point_collider.h">
       <Filter>06. Collision</Filter>
+    </ClInclude>
+    <ClInclude Include="ui.h">
+      <Filter>05. Object\06. UI</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

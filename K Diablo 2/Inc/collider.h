@@ -8,6 +8,7 @@ class Collider : public Tag, public std::enable_shared_from_this<Collider>
 {
 	friend class ObjectManager;
 	friend class Object;
+	friend class UI;
 	friend class CollisionManager;
 public:
 	std::string const& collision_group_tag() const;
@@ -41,7 +42,7 @@ protected:
 	virtual bool _Collision(std::weak_ptr<Collider> const& _dest) = 0;
 	virtual void _Render(HDC _device_context, float _time) = 0;
 
-	virtual std::unique_ptr<Collider, std::function<void(Collider*)>>_Clone() = 0;
+	virtual std::unique_ptr<Collider, std::function<void(Collider*)>>_Clone() const = 0;
 
 	bool _CollisionBetweenPointAndPoint(TYPE::Point const& _src, TYPE::Point const& _dest);
 	bool _CollisionBetweenPointAndRect(TYPE::Point const& _src, TYPE::Rectangle const& _dest);

@@ -6,6 +6,7 @@ class AnimationClip;
 class Animation
 {
 	friend class Object;
+	friend class UI;
 public:
 	int current_x() const;
 	int current_y() const;

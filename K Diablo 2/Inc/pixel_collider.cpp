@@ -100,7 +100,7 @@ void PixelCollider::_Render(HDC _device_context, float _time)
 {
 }
 
-unique_ptr<Collider, function<void(Collider*)>> PixelCollider::_Clone()
+unique_ptr<Collider, function<void(Collider*)>> PixelCollider::_Clone() const
 {
 	return unique_ptr<Collider, function<void(Collider*)>>{new PixelCollider(*this), [](Collider* _p) {
 		dynamic_cast<PixelCollider*>(_p)->_Release();

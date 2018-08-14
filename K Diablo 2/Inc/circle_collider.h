@@ -24,7 +24,7 @@ private:
 	virtual bool _Collision(std::weak_ptr<Collider> const& _dest) override;
 	virtual void _Render(HDC _device_context, float _time) override;
 
-	virtual std::unique_ptr<Collider, std::function<void(Collider*)>> _Clone() override;
+	virtual std::unique_ptr<Collider, std::function<void(Collider*)>> _Clone() const override;
 
 	HPEN pen_{};
 	HPEN old_pen_{};
