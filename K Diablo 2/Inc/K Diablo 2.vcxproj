@@ -159,6 +159,7 @@
     <ClCompile Include="animation_clip.cpp" />
     <ClCompile Include="animation_manager.cpp" />
     <ClCompile Include="audio_manager.cpp" />
+    <ClCompile Include="button.cpp" />
     <ClCompile Include="camera_manager.cpp" />
     <ClCompile Include="circle_collider.cpp" />
     <ClCompile Include="collider.cpp" />
@@ -196,6 +197,7 @@
     <ClInclude Include="animation_clip.h" />
     <ClInclude Include="animation_manager.h" />
     <ClInclude Include="audio_manager.h" />
+    <ClInclude Include="button.h" />
     <ClInclude Include="camera_manager.h" />
     <ClInclude Include="circle_collider.h" />
     <ClInclude Include="collider.h" />

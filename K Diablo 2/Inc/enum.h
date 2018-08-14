@@ -53,3 +53,10 @@ enum class COLLISION_CALLBACK
 	LEAVE,
 	END
 };
+
+enum class BUTTON_STATE
+{
+	NORMAL,
+	MOUSEON,
+	CLICK
+};
