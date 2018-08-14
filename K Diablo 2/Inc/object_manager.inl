@@ -1,5 +1,7 @@
 #pragma once
 
+#include "layer.h"
+
 using namespace std;
 
 template<typename T>
@@ -33,10 +35,10 @@ shared_ptr<Object> ObjectManager::CreateObject(string const& _tag, shared_ptr<La
 	if (!_layer)
 		return object_nullptr_;
 
-	auto object = shared_ptr<Object>{ new T, [](Object* _p) {
+	auto object = shared_ptr<Object>{new T, [](Object* _p) {
 		_p->_Release();
 		delete _p;
-	} };
+	}};
 
 	object->set_tag(_tag);
 	object->set_scene(_layer->scene());

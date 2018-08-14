@@ -6,6 +6,7 @@
 #include "camera_manager.h"
 #include "path_manager.h"
 #include "texture_manager.h"
+#include "texture.h"
 #include "animation_manager.h"
 #include "audio_manager.h"
 #include "scene_manager.h"
@@ -55,6 +56,8 @@ bool Core::Initialize(wstring const& _class_name, wstring const& _window_name, H
 
 	if (!_CreateTimer())
 		return false;
+
+	back_buffer_ = TextureManager::GetSingleton()->FindTexture("back_buffer");
 
 	return true;
 }
@@ -166,7 +169,10 @@ void Core::_Collision(float _time)
 
 void Core::_Render(float _time)
 {
-	SceneManager::GetSingleton()->Render(device_context_, _time);
+	SceneManager::GetSingleton()->Render(back_buffer_->memory_device_context(), _time);
+	InputManager::GetSingleton()->RenderMouseCursor(back_buffer_->memory_device_context(), _time);
+
+	BitBlt(device_context_, 0, 0, static_cast<int>(RESOLUTION::WIDTH), static_cast<int>(RESOLUTION::HEIGHT), back_buffer_->memory_device_context(), 0, 0, SRCCOPY);
 
 	wstring fps = to_wstring(timer_->frame_per_second());
 	fps += L" FPS";

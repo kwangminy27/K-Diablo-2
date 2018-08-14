@@ -2,8 +2,8 @@
 
 enum class RESOLUTION
 {
-	WIDTH = 1280,
-	HEIGHT = 720
+	WIDTH = 800,
+	HEIGHT = 600
 };
 
 enum class MESSAGE_LOOP

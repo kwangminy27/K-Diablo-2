@@ -1,11 +1,18 @@
 #include "stdafx.h"
 #include "input_manager.h"
 
+#include "core.h"
+#include "camera_manager.h"
+#include "object.h"
+
 using namespace std;
+using namespace TYPE;
 
 bool InputManager::Initialize()
 {
 	_AddKey("Pause"s, VK_F1);
+
+	ShowCursor(false);
 
 	return true;
 }
@@ -40,6 +47,8 @@ void InputManager::Update()
 		else if (key.second->up)
 			key.second->up = false;
 	}
+
+	UpdateMouseCursor();
 }
 
 bool InputManager::KeyPush(string const& _tag) const
@@ -61,6 +70,61 @@ bool InputManager::KeyUp(string const& _tag) const
 	auto const& key = _FindKey(_tag);
 
 	return key->up;
+}
+
+shared_ptr<Object> InputManager::mouse() const
+{
+	return mouse_;
+}
+
+Point const& InputManager::mouse_client_position() const
+{
+	return mouse_client_position_;
+}
+
+Point const& InputManager::mouse_world_position() const
+{
+	return mouse_world_position_;
+}
+
+Point const& InputManager::mouse_displacement() const
+{
+	return mouse_displacement_;
+}
+
+void InputManager::set_mouse(shared_ptr<Object> const& _mouse)
+{
+	mouse_ = _mouse;
+}
+
+void InputManager::UpdateMouseCursor()
+{
+	POINT position{};
+	GetCursorPos(&position);
+	ScreenToClient(Core::GetSingleton()->window(), &position);
+
+	mouse_displacement_.x = static_cast<float>(position.x) - mouse_client_position_.x;
+	mouse_displacement_.y = static_cast<float>(position.y) - mouse_client_position_.y;
+
+	mouse_client_position_ = { static_cast<float>(position.x), static_cast<float>(position.y) };
+	mouse_world_position_ = mouse_client_position_ + CameraManager::GetSingleton()->position();
+	mouse_->set_position(mouse_client_position_);
+
+	if (!mouse_cursor_show_state_ && mouse_client_position_.x <= 0.f && mouse_client_position_.x >= static_cast<float>(RESOLUTION::WIDTH) && mouse_client_position_.y <= 0.f && mouse_client_position_.y >= static_cast<float>(RESOLUTION::HEIGHT))
+	{
+		mouse_cursor_show_state_ = true;
+		ShowCursor(true);
+	}
+	else if (mouse_cursor_show_state_ && mouse_client_position_.x > 0.f && mouse_client_position_.x < static_cast<float>(RESOLUTION::WIDTH) && mouse_client_position_.y > 0.f && mouse_client_position_.y < static_cast<float>(RESOLUTION::HEIGHT))
+	{
+		mouse_cursor_show_state_ = false;
+		ShowCursor(false);
+	}
+}
+
+void InputManager::RenderMouseCursor(HDC _device_context, float _time)
+{
+	mouse_->_Render(_device_context, _time);
 }
 
 void InputManager::_Release()

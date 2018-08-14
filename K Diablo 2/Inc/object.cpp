@@ -96,6 +96,24 @@ void Object::set_color_key(COLORREF const& _color_key)
 	is_color_key_ = true;
 }
 
+bool Object::AddAnimationClip(string const& _tag)
+{
+	if (!animation_)
+	{
+		animation_ = unique_ptr<Animation, function<void(Animation*)>>{new Animation, [](Animation* _p) {
+			_p->_Release();
+			delete _p;
+		}};
+
+		animation_->set_object(shared_from_this());
+	}
+
+	if (!(animation_->_AddAnimationClip(_tag)))
+		return false;
+
+	return true;
+}
+
 Object::Object(Object const& _other) : Tag(_other)
 {
 	type_ = _other.type_;
@@ -179,22 +197,4 @@ void Object::_Render(HDC _device_context, float _time)
 		if (collider->enablement())
 			collider->_Render(_device_context, _time);
 	}
-}
-
-bool Object::_AddAnimationClip(string const& _tag)
-{
-	if (!animation_)
-	{
-		animation_ = unique_ptr<Animation, function<void(Animation*)>>{ new Animation, [](Animation* _p) {
-			_p->_Release();
-			delete _p;
-		} };
-
-		animation_->set_object(shared_from_this());
-	}
-
-	if (!(animation_->_AddAnimationClip(_tag)))
-		return false;
-
-	return true;
 }

@@ -10,6 +10,7 @@ class Collider;
 
 class Object : public Tag, public std::enable_shared_from_this<Object>
 {
+	friend class InputManager;
 	friend class Layer;
 	friend class ObjectManager;
 public:
@@ -32,6 +33,9 @@ public:
 	void set_texture(std::shared_ptr<Texture> const& _texture);
 	void set_color_key(COLORREF const& _color_key);
 
+	bool AddAnimationClip(std::string const& _tag);
+	template <typename T> std::shared_ptr<Collider> AddCollider(std::string const& _tag);
+
 protected:
 	Object() = default;
 	Object(Object const& _other);
@@ -48,9 +52,6 @@ protected:
 	virtual void _LateUpdate(float _time);
 	virtual void _Collision(float _time);
 	virtual void _Render(HDC _device_context, float _time);
-
-	bool _AddAnimationClip(std::string const& _tag);
-	template <typename T> std::shared_ptr<Collider> _AddCollider(std::string const& _tag);
 
 	virtual std::unique_ptr<Object, std::function<void(Object*)>> _Clone() const = 0;
 

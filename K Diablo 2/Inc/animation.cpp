@@ -90,8 +90,6 @@ void Animation::_Update(float _time)
 	{
 		elapsed_time_ -= interval_time;
 
-		++current_x_;
-
 		if (current_y_ == animation_clip_info.start_y + animation_clip_info.count_y)
 		{
 			if (current_x_ == animation_clip_info.end_x)
@@ -110,6 +108,8 @@ void Animation::_Update(float _time)
 				}
 			}
 		}
+
+		++current_x_;
 
 		if (current_x_ >= animation_clip_info.start_x + animation_clip_info.count_x)
 		{

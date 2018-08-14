@@ -3,6 +3,7 @@
 #include "singleton.h"
 
 class Timer;
+class Texture;
 
 class Core final : public Singleton<Core>
 {
@@ -52,4 +53,5 @@ private:
 	MESSAGE_LOOP state_{ MESSAGE_LOOP::RUN };
 	std::unique_ptr<Timer, std::function<void(Timer*)>> timer_{};
 	float time_scale_{};
+	std::shared_ptr<Texture> back_buffer_{};
 };

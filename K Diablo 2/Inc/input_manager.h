@@ -23,6 +23,16 @@ public:
 	bool KeyPressed(std::string const& _tag) const;
 	bool KeyUp(std::string const& _tag) const;
 
+	std::shared_ptr<Object> mouse() const;
+	TYPE::Point const& mouse_client_position() const;
+	TYPE::Point const& mouse_world_position() const;
+	TYPE::Point const& mouse_displacement() const;
+
+	void set_mouse(std::shared_ptr<Object> const& _mouse);
+
+	void UpdateMouseCursor();
+	void RenderMouseCursor(HDC _device_context, float _time);
+
 private:
 	InputManager() = default;
 	InputManager(InputManager const&) = delete;
@@ -41,6 +51,11 @@ private:
 	std::unordered_map<std::string, std::unique_ptr<KeyInfo>> key_map_{};
 	std::unique_ptr<KeyInfo> key_buffer_{};
 	std::string key_tag_buffer_{};
+	std::shared_ptr<Object> mouse_{};
+	TYPE::Point mouse_client_position_{};
+	TYPE::Point mouse_world_position_{};
+	TYPE::Point mouse_displacement_{};
+	bool mouse_cursor_show_state_{};
 };
 
 #include "input_manager.inl"
