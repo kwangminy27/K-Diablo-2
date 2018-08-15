@@ -93,11 +93,11 @@ void PointCollider::_Render(HDC _device_context, float _time)
 
 	auto rendering_position = world_info_ - camera_position;
 
-	MoveToEx(_device_context, static_cast<int>(rendering_position.x + 2), static_cast<int>(rendering_position.y), nullptr);
-	for (auto i = 30; i <= 360; i += 30)
+	MoveToEx(_device_context, static_cast<int>(rendering_position.x + 1), static_cast<int>(rendering_position.y), nullptr);
+	for (auto i = 60; i <= 360; i += 60)
 	{
-		rendering_position.x = world_info_.x - camera_position.x + cosf(Math::ConvertToRadians(static_cast<float>(i))) * 2;
-		rendering_position.y = world_info_.y - camera_position.y + sinf(Math::ConvertToRadians(static_cast<float>(i))) * 2;
+		rendering_position.x = world_info_.x - camera_position.x + cosf(Math::ConvertToRadians(static_cast<float>(i))) * 1;
+		rendering_position.y = world_info_.y - camera_position.y + sinf(Math::ConvertToRadians(static_cast<float>(i))) * 1;
 
 		LineTo(_device_context, static_cast<int>(rendering_position.x), static_cast<int>(rendering_position.y));
 	}

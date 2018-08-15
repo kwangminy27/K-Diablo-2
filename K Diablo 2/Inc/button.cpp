@@ -71,9 +71,9 @@ void Button::_Input(float _time)
 	{
 		if (input_manager->KeyPush("MouseLeft"))
 			state_ = BUTTON_STATE::PUSH;
-		else if(input_manager->KeyPressed("MouseLeft"))
+		else if(input_manager->KeyPressed("MouseLeft") && state_ == BUTTON_STATE::PUSH)
 			state_ = BUTTON_STATE::PRESSED;
-		else if (input_manager->KeyUp("MouseLeft"))
+		else if (input_manager->KeyUp("MouseLeft") && state_ == BUTTON_STATE::PRESSED)
 		{
 			for (auto const& callback : callback_list_)
 				callback(_time);

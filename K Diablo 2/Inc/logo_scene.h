@@ -21,5 +21,9 @@ private:
 	virtual void _Collision(float _time) override;
 	virtual void _Render(HDC _device_context, float _time) override;
 
+	void _ChangeToTitleScreen();
+	void _ChangeToCharacterSelect();
+	void _ChangeToCharacterCreate();
+
 	LOGO_SCENE state_{ LOGO_SCENE::TRADEMARK };
 };
