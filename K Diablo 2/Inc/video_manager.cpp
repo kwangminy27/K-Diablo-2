@@ -8,6 +8,8 @@ using namespace filesystem;
 
 bool VideoManager::Initialize()
 {
+	//RenderVideo(L"BlizNorth640x480.avi");
+
 	return true;
 }
 

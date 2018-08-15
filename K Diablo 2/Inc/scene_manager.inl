@@ -1,5 +1,7 @@
 #pragma once
 
+#include "scene.h"
+
 using namespace std;
 
 template<typename T>

@@ -91,7 +91,7 @@ void RectCollider::_Render(HDC _device_context, float _time)
 	if (affected_collider_list_.empty())
 		brush_ = Core::GetSingleton()->brush(COLOR::GREEN);
 	else
-		brush_ = Core::GetSingleton()->brush(COLOR::BLUE);
+		brush_ = Core::GetSingleton()->brush(COLOR::RED);
 
 	auto camera_position = CameraManager::GetSingleton()->position();
 

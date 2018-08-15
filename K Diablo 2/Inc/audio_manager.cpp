@@ -38,9 +38,9 @@ void AudioManager::Resume()
 	audio_engine_->Resume();
 }
 
-void AudioManager::AddSoundEffectInstance(unique_ptr<SoundEffectInstance> _sound_effect_instance)
+void AudioManager::AddSoundEffectInstance(string const& _tag, unique_ptr<SoundEffectInstance> _sound_effect_instance)
 {
-	sound_effect_instance_list_.push_back(move(_sound_effect_instance));
+	sound_effect_instance_map_.insert(make_pair(_tag, move(_sound_effect_instance)));
 }
 
 shared_ptr<SoundEffect> const& AudioManager::FindSoundEffect(string const& _tag)
@@ -51,6 +51,11 @@ shared_ptr<SoundEffect> const& AudioManager::FindSoundEffect(string const& _tag)
 		return sound_effect_nullptr_;
 
 	return iter->second;
+}
+
+void AudioManager::RemoveSoundEffectInstance(string const& _tag)
+{
+	sound_effect_instance_map_.erase(_tag);
 }
 
 void AudioManager::_Release()

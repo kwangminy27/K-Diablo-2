@@ -11,6 +11,7 @@ using namespace TYPE;
 bool InputManager::Initialize()
 {
 	_AddKey("Pause"s, VK_F1);
+	_AddKey("MouseLeft"s, VK_LBUTTON);
 
 	ShowCursor(false);
 

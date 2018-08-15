@@ -6,12 +6,12 @@ template<typename T>
 shared_ptr<Collider> Object::AddCollider(string const& _tag)
 {
 	auto collider = shared_ptr<Collider>{new T, [](Collider* _p) {
-		p->_Release();
-		delete p;
+		_p->_Release();
+		delete _p;
 	}};
 
 	collider->set_tag(_tag);
-	collider->set_object(weak_from_this());
+	collider->set_object(shared_from_this());
 
 	if (!collider->_Initialize())
 		return collider_nullptr_;

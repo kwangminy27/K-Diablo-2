@@ -9,6 +9,7 @@
 #include "texture.h"
 #include "animation_manager.h"
 #include "audio_manager.h"
+#include "video_manager.h"
 #include "scene_manager.h"
 #include "object_manager.h"
 #include "collision_manager.h"
@@ -46,6 +47,9 @@ bool Core::Initialize(wstring const& _class_name, wstring const& _window_name, H
 		return false;
 
 	if (!AudioManager::GetSingleton()->Initialize())
+		return false;
+
+	if (!VideoManager::GetSingleton()->Initialize())
 		return false;
 
 	if (!CollisionManager::GetSingleton()->Initialize())
@@ -165,6 +169,7 @@ void Core::_Update(float _time)
 void Core::_Collision(float _time)
 {
 	SceneManager::GetSingleton()->Collision(_time);
+	CollisionManager::GetSingleton()->Collision(_time);
 }
 
 void Core::_Render(float _time)

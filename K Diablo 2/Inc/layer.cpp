@@ -3,6 +3,7 @@
 
 #include "scene.h"
 #include "object.h"
+#include "collision_manager.h"
 
 using namespace std;
 
@@ -114,7 +115,7 @@ void Layer::_Collision(float _time)
 			++iter;
 		else
 		{
-			//CollisionManager::GetSingleton()->AddCollider(*iter);
+			CollisionManager::GetSingleton()->AddCollider(*iter);
 			++iter;
 		}
 	}

@@ -11,6 +11,7 @@ bool SceneManager::Initialize()
 {
 	if (!(scene_ = _CreateScene("Logo")))
 		return false;
+
 	if (!(scene_->scene_component_ = scene_->_CreateSceneComponent<LogoScene>("Logo")))
 		return false;
 

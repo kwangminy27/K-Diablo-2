@@ -66,7 +66,7 @@ void Collider::set_object(shared_ptr<Object> const& _object)
 	object_ = _object;
 }
 
-void Collider::SetCallBack(function<void(weak_ptr<Collider> const&, weak_ptr<Collider> const&, float)> const& _function, COLLISION_CALLBACK _type)
+void Collider::SetCallBack(function<void(shared_ptr<Collider> const&, shared_ptr<Collider> const&, float)> const& _function, COLLISION_CALLBACK _type)
 {
 	collision_callback_array_.at(static_cast<size_t>(_type)).push_back(_function);
 }
@@ -229,19 +229,19 @@ bool Collider::_CollisionBetweenPixelAndPixel(shared_ptr<Pixel_24_Info> const& _
 void Collider::_OnCollisionEnter(shared_ptr<Collider> const& _dest, float _time)
 {
 	for (auto const& callback : collision_callback_array_.at(static_cast<size_t>(COLLISION_CALLBACK::ENTER)))
-		callback(weak_from_this(), _dest, _time);
+		callback(shared_from_this(), _dest, _time);
 }
 
 void Collider::_OnCollision(shared_ptr<Collider> const& _dest, float _time)
 {
 	for (auto const& callback : collision_callback_array_.at(static_cast<size_t>(COLLISION_CALLBACK::STAY)))
-		callback(weak_from_this(), _dest, _time);
+		callback(shared_from_this(), _dest, _time);
 }
 
 void Collider::_OnCollisionLeave(shared_ptr<Collider> const& _dest, float _time)
 {
 	for (auto const& callback : collision_callback_array_.at(static_cast<size_t>(COLLISION_CALLBACK::LEAVE)))
-		callback(weak_from_this(), _dest, _time);
+		callback(shared_from_this(), _dest, _time);
 }
 
 bool Collider::_IsAffectedCollider(shared_ptr<Collider> const& _collider)

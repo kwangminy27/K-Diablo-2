@@ -25,7 +25,7 @@ public:
 	void set_intersect_point(TYPE::Point const& _point);
 	void set_object(std::shared_ptr<Object> const& _object);
 
-	void SetCallBack(std::function<void(std::weak_ptr<Collider> const&, std::weak_ptr<Collider> const&, float)> const& _function, COLLISION_CALLBACK _type);
+	void SetCallBack(std::function<void(std::shared_ptr<Collider> const&, std::shared_ptr<Collider> const&, float)> const& _function, COLLISION_CALLBACK _type);
 
 protected:
 	Collider() = default;
@@ -69,7 +69,7 @@ protected:
 	TYPE::Point pivot_{};
 	TYPE::Point size_{};
 	TYPE::Point intersect_point_{};
-	std::array<std::list<std::function<void(std::weak_ptr<Collider> const&, std::weak_ptr<Collider> const&, float)>>, static_cast<size_t>(COLLISION_CALLBACK::END)> collision_callback_array_{};
+	std::array<std::list<std::function<void(std::shared_ptr<Collider> const&, std::shared_ptr<Collider> const&, float)>>, static_cast<size_t>(COLLISION_CALLBACK::END)> collision_callback_array_{};
 	std::list<std::weak_ptr<Collider>> affected_collider_list_{};
 	std::weak_ptr<Object> object_{};
 };

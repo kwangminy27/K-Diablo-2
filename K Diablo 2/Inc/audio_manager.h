@@ -11,8 +11,11 @@ public:
 	void Suspend();
 	void Resume();
 
-	void AddSoundEffectInstance(std::unique_ptr<DirectX::SoundEffectInstance> _sound_effect_instance);
+	void AddSoundEffectInstance(std::string const& _tag, std::unique_ptr<DirectX::SoundEffectInstance> _sound_effect_instance);
+
 	std::shared_ptr<DirectX::SoundEffect> const& FindSoundEffect(std::string const& _tag);
+
+	void RemoveSoundEffectInstance(std::string const& _tag);
 
 private:
 	AudioManager() = default;
@@ -28,5 +31,5 @@ private:
 
 	std::unique_ptr<DirectX::AudioEngine> audio_engine_{};
 	std::unordered_map<std::string, std::shared_ptr<DirectX::SoundEffect>> sound_effect_map_{};
-	std::list<std::unique_ptr<DirectX::SoundEffectInstance>> sound_effect_instance_list_{};
+	std::unordered_map<std::string, std::unique_ptr<DirectX::SoundEffectInstance>> sound_effect_instance_map_{};
 };
