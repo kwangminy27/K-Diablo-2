@@ -5,6 +5,7 @@ class AnimationClip;
 
 class Animation
 {
+	friend class Layer;
 	friend class Object;
 	friend class UI;
 public:

@@ -55,124 +55,73 @@ bool LogoScene::_Initialize()
 	trademark->set_texture("trademark");
 	trademark->set_size({ 800.f, 600.f });
 
-	// TITLE_SCREEN
-	auto title_screen = object_manager->CreateObject<UI>("title_screen", background_layer);
-	title_screen->set_texture("title_screen");
-	title_screen->set_size({ 800.f, 600.f });
-	title_screen->set_enablement(false);
+	// TITLE
+	auto title = object_manager->CreateObject<UI>("title", background_layer);
+	title->set_texture("title");
+	title->set_size({ 800.f, 600.f });
+	title->set_enablement(false);
 
-	auto D2Logo = object_manager->CreateObject<UI>("D2Logo", background_layer);
-	D2Logo->set_position({ 209.f, 0.f });
-	D2Logo->AddAnimationClip("D2Logo");
-	D2Logo->set_color_key(RGB(11, 11, 11));
+	auto d2_logo = object_manager->CreateObject<UI>("d2_logo", background_layer);
+	d2_logo->set_position({ 209.f, 0.f });
+	d2_logo->AddAnimationClip("d2_logo");
+	d2_logo->set_color_key(RGB(11, 11, 11));
 
-	auto start_button = dynamic_pointer_cast<Button>(object_manager->CreateObject<Button>("StartButton", ui_layer));
-	start_button->set_position({ 264.f, 178.f });
-	start_button->set_texture("wide_button_blank");
-	start_button->set_size({ 272.f, 35.f });
-	start_button->set_enablement(false);
-	start_button->set_callback([this](float _time) {
+	auto single_player_button = dynamic_pointer_cast<Button>(object_manager->CreateObject<Button>("single_player_button", ui_layer));
+	single_player_button->set_position({ 250.f, 178.f });
+	single_player_button->set_texture("single_player_button");
+	single_player_button->set_size({ 270.f, 36.f });
+	single_player_button->set_offset_flag(true);
+	single_player_button->set_enablement(false);
+	single_player_button->set_callback([this](float _time) {
 		AudioManager::GetSingleton()->FindSoundEffect("button")->Play();
 		_ChangeToCharacterSelect();
 	});
-	auto start_button_collider = dynamic_pointer_cast<RectCollider>(start_button->AddCollider<RectCollider>("Button"));
-	start_button_collider->set_model_info({ 0.f, 0.f, 272.f, 35.f });
-	start_button_collider->set_collision_group_tag("UI");
-	start_button_collider->SetCallBack([p = start_button.get()](shared_ptr<Collider> const& _src, shared_ptr<Collider> const& _dest, float _time) {
-		p->OnCollisionEnter(_src, _dest, _time);
-	}, COLLISION_CALLBACK::ENTER);
-	start_button_collider->SetCallBack([p = start_button.get()](shared_ptr<Collider> const& _src, shared_ptr<Collider> const& _dest, float _time) {
-		p->OnCollision(_src, _dest, _time);
-	}, COLLISION_CALLBACK::STAY);
-	start_button_collider->SetCallBack([p = start_button.get()](shared_ptr<Collider> const& _src, shared_ptr<Collider> const& _dest, float _time) {
-		p->OnCollisionLeave(_src, _dest, _time);
-	}, COLLISION_CALLBACK::LEAVE);
+	auto single_player_button_collider = dynamic_pointer_cast<RectCollider>(single_player_button->GetCollider("Button"));
+	single_player_button_collider->set_model_info({ 0.f, 0.f, 270.f, 36.f });
+	single_player_button_collider->set_collision_group_tag("UI");
 
-	auto edit_button = dynamic_pointer_cast<Button>(object_manager->CreateObject<Button>("EditButton", ui_layer));
-	edit_button->set_position({ 264.f, 220.f });
-	edit_button->set_texture("wide_button_blank");
-	edit_button->set_size({ 272.f, 35.f });
-	edit_button->set_enablement(false);
-	edit_button->set_callback([this](float _time) {
+	auto credit_button = dynamic_pointer_cast<Button>(object_manager->CreateObject<Button>("credit_button", ui_layer));
+	credit_button->set_position({ 250.f, 499.f });
+	credit_button->set_texture("credit_button");
+	credit_button->set_size({ 133.f, 25.f });
+	credit_button->set_offset_flag(true);
+	credit_button->set_enablement(false);
+	credit_button->set_callback([this](float _time) {
 		AudioManager::GetSingleton()->FindSoundEffect("button")->Play();
+		_ChangeToCredit();
 	});
-	auto edit_button_collider = dynamic_pointer_cast<RectCollider>(edit_button->AddCollider<RectCollider>("Button"));
-	edit_button_collider->set_model_info({ 0.f, 0.f, 272.f, 35.f });
-	edit_button_collider->set_collision_group_tag("UI");
-	edit_button_collider->SetCallBack([p = edit_button.get()](shared_ptr<Collider> const& _src, shared_ptr<Collider> const& _dest, float _time) {
-		p->OnCollisionEnter(_src, _dest, _time);
-	}, COLLISION_CALLBACK::ENTER);
-	edit_button_collider->SetCallBack([p = edit_button.get()](shared_ptr<Collider> const& _src, shared_ptr<Collider> const& _dest, float _time) {
-		p->OnCollision(_src, _dest, _time);
-	}, COLLISION_CALLBACK::STAY);
-	edit_button_collider->SetCallBack([p = edit_button.get()](shared_ptr<Collider> const& _src, shared_ptr<Collider> const& _dest, float _time) {
-		p->OnCollisionLeave(_src, _dest, _time);
-	}, COLLISION_CALLBACK::LEAVE);
+	auto credit_button_collider = dynamic_pointer_cast<RectCollider>(credit_button->GetCollider("Button"));
+	credit_button_collider->set_model_info({ 0.f, 0.f, 133.f, 25.f });
+	credit_button_collider->set_collision_group_tag("UI");
 
-	auto credits_button = dynamic_pointer_cast<Button>(object_manager->CreateObject<Button>("CreditsButton", ui_layer));
-	credits_button->set_position({ 264.f, 499.f });
-	credits_button->set_texture("short_button_blank");
-	credits_button->set_size({ 135.f, 25.f });
-	credits_button->set_enablement(false);
-	credits_button->set_callback([](float _time) {
-		AudioManager::GetSingleton()->FindSoundEffect("button")->Play();
-	});
-	auto credits_button_collider = dynamic_pointer_cast<RectCollider>(credits_button->AddCollider<RectCollider>("Button"));
-	credits_button_collider->set_model_info({ 0.f, 0.f, 135.f, 25.f });
-	credits_button_collider->set_collision_group_tag("UI");
-	credits_button_collider->SetCallBack([p = credits_button.get()](shared_ptr<Collider> const& _src, shared_ptr<Collider> const& _dest, float _time) {
-		p->OnCollisionEnter(_src, _dest, _time);
-	}, COLLISION_CALLBACK::ENTER);
-	credits_button_collider->SetCallBack([p = credits_button.get()](shared_ptr<Collider> const& _src, shared_ptr<Collider> const& _dest, float _time) {
-		p->OnCollision(_src, _dest, _time);
-	}, COLLISION_CALLBACK::STAY);
-	credits_button_collider->SetCallBack([p = credits_button.get()](shared_ptr<Collider> const& _src, shared_ptr<Collider> const& _dest, float _time) {
-		p->OnCollisionLeave(_src, _dest, _time);
-	}, COLLISION_CALLBACK::LEAVE);
-
-	auto video_button = dynamic_pointer_cast<Button>(object_manager->CreateObject<Button>("VideoButton", ui_layer));
-	video_button->set_position({ 402.f, 499.f });
-	video_button->set_texture("short_button_blank");
-	video_button->set_size({ 135.f, 25.f });
+	auto video_button = dynamic_pointer_cast<Button>(object_manager->CreateObject<Button>("video_button", ui_layer));
+	video_button->set_position({ 387.f, 499.f });
+	video_button->set_texture("video_button");
+	video_button->set_size({ 133.f, 25.f });
+	video_button->set_offset_flag(true);
 	video_button->set_enablement(false);
 	video_button->set_callback([](float _time) {
 		AudioManager::GetSingleton()->Suspend();
 		VideoManager::GetSingleton()->RenderVideo(L"d2intro640x292.avi");
 		AudioManager::GetSingleton()->Resume();
 	});
-	auto video_button_collider = dynamic_pointer_cast<RectCollider>(video_button->AddCollider<RectCollider>("Button"));
-	video_button_collider->set_model_info({ 0.f, 0.f, 135.f, 25.f });
+	auto video_button_collider = dynamic_pointer_cast<RectCollider>(video_button->GetCollider("Button"));
+	video_button_collider->set_model_info({ 0.f, 0.f, 133.f, 25.f });
 	video_button_collider->set_collision_group_tag("UI");
-	video_button_collider->SetCallBack([p = video_button.get()](shared_ptr<Collider> const& _src, shared_ptr<Collider> const& _dest, float _time) {
-		p->OnCollisionEnter(_src, _dest, _time);
-	}, COLLISION_CALLBACK::ENTER);
-	video_button_collider->SetCallBack([p = video_button.get()](shared_ptr<Collider> const& _src, shared_ptr<Collider> const& _dest, float _time) {
-		p->OnCollision(_src, _dest, _time);
-	}, COLLISION_CALLBACK::STAY);
-	video_button_collider->SetCallBack([p = video_button.get()](shared_ptr<Collider> const& _src, shared_ptr<Collider> const& _dest, float _time) {
-		p->OnCollisionLeave(_src, _dest, _time);
-	}, COLLISION_CALLBACK::LEAVE);
 
-	auto d2_exit_button = dynamic_pointer_cast<Button>(object_manager->CreateObject<Button>("D2ExitButton", ui_layer));
-	d2_exit_button->set_position({ 264.f, 532.f });
-	d2_exit_button->set_texture("wide_button_blank");
-	d2_exit_button->set_size({ 272.f, 35.f });
+	auto d2_exit_button = dynamic_pointer_cast<Button>(object_manager->CreateObject<Button>("d2_exit_button", ui_layer));
+	d2_exit_button->set_position({ 250.f, 532.f });
+	d2_exit_button->set_texture("d2_exit_button");
+	d2_exit_button->set_size({ 270.f, 35.f });
+	d2_exit_button->set_offset_flag(true);
 	d2_exit_button->set_enablement(false);
 	d2_exit_button->set_callback([](float _time) {
 		Core::GetSingleton()->set_state(MESSAGE_LOOP::EXIT);
+		AudioManager::GetSingleton()->Suspend();
 	});
-	auto d2_exit_button_collider = dynamic_pointer_cast<RectCollider>(d2_exit_button->AddCollider<RectCollider>("Button"));
-	d2_exit_button_collider->set_model_info({ 0.f, 0.f, 272.f, 35.f });
+	auto d2_exit_button_collider = dynamic_pointer_cast<RectCollider>(d2_exit_button->GetCollider("Button"));
+	d2_exit_button_collider->set_model_info({ 0.f, 0.f, 270.f, 35.f });
 	d2_exit_button_collider->set_collision_group_tag("UI");
-	d2_exit_button_collider->SetCallBack([p = d2_exit_button.get()](shared_ptr<Collider> const& _src, shared_ptr<Collider> const& _dest, float _time) {
-		p->OnCollisionEnter(_src, _dest, _time);
-	}, COLLISION_CALLBACK::ENTER);
-	d2_exit_button_collider->SetCallBack([p = d2_exit_button.get()](shared_ptr<Collider> const& _src, shared_ptr<Collider> const& _dest, float _time) {
-		p->OnCollision(_src, _dest, _time);
-	}, COLLISION_CALLBACK::STAY);
-	d2_exit_button_collider->SetCallBack([p = d2_exit_button.get()](shared_ptr<Collider> const& _src, shared_ptr<Collider> const& _dest, float _time) {
-		p->OnCollisionLeave(_src, _dest, _time);
-	}, COLLISION_CALLBACK::LEAVE);
 
 	// CHARACTER_SELECT
 	auto character_select_background = object_manager->CreateObject<UI>("character_select", background_layer);
@@ -180,69 +129,74 @@ bool LogoScene::_Initialize()
 	character_select_background->set_size({ 800.f, 600.f });
 	character_select_background->set_enablement(false);
 
-	auto exit_button = dynamic_pointer_cast<Button>(object_manager->CreateObject<Button>("ExitButton", ui_layer));
+	auto create_new_character = dynamic_pointer_cast<Button>(object_manager->CreateObject<Button>("create_new_character", background_layer));
+	create_new_character->set_position({ 518.f, 65.f });
+	create_new_character->set_texture("create_new_character");
+	create_new_character->set_size({ 266.f, 86.f });
+	create_new_character->set_enablement(false);
+	create_new_character->set_callback([this](float _time) {
+		_ChangeToCharacterCreate();
+	});
+	auto create_new_character_collider = dynamic_pointer_cast<RectCollider>(create_new_character->GetCollider("Button"));
+	create_new_character_collider->set_model_info({ 0.f, 0.f, 266.f, 86.f });
+	create_new_character_collider->set_collision_group_tag("UI");
+
+	auto character_select_box = object_manager->CreateObject<UI>("character_select_box", background_layer);
+	character_select_box->set_position({ 515.f, 60.f });
+	character_select_box->set_texture("character_select_box");
+	character_select_box->set_color_key(RGB(11, 11, 11));
+	character_select_box->set_size({ 272.f, 93.f });
+	character_select_box->set_enablement(false);
+
+	auto exit_button = dynamic_pointer_cast<Button>(object_manager->CreateObject<Button>("exit_button", ui_layer));
 	exit_button->set_position({ 32.f, 540.f });
 	exit_button->set_texture("exit_button");
 	exit_button->set_size({ 126.f, 35.f });
+	exit_button->set_offset_flag(true);
 	exit_button->set_enablement(false);
 	exit_button->set_callback([this](float _time) {
 		AudioManager::GetSingleton()->FindSoundEffect("button")->Play();
-		_ChangeToTitleScreen();
+
+		switch (state_)
+		{
+		case LOGO_SCENE::CHARACTER_SELECT:
+		case LOGO_SCENE::CREDIT:
+			_ChangeToTitle();
+			break;
+		case LOGO_SCENE::CHARACTER_CREATE:
+			_ChangeToCharacterSelect();
+			break;
+		}
 	});
-	auto exit_button_collider = dynamic_pointer_cast<RectCollider>(exit_button->AddCollider<RectCollider>("Button"));
+	auto exit_button_collider = dynamic_pointer_cast<RectCollider>(exit_button->GetCollider("Button"));
 	exit_button_collider->set_model_info({ 0.f, 0.f, 126.f, 35.f });
 	exit_button_collider->set_collision_group_tag("UI");
-	exit_button_collider->SetCallBack([p = exit_button.get()](shared_ptr<Collider> const& _src, shared_ptr<Collider> const& _dest, float _time) {
-		p->OnCollisionEnter(_src, _dest, _time);
-	}, COLLISION_CALLBACK::ENTER);
-	exit_button_collider->SetCallBack([p = exit_button.get()](shared_ptr<Collider> const& _src, shared_ptr<Collider> const& _dest, float _time) {
-		p->OnCollision(_src, _dest, _time);
-	}, COLLISION_CALLBACK::STAY);
-	exit_button_collider->SetCallBack([p = exit_button.get()](shared_ptr<Collider> const& _src, shared_ptr<Collider> const& _dest, float _time) {
-		p->OnCollisionLeave(_src, _dest, _time);
-	}, COLLISION_CALLBACK::LEAVE);
 
-	auto delete_button = dynamic_pointer_cast<Button>(object_manager->CreateObject<Button>("DeleteButton", ui_layer));
+	auto delete_button = dynamic_pointer_cast<Button>(object_manager->CreateObject<Button>("delete_button", ui_layer));
 	delete_button->set_position({ 190.f, 540.f });
 	delete_button->set_texture("delete_button");
 	delete_button->set_size({ 126.f, 35.f });
+	delete_button->set_offset_flag(true);
 	delete_button->set_enablement(false);
 	delete_button->set_callback([this](float _time) {
 		AudioManager::GetSingleton()->FindSoundEffect("button")->Play();
 	});
-	auto delete_button_collider = dynamic_pointer_cast<RectCollider>(delete_button->AddCollider<RectCollider>("Button"));
+	auto delete_button_collider = dynamic_pointer_cast<RectCollider>(delete_button->GetCollider("Button"));
 	delete_button_collider->set_model_info({ 0.f, 0.f, 126.f, 35.f });
 	delete_button_collider->set_collision_group_tag("UI");
-	delete_button_collider->SetCallBack([p = delete_button.get()](shared_ptr<Collider> const& _src, shared_ptr<Collider> const& _dest, float _time) {
-		p->OnCollisionEnter(_src, _dest, _time);
-	}, COLLISION_CALLBACK::ENTER);
-	delete_button_collider->SetCallBack([p = delete_button.get()](shared_ptr<Collider> const& _src, shared_ptr<Collider> const& _dest, float _time) {
-		p->OnCollision(_src, _dest, _time);
-	}, COLLISION_CALLBACK::STAY);
-	delete_button_collider->SetCallBack([p = delete_button.get()](shared_ptr<Collider> const& _src, shared_ptr<Collider> const& _dest, float _time) {
-		p->OnCollisionLeave(_src, _dest, _time);
-	}, COLLISION_CALLBACK::LEAVE);
 
-	auto ok_button = dynamic_pointer_cast<Button>(object_manager->CreateObject<Button>("OkButton", ui_layer));
+	auto ok_button = dynamic_pointer_cast<Button>(object_manager->CreateObject<Button>("ok_button", ui_layer));
 	ok_button->set_position({ 348.f, 540.f });
 	ok_button->set_texture("ok_button");
 	ok_button->set_size({ 126.f, 35.f });
+	ok_button->set_offset_flag(true);
 	ok_button->set_enablement(false);
 	ok_button->set_callback([this](float _time) {
 		AudioManager::GetSingleton()->FindSoundEffect("button")->Play();
 	});
-	auto ok_button_collider = dynamic_pointer_cast<RectCollider>(ok_button->AddCollider<RectCollider>("Button"));
+	auto ok_button_collider = dynamic_pointer_cast<RectCollider>(ok_button->GetCollider("Button"));
 	ok_button_collider->set_model_info({ 0.f, 0.f, 126.f, 35.f });
 	ok_button_collider->set_collision_group_tag("UI");
-	ok_button_collider->SetCallBack([p = ok_button.get()](shared_ptr<Collider> const& _src, shared_ptr<Collider> const& _dest, float _time) {
-		p->OnCollisionEnter(_src, _dest, _time);
-	}, COLLISION_CALLBACK::ENTER);
-	ok_button_collider->SetCallBack([p = ok_button.get()](shared_ptr<Collider> const& _src, shared_ptr<Collider> const& _dest, float _time) {
-		p->OnCollision(_src, _dest, _time);
-	}, COLLISION_CALLBACK::STAY);
-	ok_button_collider->SetCallBack([p = ok_button.get()](shared_ptr<Collider> const& _src, shared_ptr<Collider> const& _dest, float _time) {
-		p->OnCollisionLeave(_src, _dest, _time);
-	}, COLLISION_CALLBACK::LEAVE);
 
 	// CHARACTER_CREATE
 	auto character_create = object_manager->CreateObject<UI>("character_create", background_layer);
@@ -256,6 +210,62 @@ bool LogoScene::_Initialize()
 	bornfire->set_color_key(RGB(11, 11, 11));
 	bornfire->set_enablement(false);
 
+	//auto sorceress = dynamic_pointer_cast<Button>(object_manager->CreateObject<Button>("sorceress", ui_layer));
+	//sorceress->set_position({ 450.f, 200.f });
+	//sorceress->AddAnimationClip("SONU1");
+	//sorceress->AddAnimationClip("SONU2");
+	//sorceress->AddAnimationClip("SONU3");
+	//sorceress->AddAnimationClip("SOFW");
+	//sorceress->AddAnimationClip("SOBW");
+	//sorceress->set_color_key(RGB(1, 1, 1));
+	//sorceress->set_callback([p = sorceress.get()](float _time) {
+	//	if (p->GetCurrentAnimationClipTag() == "SONU2")
+	//	{
+	//		p->SetDefaultClip("SONU3");
+	//		p->ChangeAnimationClip("SOFW");
+	//		AudioManager::GetSingleton()->FindSoundEffect("sorceress select")->Play();
+	//	}
+	//	else if (p->GetCurrentAnimationClipTag() == "SONU3")
+	//	{
+	//		p->SetDefaultClip("SONU1");
+	//		p->ChangeAnimationClip("SOBW");
+	//		AudioManager::GetSingleton()->FindSoundEffect("sorceress deselect")->Play();
+	//	}
+	//});
+	//sorceress->set_enablement(false);
+	//auto sorceress_button_collider = dynamic_pointer_cast<RectCollider>(sorceress->GetCollider("Button"));
+	//sorceress_button_collider->set_model_info({ 0.f, 0.f, 134.f, 222.f });
+	//auto sorceress_collider = dynamic_pointer_cast<RectCollider>(sorceress->AddCollider<RectCollider>("SorceressCollider"));
+	//sorceress_collider->set_model_info({ 0.f, 0.f, 134.f, 222.f });
+	//sorceress_collider->set_collision_group_tag("UI");
+	//sorceress_collider->SetCallBack([p = sorceress.get()](shared_ptr<Collider> const& _src, shared_ptr<Collider> const& _dest, float _time) {
+	//	if(p->GetCurrentAnimationClipTag() == "SONU1")
+	//		p->ChangeAnimationClip("SONU2");
+	//}, COLLISION_CALLBACK::ENTER);
+	//sorceress_collider->SetCallBack([p = sorceress.get()](shared_ptr<Collider> const& _src, shared_ptr<Collider> const& _dest, float _time) {
+	//	if(p->GetCurrentAnimationClipTag() == "SONU2")
+	//		p->ChangeAnimationClip("SONU1");
+	//}, COLLISION_CALLBACK::LEAVE);
+
+	auto character_select_button = dynamic_pointer_cast<Button>(object_manager->CreateObject<Button>("character_select_button", ui_layer));
+	character_select_button->set_position({ 630.f, 540.f });
+	character_select_button->set_texture("ok_button");
+	character_select_button->set_size({ 126.f, 35.f });
+	character_select_button->set_offset_flag(true);
+	character_select_button->set_enablement(false);
+	character_select_button->set_callback([this](float _time) {
+		AudioManager::GetSingleton()->FindSoundEffect("button")->Play();
+	});
+	auto character_select_button_collider = dynamic_pointer_cast<RectCollider>(character_select_button->GetCollider("Button"));
+	character_select_button_collider->set_model_info({ 0.f, 0.f, 126.f, 35.f });
+	character_select_button_collider->set_collision_group_tag("UI");
+
+	// CREDIT
+	auto credit_background = object_manager->CreateObject<UI>("credit_background", background_layer);
+	credit_background->set_texture("credit_background");
+	credit_background->set_size({ 800.f, 600.f });
+	credit_background->set_enablement(false);
+
 	return true;
 }
 
@@ -266,18 +276,17 @@ void LogoScene::_Input(float _time)
 		switch (state_)
 		{
 		case LOGO_SCENE::TRADEMARK:
-			state_ = LOGO_SCENE::TITLE_SCREEN;
+			state_ = LOGO_SCENE::TITLE;
 
 			auto const& background_layer = scene()->FindLayer("Background");
 			auto const& ui_layer = scene()->FindLayer("UI");
 
 			background_layer->FindObject("trademark")->set_activation(false);
-			background_layer->FindObject("title_screen")->set_enablement(true);
-			ui_layer->FindObject("StartButton")->set_enablement(true);
-			ui_layer->FindObject("EditButton")->set_enablement(true);
-			ui_layer->FindObject("CreditsButton")->set_enablement(true);
-			ui_layer->FindObject("VideoButton")->set_enablement(true);
-			ui_layer->FindObject("D2ExitButton")->set_enablement(true);
+			background_layer->FindObject("title")->set_enablement(true);
+			ui_layer->FindObject("single_player_button")->set_enablement(true);
+			ui_layer->FindObject("credit_button")->set_enablement(true);
+			ui_layer->FindObject("video_button")->set_enablement(true);
+			ui_layer->FindObject("d2_exit_button")->set_enablement(true);
 
 			break;
 		}
@@ -300,25 +309,97 @@ void LogoScene::_Render(HDC _device_context, float _time)
 {
 }
 
-void LogoScene::_ChangeToTitleScreen()
+void LogoScene::_CreateCharacter()
 {
-	state_ = LOGO_SCENE::TITLE_SCREEN;
+	auto const& object_manager = ObjectManager::GetSingleton();
+	auto const& ui_layer = scene()->FindLayer("UI");
+
+	auto sorceress = dynamic_pointer_cast<Button>(object_manager->CreateObject<Button>("sorceress", ui_layer));
+	sorceress->set_position({ 450.f, 200.f });
+	sorceress->AddAnimationClip("SONU1");
+	sorceress->AddAnimationClip("SONU2");
+	sorceress->AddAnimationClip("SONU3");
+	sorceress->AddAnimationClip("SOFW");
+	sorceress->AddAnimationClip("SOBW");
+	sorceress->set_color_key(RGB(1, 1, 1));
+
+	auto sorceress_skill = object_manager->CreateObject<UI>("sorceress_skill", ui_layer);
+	sorceress_skill->set_position({ 453.f, 162.f });
+	sorceress_skill->AddAnimationClip("SONU3s");
+	sorceress_skill->AddAnimationClip("SOFWs");
+	sorceress_skill->AddAnimationClip("SOBWs");
+	sorceress_skill->set_color_key(RGB(1, 1, 1));
+	sorceress_skill->set_enablement(false);
+
+	sorceress->set_callback([p = sorceress.get(), p2 = sorceress_skill.get()](float _time) {
+		auto const& audio_manager = AudioManager::GetSingleton();
+
+		if (p->GetCurrentAnimationClipTag() == "SONU2")
+		{
+			p->SetDefaultClip("SONU3");
+			p->ChangeAnimationClip("SOFW");
+
+			p2->set_enablement(true);
+			p2->ChangeAnimationClip("SOFWs");
+
+			audio_manager->RemoveSoundEffectInstance("sorceress select");
+			auto sorceress_select = audio_manager->FindSoundEffect("sorceress select")->CreateInstance();
+			sorceress_select->Play();
+			audio_manager->AddSoundEffectInstance("sorceress select", move(sorceress_select));
+		}
+		else if (p->GetCurrentAnimationClipTag() == "SONU3")
+		{
+			p->SetDefaultClip("SONU1");
+
+			p->ChangeAnimationClip("SOBW");
+			p2->ChangeAnimationClip("SOBWs");
+
+			audio_manager->RemoveSoundEffectInstance("sorceress deselect");
+			auto sorceress_deselect = audio_manager->FindSoundEffect("sorceress deselect")->CreateInstance();
+			sorceress_deselect->Play();
+			audio_manager->AddSoundEffectInstance("sorceress deselect", move(sorceress_deselect));
+		}
+	});
+	auto sorceress_button_collider = dynamic_pointer_cast<RectCollider>(sorceress->GetCollider("Button"));
+	sorceress_button_collider->set_model_info({ 0.f, 0.f, 134.f, 222.f });
+	auto sorceress_collider = dynamic_pointer_cast<RectCollider>(sorceress->AddCollider<RectCollider>("SorceressCollider"));
+	sorceress_collider->set_model_info({ 0.f, 0.f, 134.f, 222.f });
+	sorceress_collider->set_collision_group_tag("UI");
+	sorceress_collider->SetCallBack([p = sorceress.get()](shared_ptr<Collider> const& _src, shared_ptr<Collider> const& _dest, float _time) {
+		if (p->GetCurrentAnimationClipTag() == "SONU1")
+			p->ChangeAnimationClip("SONU2");
+	}, COLLISION_CALLBACK::ENTER);
+	sorceress_collider->SetCallBack([p = sorceress.get()](shared_ptr<Collider> const& _src, shared_ptr<Collider> const& _dest, float _time) {
+		if (p->GetCurrentAnimationClipTag() == "SONU1")
+			p->ChangeAnimationClip("SONU2");
+	}, COLLISION_CALLBACK::STAY);
+	sorceress_collider->SetCallBack([p = sorceress.get()](shared_ptr<Collider> const& _src, shared_ptr<Collider> const& _dest, float _time) {
+		if (p->GetCurrentAnimationClipTag() == "SONU2")
+			p->ChangeAnimationClip("SONU1");
+	}, COLLISION_CALLBACK::LEAVE);
+}
+
+void LogoScene::_ChangeToTitle()
+{
+	state_ = LOGO_SCENE::TITLE;
 
 	auto const& background_layer = scene()->FindLayer("Background");
 	auto const& ui_layer = scene()->FindLayer("UI");
 
 	background_layer->FindObject("character_select")->set_enablement(false);
-	ui_layer->FindObject("ExitButton")->set_enablement(false);
-	ui_layer->FindObject("DeleteButton")->set_enablement(false);
-	ui_layer->FindObject("OkButton")->set_enablement(false);
+	background_layer->FindObject("create_new_character")->set_enablement(false);
+	background_layer->FindObject("character_select_box")->set_enablement(false);
+	background_layer->FindObject("credit_background")->set_enablement(false);
+	ui_layer->FindObject("exit_button")->set_enablement(false);
+	ui_layer->FindObject("delete_button")->set_enablement(false);
+	ui_layer->FindObject("ok_button")->set_enablement(false);
 
-	background_layer->FindObject("title_screen")->set_enablement(true);
-	background_layer->FindObject("D2Logo")->set_enablement(true);
-	ui_layer->FindObject("StartButton")->set_enablement(true);
-	ui_layer->FindObject("EditButton")->set_enablement(true);
-	ui_layer->FindObject("CreditsButton")->set_enablement(true);
-	ui_layer->FindObject("VideoButton")->set_enablement(true);
-	ui_layer->FindObject("D2ExitButton")->set_enablement(true);
+	background_layer->FindObject("title")->set_enablement(true);
+	background_layer->FindObject("d2_logo")->set_enablement(true);
+	ui_layer->FindObject("single_player_button")->set_enablement(true);
+	ui_layer->FindObject("credit_button")->set_enablement(true);
+	ui_layer->FindObject("video_button")->set_enablement(true);
+	ui_layer->FindObject("d2_exit_button")->set_enablement(true);
 }
 
 void LogoScene::_ChangeToCharacterSelect()
@@ -328,18 +409,24 @@ void LogoScene::_ChangeToCharacterSelect()
 	auto const& background_layer = scene()->FindLayer("Background");
 	auto const& ui_layer = scene()->FindLayer("UI");
 
-	background_layer->FindObject("title_screen")->set_enablement(false);
-	background_layer->FindObject("D2Logo")->set_enablement(false);
-	ui_layer->FindObject("StartButton")->set_enablement(false);
-	ui_layer->FindObject("EditButton")->set_enablement(false);
-	ui_layer->FindObject("CreditsButton")->set_enablement(false);
-	ui_layer->FindObject("VideoButton")->set_enablement(false);
-	ui_layer->FindObject("D2ExitButton")->set_enablement(false);
+	_ClearCharacter();
+
+	background_layer->FindObject("title")->set_enablement(false);
+	background_layer->FindObject("d2_logo")->set_enablement(false);
+	background_layer->FindObject("character_create")->set_enablement(false);
+	background_layer->FindObject("bonfire")->set_enablement(false);
+	ui_layer->FindObject("character_select_button")->set_enablement(false);
+	ui_layer->FindObject("single_player_button")->set_enablement(false);
+	ui_layer->FindObject("credit_button")->set_enablement(false);
+	ui_layer->FindObject("video_button")->set_enablement(false);
+	ui_layer->FindObject("d2_exit_button")->set_enablement(false);
 
 	background_layer->FindObject("character_select")->set_enablement(true);
-	ui_layer->FindObject("ExitButton")->set_enablement(true);
-	ui_layer->FindObject("DeleteButton")->set_enablement(true);
-	ui_layer->FindObject("OkButton")->set_enablement(true);
+	background_layer->FindObject("create_new_character")->set_enablement(true);
+	background_layer->FindObject("character_select_box")->set_enablement(true);
+	ui_layer->FindObject("exit_button")->set_enablement(true);
+	ui_layer->FindObject("delete_button")->set_enablement(true);
+	ui_layer->FindObject("ok_button")->set_enablement(true);
 }
 
 void LogoScene::_ChangeToCharacterCreate()
@@ -350,6 +437,46 @@ void LogoScene::_ChangeToCharacterCreate()
 	auto const& ui_layer = scene()->FindLayer("UI");
 
 	background_layer->FindObject("character_select")->set_enablement(false);
+	background_layer->FindObject("create_new_character")->set_enablement(false);
+	background_layer->FindObject("character_select_box")->set_enablement(false);
+	ui_layer->FindObject("delete_button")->set_enablement(false);
+	ui_layer->FindObject("ok_button")->set_enablement(false);
+
 	background_layer->FindObject("character_create")->set_enablement(true);
-	background_layer->FindObject("bornfire")->set_enablement(true);
+	background_layer->FindObject("bonfire")->set_enablement(true);
+	ui_layer->FindObject("character_select_button")->set_enablement(true);
+
+	_CreateCharacter();
+}
+
+void LogoScene::_ChangeToCredit()
+{
+	state_ = LOGO_SCENE::CREDIT;
+
+	auto const& background_layer = scene()->FindLayer("Background");
+	auto const& ui_layer = scene()->FindLayer("UI");
+
+	background_layer->FindObject("title")->set_enablement(false);
+	background_layer->FindObject("d2_logo")->set_enablement(false);
+	ui_layer->FindObject("single_player_button")->set_enablement(false);
+	ui_layer->FindObject("credit_button")->set_enablement(false);
+	ui_layer->FindObject("video_button")->set_enablement(false);
+	ui_layer->FindObject("d2_exit_button")->set_enablement(false);
+
+	background_layer->FindObject("credit_background")->set_enablement(true);
+	ui_layer->FindObject("exit_button")->set_enablement(true);
+}
+
+void LogoScene::_ClearCharacter()
+{
+	auto const& ui_layer = scene()->FindLayer("UI");
+
+	if (auto sorceress = ui_layer->FindObject("sorceress"))
+	{
+		auto const& audio_manager = AudioManager::GetSingleton();
+		sorceress->set_activation(false);
+		ui_layer->FindObject("sorceress_skill")->set_activation(false);
+		audio_manager->RemoveSoundEffectInstance("sorceress select");
+		audio_manager->RemoveSoundEffectInstance("sorceress deselect");
+	}
 }

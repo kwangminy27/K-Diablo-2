@@ -105,18 +105,25 @@ void Animation::_Update(float _time)
 				case ANIMATION_OPTION::DESTROY:
 					object_.lock()->set_activation(false);
 					break;
+				case ANIMATION_OPTION::ONCE:
+					object_.lock()->set_enablement(false);
+					break;
 				}
+
+				continue;
 			}
 		}
-
-		++current_x_;
 
 		if (current_x_ >= animation_clip_info.start_x + animation_clip_info.count_x)
 		{
 			++current_y_;
 
 			current_x_ = animation_clip_info.start_x;
+
+			continue;
 		}
+
+		++current_x_;
 	}
 }
 

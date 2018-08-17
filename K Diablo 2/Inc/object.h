@@ -36,6 +36,12 @@ public:
 	bool AddAnimationClip(std::string const& _tag);
 	template <typename T> std::shared_ptr<Collider> AddCollider(std::string const& _tag);
 
+	void SetDefaultClip(std::string const& _tag);
+	void ChangeAnimationClip(std::string const& _tag);
+
+	std::string const& GetCurrentAnimationClipTag() const;
+	std::shared_ptr<Collider> GetCollider(std::string const& _tag);
+
 protected:
 	Object() = default;
 	Object(Object const& _other);

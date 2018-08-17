@@ -55,7 +55,10 @@ shared_ptr<SoundEffect> const& AudioManager::FindSoundEffect(string const& _tag)
 
 void AudioManager::RemoveSoundEffectInstance(string const& _tag)
 {
-	sound_effect_instance_map_.erase(_tag);
+	auto iter = sound_effect_instance_map_.find(_tag);
+
+	if (iter != sound_effect_instance_map_.end())
+		sound_effect_instance_map_.erase(_tag);
 }
 
 void AudioManager::_Release()
@@ -116,7 +119,6 @@ bool AudioManager::_LoadSoundEffect(string const& _tag, wstring const& _file_nam
 	wstring full_path = path_buffer.wstring() + _file_name;
 
 	auto sound_effect = std::make_unique<SoundEffect>(audio_engine_.get(), full_path.c_str());
-
 	sound_effect_map_.insert(make_pair(_tag, move(sound_effect)));
 
 	return true;

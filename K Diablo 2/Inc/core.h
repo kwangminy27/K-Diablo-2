@@ -53,5 +53,5 @@ private:
 	MESSAGE_LOOP state_{ MESSAGE_LOOP::RUN };
 	std::unique_ptr<Timer, std::function<void(Timer*)>> timer_{};
 	float time_scale_{};
-	std::shared_ptr<Texture> back_buffer_{};
+	std::shared_ptr<Texture> backbuffer_{};
 };

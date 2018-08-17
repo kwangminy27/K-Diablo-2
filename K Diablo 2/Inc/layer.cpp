@@ -4,6 +4,7 @@
 #include "scene.h"
 #include "object.h"
 #include "collision_manager.h"
+#include "collider.h"
 
 using namespace std;
 
@@ -128,7 +129,11 @@ void Layer::_Render(HDC _device_context, float _time)
 		if (!(*iter)->activation())
 			iter = object_list_.erase(iter);
 		else if (!(*iter)->enablement())
+		{
+			// RemoveAffectedCollider
+			// Mouse »©ÁÖÀÚ
 			++iter;
+		}
 		else
 		{
 			(*iter)->_Render(_device_context, _time);

@@ -6,7 +6,7 @@ class UI : public Object
 {
 	friend class ObjectManager;
 public:
-	void set_offset(TYPE::Point const& _offset);
+	void set_offset_flag(bool _flag);
 
 protected:
 	UI() = default;
@@ -27,4 +27,5 @@ protected:
 	virtual std::unique_ptr<Object, std::function<void(Object*)>> _Clone() const override;
 
 	TYPE::Point offset_{};
+	bool offset_flag_{};
 };

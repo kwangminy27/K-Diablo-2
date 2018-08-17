@@ -5,6 +5,7 @@
 #include "texture_manager.h"
 #include "texture.h"
 #include "animation.h"
+#include "animation_clip.h"
 #include "collider.h"
 
 using namespace std;
@@ -112,6 +113,32 @@ bool Object::AddAnimationClip(string const& _tag)
 		return false;
 
 	return true;
+}
+
+void Object::SetDefaultClip(string const& _tag)
+{
+	animation_->set_default_clip(_tag);
+}
+
+void Object::ChangeAnimationClip(string const& _tag)
+{
+	animation_->_ChangeClip(_tag);
+}
+
+string const& Object::GetCurrentAnimationClipTag() const
+{
+	return animation_->current_clip_->tag();
+}
+
+shared_ptr<Collider> Object::GetCollider(string const& _tag)
+{
+	for (auto collider : collider_list_)
+	{
+		if (collider->tag() == _tag)
+			return collider;
+	}
+
+	return shared_ptr<Collider>{};
 }
 
 Object::Object(Object const& _other) : Tag(_other)

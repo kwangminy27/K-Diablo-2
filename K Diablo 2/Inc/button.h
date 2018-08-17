@@ -9,10 +9,6 @@ public:
 	void set_state(BUTTON_STATE _state);
 	void set_callback(std::function<void(float)> const& _callback);
 
-	void OnCollisionEnter(std::shared_ptr<Collider> const& _src, std::shared_ptr<Collider> const& _dest, float _time);
-	void OnCollision(std::shared_ptr<Collider> const& _src, std::shared_ptr<Collider> const& _dest, float _time);
-	void OnCollisionLeave(std::shared_ptr<Collider> const& _src, std::shared_ptr<Collider> const& _dest, float _time);
-
 protected:
 	Button() = default;
 	Button(Button const& _other);
@@ -28,6 +24,10 @@ protected:
 	virtual void _LateUpdate(float _time) override;
 	virtual void _Collision(float _time) override;
 	virtual void _Render(HDC _device_context, float _time) override;
+
+	void _OnCollisionEnter(std::shared_ptr<Collider> const& _src, std::shared_ptr<Collider> const& _dest, float _time);
+	void _OnCollision(std::shared_ptr<Collider> const& _src, std::shared_ptr<Collider> const& _dest, float _time);
+	void _OnCollisionLeave(std::shared_ptr<Collider> const& _src, std::shared_ptr<Collider> const& _dest, float _time);
 
 	virtual std::unique_ptr<Object, std::function<void(Object*)>> _Clone() const override;
 

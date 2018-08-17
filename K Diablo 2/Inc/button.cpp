@@ -3,6 +3,7 @@
 
 #include "input_manager.h"
 #include "collider.h"
+#include "rect_collider.h"
 
 using namespace std;
 
@@ -16,7 +17,8 @@ void Button::set_callback(function<void(float)> const& _callback)
 	callback_list_.push_back(_callback);
 }
 
-void Button::OnCollisionEnter(shared_ptr<Collider> const& _src, shared_ptr<Collider> const& _dest, float _time)
+
+void Button::_OnCollisionEnter(shared_ptr<Collider> const& _src, shared_ptr<Collider> const& _dest, float _time)
 {
 	auto src_tag = _src->tag();
 	auto dest_tag = _dest->tag();
@@ -27,11 +29,11 @@ void Button::OnCollisionEnter(shared_ptr<Collider> const& _src, shared_ptr<Colli
 		dynamic_pointer_cast<Button>(_src->object())->set_state(BUTTON_STATE::UNDER_MOUSE);
 }
 
-void Button::OnCollision(shared_ptr<Collider> const& _src, shared_ptr<Collider> const& _dest, float _time)
+void Button::_OnCollision(shared_ptr<Collider> const& _src, shared_ptr<Collider> const& _dest, float _time)
 {
 }
 
-void Button::OnCollisionLeave(shared_ptr<Collider> const& _src, shared_ptr<Collider> const& _dest, float _time)
+void Button::_OnCollisionLeave(shared_ptr<Collider> const& _src, shared_ptr<Collider> const& _dest, float _time)
 {
 	auto src_tag = _src->tag();
 	auto dest_tag = _dest->tag();
@@ -58,6 +60,18 @@ void Button::_Release()
 
 bool Button::_Initialize()
 {
+	auto button_collider = dynamic_pointer_cast<RectCollider>(AddCollider<RectCollider>("Button"));
+	button_collider->set_collision_group_tag("UI");
+	button_collider->SetCallBack([this](shared_ptr<Collider> const& _src, shared_ptr<Collider> const& _dest, float _time) {
+		_OnCollisionEnter(_src, _dest, _time);
+	}, COLLISION_CALLBACK::ENTER);
+	button_collider->SetCallBack([this](shared_ptr<Collider> const& _src, shared_ptr<Collider> const& _dest, float _time) {
+		_OnCollision(_src, _dest, _time);
+	}, COLLISION_CALLBACK::STAY);
+	button_collider->SetCallBack([this](shared_ptr<Collider> const& _src, shared_ptr<Collider> const& _dest, float _time) {
+		_OnCollisionLeave(_src, _dest, _time);
+	}, COLLISION_CALLBACK::LEAVE);
+
 	return true;
 }
 
@@ -86,6 +100,9 @@ void Button::_Input(float _time)
 void Button::_Update(float _time)
 {
 	UI::_Update(_time);
+
+	if (!offset_flag_)
+		return;
 
 	switch (state_)
 	{

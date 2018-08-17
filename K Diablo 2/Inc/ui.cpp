@@ -8,9 +8,9 @@
 using namespace std;
 using namespace TYPE;
 
-void UI::set_offset(Point const& _offset)
+void UI::set_offset_flag(bool _flag)
 {
-	offset_ = _offset;
+	offset_flag_ = _flag;
 }
 
 UI::UI(UI const& _other) : Object(_other)
