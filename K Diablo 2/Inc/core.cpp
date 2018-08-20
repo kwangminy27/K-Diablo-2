@@ -92,6 +92,14 @@ int Core::Run()
 	return static_cast<int>(message.wParam);
 }
 
+void Core::ResizeWindow(TYPE::Rectangle const& _rect)
+{
+	RECT rect{};
+	SetRect(&rect, static_cast<int>(_rect.left), static_cast<int>(_rect.top), static_cast<int>(_rect.right), static_cast<int>(_rect.bottom));
+	AdjustWindowRect(&rect, WS_CAPTION | WS_SYSMENU, false);
+	MoveWindow(window_, 100, 50, rect.right - rect.left, rect.bottom - rect.top, true);
+}
+
 HINSTANCE Core::instance() const
 {
 	return instance_;

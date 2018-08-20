@@ -6,6 +6,7 @@ class Object;
 
 class Collider : public Tag, public std::enable_shared_from_this<Collider>
 {
+	friend class Layer;
 	friend class ObjectManager;
 	friend class Object;
 	friend class UI;

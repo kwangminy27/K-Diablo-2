@@ -88,5 +88,8 @@ void UI::_Render(HDC _device_context, float _time)
 
 unique_ptr<Object, function<void(Object*)>> UI::_Clone() const
 {
-	return std::unique_ptr<Object, std::function<void(Object*)>>();
+	return unique_ptr<Object, function<void(Object*)>>{new UI{ *this }, [](Object* _p) {
+		dynamic_cast<UI*>(_p)->_Release();
+		delete dynamic_cast<UI*>(_p);
+	}};
 }

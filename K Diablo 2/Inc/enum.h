@@ -3,7 +3,9 @@
 enum class RESOLUTION
 {
 	WIDTH = 800,
-	HEIGHT = 600
+	HEIGHT = 600,
+	GAME_WIDTH = 640,
+	GAME_HEIGHT = 480
 };
 
 enum class MESSAGE_LOOP
@@ -36,7 +38,9 @@ enum class ANIMATION_OPTION
 
 enum class OBJECT
 {
-	UI
+	UI,
+	STAGE,
+	CHARACTER
 };
 
 enum class COLLIDER

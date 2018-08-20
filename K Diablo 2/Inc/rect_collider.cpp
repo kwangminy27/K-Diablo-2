@@ -87,6 +87,9 @@ bool RectCollider::_Collision(weak_ptr<Collider> const& _dest)
 
 void RectCollider::_Render(HDC _device_context, float _time)
 {
+	if (tag_ == "PlayerCollider")
+		int a = 3;
+
 #ifdef _DEBUG
 	if (affected_collider_list_.empty())
 		brush_ = Core::GetSingleton()->brush(COLOR::GREEN);

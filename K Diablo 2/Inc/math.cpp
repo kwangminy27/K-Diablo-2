@@ -23,7 +23,7 @@ float Math::GetAngle(Point const& _src, Point const& _dest)
 	float cos_theta = width / diagonal;
 	float theta = Math::ConvertToDegrees(acos(cos_theta));
 
-	return _dest.y - _src.y < 0.f ? -theta : theta;
+	return _dest.y - _src.y < 0.f ? 360.f - theta : theta;
 }
 
 float Math::ConvertToDegrees(float _radians)

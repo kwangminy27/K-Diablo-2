@@ -11,7 +11,13 @@ using namespace TYPE;
 bool InputManager::Initialize()
 {
 	_AddKey("Pause"s, VK_F1);
+
 	_AddKey("MouseLeft"s, VK_LBUTTON);
+
+	_AddKey("MoveLeft"s, VK_LEFT);
+	_AddKey("MoveUp"s, VK_UP);
+	_AddKey("MoveRight"s, VK_RIGHT);
+	_AddKey("MoveDown"s, VK_DOWN);
 
 	ShowCursor(false);
 

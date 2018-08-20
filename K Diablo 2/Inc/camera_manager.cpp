@@ -27,7 +27,7 @@ void CameraManager::Update(float _time)
 
 void CameraManager::Move(Point const& _direction, float _time)
 {
-	static float const kMoveSpeed = 200.f;
+	static float const kMoveSpeed = 1000.f;
 
 	position_.x += _direction.x * kMoveSpeed * _time;
 	position_.y += _direction.y * kMoveSpeed * _time;

@@ -3,6 +3,7 @@
 
 #include "scene.h"
 #include "object.h"
+#include "button.h"
 #include "collision_manager.h"
 #include "collider.h"
 
@@ -113,7 +114,21 @@ void Layer::_Collision(float _time)
 		if (!(*iter)->activation())
 			iter = object_list_.erase(iter);
 		else if (!(*iter)->enablement())
+		{
+			for (auto& collider : (*iter)->collider_list_)
+			{
+				for (auto affected_collider_iter = collider->affected_collider_list_.begin(); affected_collider_iter != collider->affected_collider_list_.end();)
+				{
+					affected_collider_iter->lock()->_RemoveAffectedCollider(collider);
+					affected_collider_iter = collider->affected_collider_list_.erase(affected_collider_iter);
+				}
+			}
+
+			if (auto button = dynamic_pointer_cast<Button>(*iter))
+				button->set_state(BUTTON_STATE::IDLE);
+
 			++iter;
+		}
 		else
 		{
 			CollisionManager::GetSingleton()->AddCollider(*iter);
@@ -129,11 +144,7 @@ void Layer::_Render(HDC _device_context, float _time)
 		if (!(*iter)->activation())
 			iter = object_list_.erase(iter);
 		else if (!(*iter)->enablement())
-		{
-			// RemoveAffectedCollider
-			// Mouse »©ÁÖÀÚ
 			++iter;
-		}
 		else
 		{
 			(*iter)->_Render(_device_context, _time);

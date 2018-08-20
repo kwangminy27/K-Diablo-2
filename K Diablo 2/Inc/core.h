@@ -12,6 +12,8 @@ public:
 	bool Initialize(std::wstring const& _class_name, std::wstring const& _window_name, HINSTANCE _instance, HICON _icon);
 	int Run();
 
+	void ResizeWindow(TYPE::Rectangle const& _rect);
+
 	HINSTANCE instance() const;
 	HWND window() const;
 	HDC device_context() const;

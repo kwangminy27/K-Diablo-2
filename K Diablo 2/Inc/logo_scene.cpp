@@ -3,7 +3,9 @@
 
 #include "core.h"
 #include "input_manager.h"
+#include "scene_manager.h"
 #include "scene.h"
+#include "main_scene.h"
 #include "object_manager.h"
 #include "ui.h"
 #include "button.h"
@@ -129,7 +131,14 @@ bool LogoScene::_Initialize()
 	character_select_background->set_size({ 800.f, 600.f });
 	character_select_background->set_enablement(false);
 
-	auto create_new_character = dynamic_pointer_cast<Button>(object_manager->CreateObject<Button>("create_new_character", background_layer));
+	auto character_select_box = object_manager->CreateObject<UI>("character_select_box", background_layer);
+	character_select_box->set_position({ 515.f, 60.f });
+	character_select_box->set_texture("character_select_box");
+	character_select_box->set_color_key(RGB(11, 11, 11));
+	character_select_box->set_size({ 272.f, 93.f });
+	character_select_box->set_enablement(false);
+
+	auto create_new_character = dynamic_pointer_cast<Button>(object_manager->CreateObject<Button>("create_new_character", ui_layer));
 	create_new_character->set_position({ 518.f, 65.f });
 	create_new_character->set_texture("create_new_character");
 	create_new_character->set_size({ 266.f, 86.f });
@@ -140,13 +149,6 @@ bool LogoScene::_Initialize()
 	auto create_new_character_collider = dynamic_pointer_cast<RectCollider>(create_new_character->GetCollider("Button"));
 	create_new_character_collider->set_model_info({ 0.f, 0.f, 266.f, 86.f });
 	create_new_character_collider->set_collision_group_tag("UI");
-
-	auto character_select_box = object_manager->CreateObject<UI>("character_select_box", background_layer);
-	character_select_box->set_position({ 515.f, 60.f });
-	character_select_box->set_texture("character_select_box");
-	character_select_box->set_color_key(RGB(11, 11, 11));
-	character_select_box->set_size({ 272.f, 93.f });
-	character_select_box->set_enablement(false);
 
 	auto exit_button = dynamic_pointer_cast<Button>(object_manager->CreateObject<Button>("exit_button", ui_layer));
 	exit_button->set_position({ 32.f, 540.f });
@@ -210,43 +212,6 @@ bool LogoScene::_Initialize()
 	bornfire->set_color_key(RGB(11, 11, 11));
 	bornfire->set_enablement(false);
 
-	//auto sorceress = dynamic_pointer_cast<Button>(object_manager->CreateObject<Button>("sorceress", ui_layer));
-	//sorceress->set_position({ 450.f, 200.f });
-	//sorceress->AddAnimationClip("SONU1");
-	//sorceress->AddAnimationClip("SONU2");
-	//sorceress->AddAnimationClip("SONU3");
-	//sorceress->AddAnimationClip("SOFW");
-	//sorceress->AddAnimationClip("SOBW");
-	//sorceress->set_color_key(RGB(1, 1, 1));
-	//sorceress->set_callback([p = sorceress.get()](float _time) {
-	//	if (p->GetCurrentAnimationClipTag() == "SONU2")
-	//	{
-	//		p->SetDefaultClip("SONU3");
-	//		p->ChangeAnimationClip("SOFW");
-	//		AudioManager::GetSingleton()->FindSoundEffect("sorceress select")->Play();
-	//	}
-	//	else if (p->GetCurrentAnimationClipTag() == "SONU3")
-	//	{
-	//		p->SetDefaultClip("SONU1");
-	//		p->ChangeAnimationClip("SOBW");
-	//		AudioManager::GetSingleton()->FindSoundEffect("sorceress deselect")->Play();
-	//	}
-	//});
-	//sorceress->set_enablement(false);
-	//auto sorceress_button_collider = dynamic_pointer_cast<RectCollider>(sorceress->GetCollider("Button"));
-	//sorceress_button_collider->set_model_info({ 0.f, 0.f, 134.f, 222.f });
-	//auto sorceress_collider = dynamic_pointer_cast<RectCollider>(sorceress->AddCollider<RectCollider>("SorceressCollider"));
-	//sorceress_collider->set_model_info({ 0.f, 0.f, 134.f, 222.f });
-	//sorceress_collider->set_collision_group_tag("UI");
-	//sorceress_collider->SetCallBack([p = sorceress.get()](shared_ptr<Collider> const& _src, shared_ptr<Collider> const& _dest, float _time) {
-	//	if(p->GetCurrentAnimationClipTag() == "SONU1")
-	//		p->ChangeAnimationClip("SONU2");
-	//}, COLLISION_CALLBACK::ENTER);
-	//sorceress_collider->SetCallBack([p = sorceress.get()](shared_ptr<Collider> const& _src, shared_ptr<Collider> const& _dest, float _time) {
-	//	if(p->GetCurrentAnimationClipTag() == "SONU2")
-	//		p->ChangeAnimationClip("SONU1");
-	//}, COLLISION_CALLBACK::LEAVE);
-
 	auto character_select_button = dynamic_pointer_cast<Button>(object_manager->CreateObject<Button>("character_select_button", ui_layer));
 	character_select_button->set_position({ 630.f, 540.f });
 	character_select_button->set_texture("ok_button");
@@ -254,7 +219,12 @@ bool LogoScene::_Initialize()
 	character_select_button->set_offset_flag(true);
 	character_select_button->set_enablement(false);
 	character_select_button->set_callback([this](float _time) {
-		AudioManager::GetSingleton()->FindSoundEffect("button")->Play();
+		auto const& audio_manager = AudioManager::GetSingleton();
+
+		audio_manager->RemoveSoundEffectInstance("sorceress select");
+		audio_manager->RemoveSoundEffectInstance("options");
+
+		SceneManager::GetSingleton()->CreateNextScene<MainScene>("MainScene");
 	});
 	auto character_select_button_collider = dynamic_pointer_cast<RectCollider>(character_select_button->GetCollider("Button"));
 	character_select_button_collider->set_model_info({ 0.f, 0.f, 126.f, 35.f });
@@ -324,14 +294,14 @@ void LogoScene::_CreateCharacter()
 	sorceress->set_color_key(RGB(1, 1, 1));
 
 	auto sorceress_skill = object_manager->CreateObject<UI>("sorceress_skill", ui_layer);
-	sorceress_skill->set_position({ 453.f, 162.f });
+	sorceress_skill->set_position({ 451.f, 157.f });
 	sorceress_skill->AddAnimationClip("SONU3s");
 	sorceress_skill->AddAnimationClip("SOFWs");
 	sorceress_skill->AddAnimationClip("SOBWs");
 	sorceress_skill->set_color_key(RGB(1, 1, 1));
 	sorceress_skill->set_enablement(false);
 
-	sorceress->set_callback([p = sorceress.get(), p2 = sorceress_skill.get()](float _time) {
+	sorceress->set_callback([p = sorceress.get(), p2 = sorceress_skill.get(), p3 = ui_layer.get()](float _time) {
 		auto const& audio_manager = AudioManager::GetSingleton();
 
 		if (p->GetCurrentAnimationClipTag() == "SONU2")
@@ -342,6 +312,8 @@ void LogoScene::_CreateCharacter()
 			p2->set_enablement(true);
 			p2->ChangeAnimationClip("SOFWs");
 
+			p3->FindObject("character_select_button")->set_enablement(true);
+
 			audio_manager->RemoveSoundEffectInstance("sorceress select");
 			auto sorceress_select = audio_manager->FindSoundEffect("sorceress select")->CreateInstance();
 			sorceress_select->Play();
@@ -350,9 +322,11 @@ void LogoScene::_CreateCharacter()
 		else if (p->GetCurrentAnimationClipTag() == "SONU3")
 		{
 			p->SetDefaultClip("SONU1");
-
 			p->ChangeAnimationClip("SOBW");
+
 			p2->ChangeAnimationClip("SOBWs");
+
+			p3->FindObject("character_select_button")->set_enablement(false);
 
 			audio_manager->RemoveSoundEffectInstance("sorceress deselect");
 			auto sorceress_deselect = audio_manager->FindSoundEffect("sorceress deselect")->CreateInstance();
@@ -387,9 +361,9 @@ void LogoScene::_ChangeToTitle()
 	auto const& ui_layer = scene()->FindLayer("UI");
 
 	background_layer->FindObject("character_select")->set_enablement(false);
-	background_layer->FindObject("create_new_character")->set_enablement(false);
 	background_layer->FindObject("character_select_box")->set_enablement(false);
 	background_layer->FindObject("credit_background")->set_enablement(false);
+	ui_layer->FindObject("create_new_character")->set_enablement(false);
 	ui_layer->FindObject("exit_button")->set_enablement(false);
 	ui_layer->FindObject("delete_button")->set_enablement(false);
 	ui_layer->FindObject("ok_button")->set_enablement(false);
@@ -415,15 +389,14 @@ void LogoScene::_ChangeToCharacterSelect()
 	background_layer->FindObject("d2_logo")->set_enablement(false);
 	background_layer->FindObject("character_create")->set_enablement(false);
 	background_layer->FindObject("bonfire")->set_enablement(false);
-	ui_layer->FindObject("character_select_button")->set_enablement(false);
 	ui_layer->FindObject("single_player_button")->set_enablement(false);
 	ui_layer->FindObject("credit_button")->set_enablement(false);
 	ui_layer->FindObject("video_button")->set_enablement(false);
 	ui_layer->FindObject("d2_exit_button")->set_enablement(false);
 
 	background_layer->FindObject("character_select")->set_enablement(true);
-	background_layer->FindObject("create_new_character")->set_enablement(true);
 	background_layer->FindObject("character_select_box")->set_enablement(true);
+	ui_layer->FindObject("create_new_character")->set_enablement(true);
 	ui_layer->FindObject("exit_button")->set_enablement(true);
 	ui_layer->FindObject("delete_button")->set_enablement(true);
 	ui_layer->FindObject("ok_button")->set_enablement(true);
@@ -437,14 +410,13 @@ void LogoScene::_ChangeToCharacterCreate()
 	auto const& ui_layer = scene()->FindLayer("UI");
 
 	background_layer->FindObject("character_select")->set_enablement(false);
-	background_layer->FindObject("create_new_character")->set_enablement(false);
 	background_layer->FindObject("character_select_box")->set_enablement(false);
+	ui_layer->FindObject("create_new_character")->set_enablement(false);
 	ui_layer->FindObject("delete_button")->set_enablement(false);
 	ui_layer->FindObject("ok_button")->set_enablement(false);
 
 	background_layer->FindObject("character_create")->set_enablement(true);
 	background_layer->FindObject("bonfire")->set_enablement(true);
-	ui_layer->FindObject("character_select_button")->set_enablement(true);
 
 	_CreateCharacter();
 }
@@ -473,10 +445,13 @@ void LogoScene::_ClearCharacter()
 
 	if (auto sorceress = ui_layer->FindObject("sorceress"))
 	{
-		auto const& audio_manager = AudioManager::GetSingleton();
 		sorceress->set_activation(false);
 		ui_layer->FindObject("sorceress_skill")->set_activation(false);
+
+		auto const& audio_manager = AudioManager::GetSingleton();
 		audio_manager->RemoveSoundEffectInstance("sorceress select");
 		audio_manager->RemoveSoundEffectInstance("sorceress deselect");
 	}
+
+	ui_layer->FindObject("character_select_button")->set_enablement(false);
 }

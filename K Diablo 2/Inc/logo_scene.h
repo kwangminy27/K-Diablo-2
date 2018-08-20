@@ -2,7 +2,7 @@
 
 #include "scene_component.h"
 
-class LogoScene : public SceneComponent
+class LogoScene final : public SceneComponent
 {
 	friend class Scene;
 private:

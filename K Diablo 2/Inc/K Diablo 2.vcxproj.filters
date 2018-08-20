@@ -177,6 +177,18 @@
     <ClCompile Include="button.cpp">
       <Filter>05. Object\06. UI</Filter>
     </ClCompile>
+    <ClCompile Include="main_scene.cpp">
+      <Filter>04. Scene\01. SceneComponent</Filter>
+    </ClCompile>
+    <ClCompile Include="stage.cpp">
+      <Filter>05. Object\01. Stage</Filter>
+    </ClCompile>
+    <ClCompile Include="character.cpp">
+      <Filter>05. Object\02. Character</Filter>
+    </ClCompile>
+    <ClCompile Include="player.cpp">
+      <Filter>05. Object\02. Character</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -283,6 +295,18 @@
     </ClInclude>
     <ClInclude Include="button.h">
       <Filter>05. Object\06. UI</Filter>
+    </ClInclude>
+    <ClInclude Include="main_scene.h">
+      <Filter>04. Scene\01. SceneComponent</Filter>
+    </ClInclude>
+    <ClInclude Include="stage.h">
+      <Filter>05. Object\01. Stage</Filter>
+    </ClInclude>
+    <ClInclude Include="character.h">
+      <Filter>05. Object\02. Character</Filter>
+    </ClInclude>
+    <ClInclude Include="player.h">
+      <Filter>05. Object\02. Character</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
