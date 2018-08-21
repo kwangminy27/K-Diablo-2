@@ -56,14 +56,14 @@ bool MainScene::_Initialize()
 
 	camera_manager->set_size({ static_cast<float>(RESOLUTION::GAME_WIDTH), static_cast<float>(RESOLUTION::GAME_HEIGHT) });
 
-	auto rogue_encampment = object_manager->CreateObject<Stage>("rogue_encampment", background_layer);
-	rogue_encampment->set_size({ 7840.f, 3920.f });
-	rogue_encampment->set_texture("rogue_encampment");
-	camera_manager->set_world_size({ static_cast<float>(rogue_encampment->texture()->width()), static_cast<float>(rogue_encampment->texture()->height()) });
+	auto rogue_encampment = dynamic_pointer_cast<Stage>(object_manager->CreateObject<Stage>("rogue_encampment", background_layer));
+	rogue_encampment->CreateTile(TILE::ISOMETRIC, 49, 49, { 7840.f, 3920.f }, { 160.f, 80.f }, "base");
+	camera_manager->set_world_size({ rogue_encampment->stage_size().x, rogue_encampment->stage_size().y });
 
 	auto player = object_manager->CreateObject<Player>("player", default_layer);
-	player->set_position({ 3420.f, 1960.f });
-	player->set_pivot({ 0.5f, 1.f });
+	player->set_position({ 3920.f, 1960.f });
+	player->set_size({ 42.f, 73.f });
+	player->set_pivot({ 0.5f, 0.5f });
 	player->AddAnimationClip("town_neutral_0");
 	player->AddAnimationClip("town_neutral_1");
 	player->AddAnimationClip("town_neutral_2");
@@ -84,6 +84,7 @@ bool MainScene::_Initialize()
 	camera_manager->set_target(player);
 	auto player_collider = dynamic_pointer_cast<RectCollider>(player->AddCollider<RectCollider>("PlayerCollider"));
 	player_collider->set_model_info({ 0.f, 0.f, 42.f, 73.f });
+	player_collider->set_pivot({ 0.5f, 0.5f });
 
 	auto control_panel = object_manager->CreateObject<UI>("control_panel", ui_layer);
 	control_panel->set_position({ 0.f, 376.f });
@@ -169,7 +170,7 @@ void MainScene::_Input(float _time)
 			player->ChangeAnimationClip("town_neutral_9");
 		else if (angle < 337.5f)
 			player->ChangeAnimationClip("town_neutral_10");
-		else if (angle < 360.f)
+		else
 			player->ChangeAnimationClip("town_neutral_11");
 
 		player->Move(direction, _time);

@@ -40,6 +40,7 @@ enum class OBJECT
 {
 	UI,
 	STAGE,
+	TILE,
 	CHARACTER
 };
 
@@ -74,4 +75,16 @@ enum class LOGO_SCENE
 	CHARACTER_SELECT,
 	CHARACTER_CREATE,
 	CREDIT
+};
+
+enum class TILE
+{
+	NORMAL,
+	ISOMETRIC
+};
+
+enum class TILE_OPTION
+{
+	NONE,
+	BLOCKED
 };

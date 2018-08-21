@@ -76,6 +76,9 @@
     <Filter Include="11. Video">
       <UniqueIdentifier>{2ae27d2b-4034-4d25-9584-94c525466d13}</UniqueIdentifier>
     </Filter>
+    <Filter Include="05. Object\01. Stage\01. Tile">
+      <UniqueIdentifier>{c7659ed5-f13e-4759-bf02-76f5243b4254}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -188,6 +191,9 @@
     </ClCompile>
     <ClCompile Include="player.cpp">
       <Filter>05. Object\02. Character</Filter>
+    </ClCompile>
+    <ClCompile Include="tile.cpp">
+      <Filter>05. Object\01. Stage\01. Tile</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -307,6 +313,9 @@
     </ClInclude>
     <ClInclude Include="player.h">
       <Filter>05. Object\02. Character</Filter>
+    </ClInclude>
+    <ClInclude Include="tile.h">
+      <Filter>05. Object\01. Stage\01. Tile</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

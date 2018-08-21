@@ -191,6 +191,7 @@
     <ClCompile Include="tag.cpp" />
     <ClCompile Include="texture.cpp" />
     <ClCompile Include="texture_manager.cpp" />
+    <ClCompile Include="tile.cpp" />
     <ClCompile Include="timer.cpp" />
     <ClCompile Include="type.cpp" />
     <ClCompile Include="ui.cpp" />
@@ -232,6 +233,7 @@
     <ClInclude Include="tag.h" />
     <ClInclude Include="texture.h" />
     <ClInclude Include="texture_manager.h" />
+    <ClInclude Include="tile.h" />
     <ClInclude Include="timer.h" />
     <ClInclude Include="type.h" />
     <ClInclude Include="ui.h" />

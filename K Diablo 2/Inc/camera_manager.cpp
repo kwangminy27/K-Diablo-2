@@ -86,8 +86,8 @@ void CameraManager::_Release()
 
 void CameraManager::_Calibrate()
 {
-	float x_upper_bound = (world_size_.x - size_.x - numeric_limits<float>::epsilon() * 2) < 0.f ? 0.f : (world_size_.x - size_.x - numeric_limits<float>::epsilon() * 2);
-	float y_upper_bound = (world_size_.y - size_.y - numeric_limits<float>::epsilon() * 2) < 0.f ? 0.f : (world_size_.y - size_.y - numeric_limits<float>::epsilon() * 2);
+	float x_upper_bound = (world_size_.x - size_.x) * (1.f - numeric_limits<float>::epsilon()) < 0.f ? 0.f : (world_size_.x - size_.x) * (1.f - numeric_limits<float>::epsilon());
+	float y_upper_bound = (world_size_.y - size_.y) * (1.f - numeric_limits<float>::epsilon()) < 0.f ? 0.f : (world_size_.y - size_.y) * (1.f - numeric_limits<float>::epsilon());
 
 	position_.x = clamp(position_.x, 0.f, x_upper_bound);
 	position_.y = clamp(position_.y, 0.f, y_upper_bound);
