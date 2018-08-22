@@ -3,19 +3,14 @@
 
 using namespace std;
 
-TILE Tile::type() const
-{
-	return type_;
-}
-
 pair<int, int> const& Tile::idx() const
 {
 	return idx_;
 }
 
-void Tile::set_type(TILE _type)
+TILE_OPTION Tile::option() const
 {
-	type_ = _type;
+	return option_;
 }
 
 void Tile::set_idx(std::pair<int, int> const& _idx)
@@ -23,12 +18,21 @@ void Tile::set_idx(std::pair<int, int> const& _idx)
 	idx_ = _idx;
 }
 
+void Tile::set_option(TILE_OPTION _option)
+{
+	option_ = _option;
+}
+
 Tile::Tile(Tile const& _other) : Object(_other)
 {
+	option_ = _other.option_;
+	idx_ = _other.idx_;
 }
 
 Tile::Tile(Tile&& _other) noexcept : Object(move(_other))
 {
+	option_ = move(_other.option_);
+	idx_ = move(_other.idx_);
 }
 
 void Tile::_Release()

@@ -7,11 +7,11 @@ class Tile final : public Object
 	friend class ObjectManager;
 	friend class Stage;
 public:
-	TILE type() const;
 	std::pair<int, int> const& idx() const;
+	TILE_OPTION option() const;
 
-	void set_type(TILE _type);
 	void set_idx(std::pair<int, int> const& _idx);
+	void set_option(TILE_OPTION _option);
 
 private:
 	Tile() = default;
@@ -31,7 +31,6 @@ private:
 
 	virtual std::unique_ptr<Object, std::function<void(Object*)>> _Clone() const override;
 
-	TILE type_{ TILE::NORMAL };
 	TILE_OPTION option_{ TILE_OPTION::NONE };
 	std::pair<int, int> idx_{};
 };

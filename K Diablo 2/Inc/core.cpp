@@ -13,6 +13,7 @@
 #include "scene_manager.h"
 #include "object_manager.h"
 #include "collision_manager.h"
+#include "ai_manager.h"
 
 using namespace std;
 
@@ -56,6 +57,9 @@ bool Core::Initialize(wstring const& _class_name, wstring const& _window_name, H
 		return false;
 
 	if (!SceneManager::GetSingleton()->Initialize())
+		return false;
+
+	if (!AIManager::GetSingleton()->Initialize())
 		return false;
 
 	if (!_CreateTimer())

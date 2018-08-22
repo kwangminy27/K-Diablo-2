@@ -135,6 +135,17 @@ void Animation::_ChangeClip(string const& _tag)
 	set_current_clip(_tag);
 }
 
+void Animation::_ChangeToDefaultClip()
+{
+	current_x_ = default_clip_->animation_clip_info_.start_x;
+	current_y_ = default_clip_->animation_clip_info_.start_y;
+	elapsed_time_ = 0.f;
+
+	current_clip_ = default_clip_;
+
+	object_.lock()->set_texture(default_clip_->texture_);
+}
+
 unique_ptr<Animation, function<void(Animation*)>> Animation::_Clone() const
 {
 	return unique_ptr<Animation, function<void(Animation*)>>{ new Animation(*this), [](Animation* _p) {

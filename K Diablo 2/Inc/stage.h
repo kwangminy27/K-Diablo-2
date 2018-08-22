@@ -6,11 +6,18 @@ class Stage final : public Object
 {
 	friend class ObjectManager;
 public:
+	STAGE type() const;
+	std::vector<std::vector<std::shared_ptr<Object>>> const& tile_collection() const;
 	TYPE::Point const& stage_size() const;
 
-	void CreateTile(TILE _type, int _idx_width, int _idx_height, TYPE::Point const& _stage_size, TYPE::Point const& _tile_size, std::string const& _tag);
+	void set_type(STAGE _type);
+
+	void CreateTile(STAGE _type, int _idx_width, int _idx_height, TYPE::Point const& _stage_size, TYPE::Point const& _tile_size, std::string const& _tag);
 
 	std::pair<int, int> FindIsometricIndex(TYPE::Point const& _position);
+	TILE_OPTION GetTileOption(int _x, int _y) const;
+	std::list<std::pair<int, int>> const& GetTileAdjacencyList(std::pair<int, int> const& _idx) const;
+	TYPE::Point GetTileCenterPosition(std::pair<int, int> const& _idx) const;
 
 private:
 	Stage() = default;
@@ -30,9 +37,11 @@ private:
 
 	virtual std::unique_ptr<Object, std::function<void(Object*)>> _Clone() const override;
 
+	STAGE type_{ STAGE::NORMAL };
 	std::vector<std::vector<std::shared_ptr<Object>>> tile_collection_{};
 	TYPE::Point stage_size_{};
 	TYPE::Point tile_size_{};
 	std::pair<int, int> view_range_idx_x_{};
 	std::pair<int, int> view_range_idx_y_{};
+	std::vector<std::vector<std::list<std::pair<int, int>>>> tile_graph_{};
 };

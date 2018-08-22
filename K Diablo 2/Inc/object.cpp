@@ -125,6 +125,16 @@ void Object::ChangeAnimationClip(string const& _tag)
 	animation_->_ChangeClip(_tag);
 }
 
+void Object::ChangeAnimationDirection(int _dir_idx)
+{
+	animation_->current_y_ = _dir_idx;
+}
+
+void Object::ChangeToDefaultClip()
+{
+	animation_->_ChangeToDefaultClip();
+}
+
 string const& Object::GetCurrentAnimationClipTag() const
 {
 	return animation_->current_clip_->tag();

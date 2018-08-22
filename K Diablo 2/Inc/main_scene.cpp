@@ -57,30 +57,26 @@ bool MainScene::_Initialize()
 	camera_manager->set_size({ static_cast<float>(RESOLUTION::GAME_WIDTH), static_cast<float>(RESOLUTION::GAME_HEIGHT) });
 
 	auto rogue_encampment = dynamic_pointer_cast<Stage>(object_manager->CreateObject<Stage>("rogue_encampment", background_layer));
-	rogue_encampment->CreateTile(TILE::ISOMETRIC, 49, 49, { 7840.f, 3920.f }, { 160.f, 80.f }, "base");
+	rogue_encampment->CreateTile(STAGE::ISOMETRIC, 100, 100, { 16000.f, 8000.f }, { 160.f, 80.f }, "base");
 	camera_manager->set_world_size({ rogue_encampment->stage_size().x, rogue_encampment->stage_size().y });
 
-	auto player = object_manager->CreateObject<Player>("player", default_layer);
-	player->set_position({ 3920.f, 1960.f });
+	auto player = dynamic_pointer_cast<Player>(object_manager->CreateObject<Player>("player", default_layer));
+	player->set_position({ 8000.f, 4000.f });
 	player->set_size({ 42.f, 73.f });
 	player->set_pivot({ 0.5f, 0.5f });
-	player->AddAnimationClip("town_neutral_0");
-	player->AddAnimationClip("town_neutral_1");
-	player->AddAnimationClip("town_neutral_2");
-	player->AddAnimationClip("town_neutral_3");
-	player->AddAnimationClip("town_neutral_4");
-	player->AddAnimationClip("town_neutral_5");
-	player->AddAnimationClip("town_neutral_6");
-	player->AddAnimationClip("town_neutral_7");
-	player->AddAnimationClip("town_neutral_8");
-	player->AddAnimationClip("town_neutral_9");
-	player->AddAnimationClip("town_neutral_10");
-	player->AddAnimationClip("town_neutral_11");
-	player->AddAnimationClip("town_neutral_12");
-	player->AddAnimationClip("town_neutral_13");
-	player->AddAnimationClip("town_neutral_14");
-	player->AddAnimationClip("town_neutral_15");
+	for (int i = 0; i < 16; ++i)
+	{
+		string town_neutral = "town_neutral_" + to_string(i);
+		string town_walk = "town_walk_" + to_string(i);
+		string run = "run_" + to_string(i);
+
+		player->AddAnimationClip(town_neutral.c_str());
+		player->AddAnimationClip(town_walk.c_str());
+		player->AddAnimationClip(run.c_str());
+	}
 	player->set_color_key(RGB(170, 170, 170));
+	player->set_stage(rogue_encampment);
+	player->set_astar_interval(0.01f);
 	camera_manager->set_target(player);
 	auto player_collider = dynamic_pointer_cast<RectCollider>(player->AddCollider<RectCollider>("PlayerCollider"));
 	player_collider->set_model_info({ 0.f, 0.f, 42.f, 73.f });
@@ -114,67 +110,6 @@ bool MainScene::_Initialize()
 
 void MainScene::_Input(float _time)
 {
-	auto const& input_manager = InputManager::GetSingleton();
-	auto const& camera_manager = CameraManager::GetSingleton();
-
-	if (input_manager->KeyPressed("MoveLeft"))
-		camera_manager->Move({ -1.f, 0.f }, _time);
-
-	if (input_manager->KeyPressed("MoveUp"))
-		camera_manager->Move({ 0.f, -1.f }, _time);
-
-	if (input_manager->KeyPressed("MoveRight"))
-		camera_manager->Move({ 1.f, 0.f }, _time);
-
-	if (input_manager->KeyPressed("MoveDown"))
-		camera_manager->Move({ 0.f, 1.f}, _time);
-
-	if (input_manager->KeyPressed("MouseLeft"))
-	{
-		auto player = dynamic_pointer_cast<Player>(scene()->FindLayer("Default")->FindObject("player"));
-
-		auto player_position = player->position();
-		auto mouse_position = InputManager::GetSingleton()->mouse_world_position();
-
-		auto direction = (mouse_position - player_position) / Math::GetDistance(player_position, mouse_position);
-		
-		float angle = Math::GetAngle(player_position, mouse_position);
-
-		if (angle < 22.5f)
-			player->ChangeAnimationClip("town_neutral_12");
-		else if(angle < 45.f)
-			player->ChangeAnimationClip("town_neutral_13");
-		else if(angle < 67.5f)
-			player->ChangeAnimationClip("town_neutral_14");
-		else if(angle < 90.f)
-			player->ChangeAnimationClip("town_neutral_15");
-		else if (angle < 112.5f)
-			player->ChangeAnimationClip("town_neutral_0");
-		else if (angle < 135.f)
-			player->ChangeAnimationClip("town_neutral_1");
-		else if (angle < 157.5f)
-			player->ChangeAnimationClip("town_neutral_2");
-		else if (angle < 180.f)
-			player->ChangeAnimationClip("town_neutral_3");
-		else if (angle < 202.5f)
-			player->ChangeAnimationClip("town_neutral_4");
-		else if (angle < 225.f)
-			player->ChangeAnimationClip("town_neutral_5");
-		else if (angle < 247.5f)
-			player->ChangeAnimationClip("town_neutral_6");
-		else if (angle < 270.f)
-			player->ChangeAnimationClip("town_neutral_7");
-		else if (angle < 292.5f)
-			player->ChangeAnimationClip("town_neutral_8");
-		else if (angle < 315.f)
-			player->ChangeAnimationClip("town_neutral_9");
-		else if (angle < 337.5f)
-			player->ChangeAnimationClip("town_neutral_10");
-		else
-			player->ChangeAnimationClip("town_neutral_11");
-
-		player->Move(direction, _time);
-	}
 }
 
 void MainScene::_Update(float _time)

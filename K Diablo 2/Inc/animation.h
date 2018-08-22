@@ -8,6 +8,7 @@ class Animation
 	friend class Layer;
 	friend class Object;
 	friend class UI;
+	friend class Player;
 public:
 	int current_x() const;
 	int current_y() const;
@@ -30,6 +31,7 @@ private:
 	bool _Initialize();
 	void _Update(float _time);
 	void _ChangeClip(std::string const& _tag);
+	void _ChangeToDefaultClip();
 
 	std::unique_ptr<Animation, std::function<void(Animation*)>> _Clone() const;
 

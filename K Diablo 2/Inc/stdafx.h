@@ -23,6 +23,7 @@
 #include <limits>
 #include <list>
 #include <sstream>
+#include <stack>
 #include <string>
 
 // DirectX

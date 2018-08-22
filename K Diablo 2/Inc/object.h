@@ -38,6 +38,8 @@ public:
 
 	void SetDefaultClip(std::string const& _tag);
 	void ChangeAnimationClip(std::string const& _tag);
+	void ChangeAnimationDirection(int _dir_idx);
+	void ChangeToDefaultClip();
 
 	std::string const& GetCurrentAnimationClipTag() const;
 	std::shared_ptr<Collider> GetCollider(std::string const& _tag);

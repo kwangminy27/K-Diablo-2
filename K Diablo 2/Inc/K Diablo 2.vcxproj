@@ -155,6 +155,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="ai_manager.cpp" />
     <ClCompile Include="animation.cpp" />
     <ClCompile Include="animation_clip.cpp" />
     <ClCompile Include="animation_manager.cpp" />
@@ -198,6 +199,7 @@
     <ClCompile Include="video_manager.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="ai_manager.h" />
     <ClInclude Include="animation.h" />
     <ClInclude Include="animation_clip.h" />
     <ClInclude Include="animation_manager.h" />

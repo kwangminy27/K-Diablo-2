@@ -19,6 +19,8 @@ bool InputManager::Initialize()
 	_AddKey("MoveRight"s, VK_RIGHT);
 	_AddKey("MoveDown"s, VK_DOWN);
 
+	_AddKey("RunToggle"s, 'R');
+
 	ShowCursor(false);
 
 	return true;

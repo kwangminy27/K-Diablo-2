@@ -77,7 +77,7 @@ enum class LOGO_SCENE
 	CREDIT
 };
 
-enum class TILE
+enum class STAGE
 {
 	NORMAL,
 	ISOMETRIC
@@ -86,5 +86,12 @@ enum class TILE
 enum class TILE_OPTION
 {
 	NONE,
-	BLOCKED
+	BLOCKED,
+	IDX_ERROR
+};
+
+enum class PLAYER
+{
+	WALK,
+	RUN
 };
