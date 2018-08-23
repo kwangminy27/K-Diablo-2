@@ -5,8 +5,12 @@
 #include "input_manager.h"
 #include "scene.h"
 #include "layer.h"
+#include "object_manager.h"
 #include "stage.h"
+#include "missile.h"
 #include "animation.h"
+#include "animation_clip.h"
+#include "audio_manager.h"
 #include "ai_manager.h"
 
 using namespace std;
@@ -39,7 +43,14 @@ void Player::MoveByAStar(float _time)
 
 	if (astar_complete_flag_)
 	{
-		ChangeToDefaultClip();
+		if(state_ != PLAYER::CASTING)
+			ChangeToDefaultClip();
+
+		auto const& audio_manager = AudioManager::GetSingleton();
+
+		audio_manager->RemoveSoundEffectInstance("LightDirtRun1");
+		audio_manager->RemoveSoundEffectInstance("LightDirt1");
+
 		return;
 	}
 
@@ -62,93 +73,17 @@ void Player::MoveByAStar(float _time)
 
 	auto dir = (next_target_point_ - position_) / Math::GetDistance(position_, next_target_point_);
 
-	switch (state_)
-	{
-	case PLAYER::WALK:
-		position_ += dir * kPlayerWalkSpeed * _time;
-		break;
-	case PLAYER::RUN:
+	if (run_flag_)
 		position_ += dir * kPlayerRunSpeed * _time;
-		break;
-	}
+	else
+		position_ += dir * kPlayerWalkSpeed * _time;
 
-	if (Math::GetDistance(position_, final_target_point_) <= 5.f)
+	if (Math::GetDistance(position_, final_target_point_) <= 1.f)
 		astar_complete_flag_ = true;
 
-	if (Math::GetDistance(position_, next_target_point_) <= 5.f)
+	if (Math::GetDistance(position_, next_target_point_) <= 1.f)
 		test_ = true;
-
-	/*;
-
-	if (on_final_target_)
-		return;
-
-	if (on_next_target_)
-	{
-		if (travel_path_stack_.empty())
-			next_target_point_ = final_target_point_;
-		else
-		{
-			if (travel_path_stack_.size() == 1)
-				next_target_point_ = final_target_point_;
-			else
-				next_target_point_ = dynamic_pointer_cast<Stage>(stage_)->GetTileCenterPosition(travel_path_stack_.top());
-			travel_path_stack_.pop();
-		}
-
-		on_next_target_ = false;
-	}
-
-	auto dir = (next_target_point_ - position_) / Math::GetDistance(position_, next_target_point_);
-
-	switch (state_)
-	{
-	case PLAYER::WALK:
-		position_ += dir * kPlayerWalkSpeed * _time;
-		break;
-	case PLAYER::RUN:
-		position_ += dir * kPlayerRunSpeed * _time;
-		break;
-	}
-
-	if (Math::GetDistance(position_, next_target_point_) <= 10.f)
-		on_next_target_ = true;
-
-	if (Math::GetDistance(position_, final_target_point_) <= 10.f)
-		on_final_target_ = true;*/
 }
-
-//void Player::MoveByPath(float _time)
-//{
-//	static const float kPlayerWalkSpeed = 200.f;
-//	static const float kPlayerRunSpeed = 300.f;
-//
-//	if (move_path_stack_.empty())
-//		return;
-//
-//	next_target_position_ = dynamic_pointer_cast<Stage>(stage_)->GetTileCenterPosition(move_path_stack_.top());
-//
-//	if (arrival_flag_)
-//	{
-//		move_path_stack_.pop();
-//		arrival_flag_ = false;
-//	}
-//
-//	auto dir = (next_target_position_ - position_) / Math::GetDistance(position_, next_target_position_);
-//
-//	switch (state_)
-//	{
-//	case PLAYER::WALK:
-//		position_ += dir * kPlayerWalkSpeed * _time;
-//		break;
-//	case PLAYER::RUN:
-//		position_ += dir * kPlayerRunSpeed * _time;
-//		break;
-//	}
-//
-//	if (Math::GetDistance(position_, next_target_position_) <= 10.f)
-//		arrival_flag_ = true;
-//}
 
 Player::Player(Player const& _other) : Character(_other)
 {
@@ -179,28 +114,43 @@ void Player::_Input(float _time)
 
 	auto const& input_manager = InputManager::GetSingleton();
 	auto const& ai_manager = AIManager::GetSingleton();
+	auto const& audio_manager = AudioManager::GetSingleton();
 
 	auto mouse_position = InputManager::GetSingleton()->mouse_world_position();
 	float angle = Math::GetAngle(position_, mouse_position);
 
 	int dir_idx = static_cast<int>((static_cast<int>(angle + 270.f) % 360) / 22.5f); // 0 ~ 15
 
-	string town_neutral = "town_neutral_" + to_string(dir_idx);
-	string town_walk = "town_walk_" + to_string(dir_idx);
-	string run = "run_" + to_string(dir_idx);
+	string town_neutral_tag = "town_neutral_" + to_string(dir_idx);
+	string town_walk_tag = "town_walk_" + to_string(dir_idx);
+	string run_tag = "run_" + to_string(dir_idx);
+	string skill_casting_tag = "skill_casting_" + to_string(dir_idx);
+	string ice_bolt_tag = "ice_bolt_" + to_string(dir_idx);
 
 	if (input_manager->KeyPush("MouseLeft"))
 	{
-		switch (state_)
+		state_ = PLAYER::IDLE;
+
+		if (run_flag_)
 		{
-		case PLAYER::WALK:
-			ChangeAnimationClip(town_walk.c_str());
-			break;
-		case PLAYER::RUN:
-			ChangeAnimationClip(run.c_str());
-			break;
+			auto LightDirtRun1 = audio_manager->FindSoundEffect("LightDirtRun1")->CreateInstance();
+			LightDirtRun1->SetVolume(5.f);
+			LightDirtRun1->Play(true);
+			audio_manager->AddSoundEffectInstance("LightDirtRun1", move(LightDirtRun1));
+
+			ChangeAnimationClip(run_tag.c_str());
 		}
-		SetDefaultClip(town_neutral.c_str());
+		else
+		{
+			auto LightDirt1 = audio_manager->FindSoundEffect("LightDirt1")->CreateInstance();
+			LightDirt1->SetVolume(5.f);
+			LightDirt1->Play(true);
+			audio_manager->AddSoundEffectInstance("LightDirt1", move(LightDirt1));
+
+			ChangeAnimationClip(town_walk_tag.c_str());
+		}
+
+		SetDefaultClip(town_neutral_tag.c_str());
 
 		travel_path_stack_ = ai_manager->ProcessAStar(position_, mouse_position, dynamic_pointer_cast<Stage>(stage_));
 		if (!travel_path_stack_.empty())
@@ -213,27 +163,65 @@ void Player::_Input(float _time)
 	}
 	else if (input_manager->KeyPressed("MouseLeft"))
 	{
-		ChangeAnimationDirection(dir_idx);
-		SetDefaultClip(town_neutral.c_str());
-
-		astar_elapsed_time += _time;
-		if (astar_elapsed_time >= astar_interval_)
+		switch (state_)
 		{
-			astar_elapsed_time -= astar_interval_;
+		case PLAYER::IDLE:
+			ChangeAnimationDirection(dir_idx);
+			SetDefaultClip(town_neutral_tag.c_str());
 
-			travel_path_stack_ = ai_manager->ProcessAStar(position_, mouse_position, dynamic_pointer_cast<Stage>(stage_));
-			if (!travel_path_stack_.empty())
+			astar_elapsed_time += _time;
+			if (astar_elapsed_time >= astar_interval_)
 			{
-				astar_complete_flag_ = false;
-				test_ = false;
-				next_target_point_ = dynamic_pointer_cast<Stage>(stage_)->GetTileCenterPosition(travel_path_stack_.top());
-				final_target_point_ = mouse_position;
+				astar_elapsed_time -= astar_interval_;
+
+				travel_path_stack_ = ai_manager->ProcessAStar(position_, mouse_position, dynamic_pointer_cast<Stage>(stage_));
+				if (!travel_path_stack_.empty())
+				{
+					astar_complete_flag_ = false;
+					test_ = false;
+					next_target_point_ = dynamic_pointer_cast<Stage>(stage_)->GetTileCenterPosition(travel_path_stack_.top());
+					final_target_point_ = mouse_position;
+				}
 			}
+			break;
+		case PLAYER::CASTING:
+			break;
 		}
 	}
 
 	if (input_manager->KeyPush("RunToggle"))
-		state_ = static_cast<PLAYER>(static_cast<bool>(state_) ^ true);
+	{
+		if (run_flag_)
+		{
+			run_flag_ = false;
+			ChangeAnimationClip(town_walk_tag.c_str());
+		}
+		else
+		{
+			run_flag_ = true;
+			ChangeAnimationClip(run_tag.c_str());
+		}
+		SetDefaultClip(town_neutral_tag.c_str());
+	}
+
+	if (input_manager->KeyPush("MouseRight"))
+	{
+		AudioManager::GetSingleton()->FindSoundEffect("coldcast")->Play();
+
+		state_ = PLAYER::CASTING;
+
+		astar_complete_flag_ = true;
+
+		ChangeAnimationClip(skill_casting_tag.c_str());
+		SetDefaultClip(town_neutral_tag.c_str());
+
+		SetAnimationCallback(skill_casting_tag.c_str(), [this, _ice_bolt_tag = ice_bolt_tag, _angle = angle]() {
+			auto ice_bolt = dynamic_pointer_cast<Missile>(ObjectManager::GetSingleton()->CreateCloneObject("ice_bolt", layer()));
+			ice_bolt->set_position(position_ + Point{ -50.f, -50.f });
+			ice_bolt->AddAnimationClip(_ice_bolt_tag);
+			ice_bolt->set_dir({ cos(Math::ConvertToRadians(_angle)), sin(Math::ConvertToRadians(_angle)) });
+		});
+	}
 }
 
 void Player::_Update(float _time)

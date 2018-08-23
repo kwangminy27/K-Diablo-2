@@ -33,6 +33,7 @@ protected:
 	virtual std::unique_ptr<Object, std::function<void(Object*)>> _Clone() const override;
 
 	PLAYER state_{};
+	bool run_flag_{};
 	std::shared_ptr<Object> stage_{};
 	std::stack<std::pair<int, int>> travel_path_stack_{};
 	bool astar_complete_flag_{ true };

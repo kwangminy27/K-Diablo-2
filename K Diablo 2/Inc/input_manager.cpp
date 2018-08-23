@@ -21,6 +21,12 @@ bool InputManager::Initialize()
 
 	_AddKey("RunToggle"s, 'R');
 
+	_AddKey("MouseRight"s, VK_RBUTTON);
+
+	_AddKey("Character"s, 'C');
+	_AddKey("Inventory"s, 'I');
+	_AddKey("SkillTree"s, 'T');
+
 	ShowCursor(false);
 
 	return true;

@@ -173,6 +173,7 @@
     <ClCompile Include="logo_scene.cpp" />
     <ClCompile Include="main_scene.cpp" />
     <ClCompile Include="math.cpp" />
+    <ClCompile Include="missile.cpp" />
     <ClCompile Include="object.cpp" />
     <ClCompile Include="object_manager.cpp" />
     <ClCompile Include="path_manager.cpp" />
@@ -217,6 +218,7 @@
     <ClInclude Include="logo_scene.h" />
     <ClInclude Include="main_scene.h" />
     <ClInclude Include="math.h" />
+    <ClInclude Include="missile.h" />
     <ClInclude Include="object.h" />
     <ClInclude Include="object_manager.h" />
     <ClInclude Include="path_manager.h" />

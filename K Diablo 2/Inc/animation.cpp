@@ -54,6 +54,16 @@ void Animation::set_object(shared_ptr<Object> const& _object)
 	object_ = _object;
 }
 
+void Animation::InsertAnimationCallback(string const& _tag, function<void(void)> const& _function)
+{
+	auto iter = callback_map_.find(_tag);
+
+	if (iter != callback_map_.end())
+		callback_map_[_tag] = _function;
+	else
+		callback_map_.insert(make_pair(_tag, _function));
+}
+
 Animation::Animation(Animation const& _other)
 {
 	*this = _other;
@@ -96,6 +106,10 @@ void Animation::_Update(float _time)
 			{
 				current_x_ = animation_clip_info.start_x;
 				current_y_ = animation_clip_info.start_y;
+
+				auto iter = callback_map_.find(current_clip_->tag());
+				if (iter != callback_map_.end())
+					iter->second();
 
 				switch (current_clip_->option_)
 				{

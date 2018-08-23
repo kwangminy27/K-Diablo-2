@@ -96,12 +96,24 @@ int Core::Run()
 	return static_cast<int>(message.wParam);
 }
 
-void Core::ResizeWindow(TYPE::Rectangle const& _rect)
+void Core::ResizeWindow(TYPE::Rectangle const& _rect, bool _full_screen_flag)
 {
 	RECT rect{};
 	SetRect(&rect, static_cast<int>(_rect.left), static_cast<int>(_rect.top), static_cast<int>(_rect.right), static_cast<int>(_rect.bottom));
-	AdjustWindowRect(&rect, WS_CAPTION | WS_SYSMENU, false);
-	MoveWindow(window_, 100, 50, rect.right - rect.left, rect.bottom - rect.top, true);
+	AdjustWindowRect(&rect, WS_POPUP, false);
+	MoveWindow(window_, 0, 0, rect.right - rect.left, rect.bottom - rect.top, true);
+
+	if (_full_screen_flag)
+	{
+		DEVMODE device_mode{};
+		device_mode.dmSize = sizeof(device_mode);
+		device_mode.dmPelsWidth = rect.right - rect.left;
+		device_mode.dmPelsHeight = rect.bottom - rect.top;
+		device_mode.dmBitsPerPel = 32;
+		device_mode.dmFields = DM_BITSPERPEL | DM_PELSWIDTH | DM_PELSHEIGHT;
+
+		ChangeDisplaySettings(&device_mode, CDS_FULLSCREEN);
+	}
 }
 
 HINSTANCE Core::instance() const
@@ -232,7 +244,7 @@ void Core::_CreateWindow(wstring const& _class_name, wstring const& _window_name
 {
 	window_ = CreateWindow(
 		_class_name.c_str(), _window_name.c_str(),
-		WS_CAPTION | WS_SYSMENU,
+		WS_POPUP,
 		CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT,
 		nullptr, nullptr, instance_,
 		nullptr
@@ -241,9 +253,7 @@ void Core::_CreateWindow(wstring const& _class_name, wstring const& _window_name
 	if (!window_)
 		return;
 
-	RECT rc{ 0, 0, static_cast<long>(RESOLUTION::WIDTH), static_cast<long>(RESOLUTION::HEIGHT) };
-	AdjustWindowRect(&rc, WS_CAPTION | WS_SYSMENU, false);
-	SetWindowPos(window_, HWND_TOP, 100, 50, rc.right - rc.left, rc.bottom - rc.top, NULL);
+	ResizeWindow({ 0.f, 0.f, static_cast<float>(RESOLUTION::WIDTH), static_cast<float>(RESOLUTION::HEIGHT) }, true);
 
 	ShowWindow(window_, SW_SHOW);
 }

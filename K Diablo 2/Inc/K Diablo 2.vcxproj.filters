@@ -201,6 +201,9 @@
     <ClCompile Include="ai_manager.cpp">
       <Filter>12. AI</Filter>
     </ClCompile>
+    <ClCompile Include="missile.cpp">
+      <Filter>05. Object\03. Missile</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -325,6 +328,9 @@
     </ClInclude>
     <ClInclude Include="ai_manager.h">
       <Filter>12. AI</Filter>
+    </ClInclude>
+    <ClInclude Include="missile.h">
+      <Filter>05. Object\03. Missile</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

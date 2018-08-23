@@ -115,6 +115,11 @@ bool Object::AddAnimationClip(string const& _tag)
 	return true;
 }
 
+void Object::SetAnimationCallback(string const& _tag, function<void(void)> const& _function)
+{
+	animation_->InsertAnimationCallback(_tag, _function);
+}
+
 void Object::SetDefaultClip(string const& _tag)
 {
 	animation_->set_default_clip(_tag);
@@ -162,7 +167,9 @@ Object::Object(Object const& _other) : Tag(_other)
 	texture_ = _other.texture_;
 	color_key_ = _other.color_key_;
 	is_color_key_ = _other.is_color_key_;
-	animation_ = _other.animation_->_Clone();
+
+	if(_other.animation_)
+		animation_ = _other.animation_->_Clone();
 }
 
 Object::Object(Object&& _other) noexcept

@@ -41,7 +41,8 @@ enum class OBJECT
 	UI,
 	STAGE,
 	TILE,
-	CHARACTER
+	CHARACTER,
+	MISSILE
 };
 
 enum class COLLIDER
@@ -92,6 +93,6 @@ enum class TILE_OPTION
 
 enum class PLAYER
 {
-	WALK,
-	RUN
+	IDLE,
+	CASTING
 };

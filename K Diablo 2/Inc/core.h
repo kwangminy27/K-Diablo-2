@@ -12,7 +12,7 @@ public:
 	bool Initialize(std::wstring const& _class_name, std::wstring const& _window_name, HINSTANCE _instance, HICON _icon);
 	int Run();
 
-	void ResizeWindow(TYPE::Rectangle const& _rect);
+	void ResizeWindow(TYPE::Rectangle const& _rect, bool _full_screen_flag);
 
 	HINSTANCE instance() const;
 	HWND window() const;
