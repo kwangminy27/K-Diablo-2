@@ -113,6 +113,8 @@ bool AnimationManager::_LoadAnimationClip(wstring const& _file_name, string cons
 		string option{};
 		string frame_width{};
 		string frame_height{};
+		string offset_x{};
+		string offset_y{};
 		string start_x{};
 		string start_y{};
 		string end_x{};
@@ -130,6 +132,8 @@ bool AnimationManager::_LoadAnimationClip(wstring const& _file_name, string cons
 		getline(line_stream, option, ',');
 		getline(line_stream, frame_width, ',');
 		getline(line_stream, frame_height, ',');
+		getline(line_stream, offset_x, ',');
+		getline(line_stream, offset_y, ',');
 		getline(line_stream, start_x, ',');
 		getline(line_stream, start_y, ',');
 		getline(line_stream, end_x, ',');
@@ -149,6 +153,8 @@ bool AnimationManager::_LoadAnimationClip(wstring const& _file_name, string cons
 		animation_clip->option_ = static_cast<ANIMATION_OPTION>(stoi(option));
 		animation_clip->animation_clip_info_.frame_width = stoi(frame_width);
 		animation_clip->animation_clip_info_.frame_height = stoi(frame_height);
+		animation_clip->animation_clip_info_.offset_x = stoi(offset_x);
+		animation_clip->animation_clip_info_.offset_y = stoi(offset_y);
 		animation_clip->animation_clip_info_.start_x = stoi(start_x);
 		animation_clip->animation_clip_info_.start_y = stoi(start_y);
 		animation_clip->animation_clip_info_.end_x = stoi(end_x);

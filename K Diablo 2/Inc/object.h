@@ -39,7 +39,7 @@ public:
 	void SetAnimationCallback(std::string const& _tag, std::function<void(void)> const& _function);
 	void SetDefaultClip(std::string const& _tag);
 	void ChangeAnimationClip(std::string const& _tag);
-	void ChangeAnimationDirection(int _dir_idx);
+	void ChangeAnimationClipWithDirection(std::string const& _tag);
 	void ChangeToDefaultClip();
 
 	std::string const& GetCurrentAnimationClipTag() const;

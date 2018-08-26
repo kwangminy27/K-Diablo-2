@@ -32,7 +32,7 @@ void MainScene::_Release()
 
 bool MainScene::_Initialize()
 {
-	Core::GetSingleton()->ResizeWindow({ 0.f, 0.f, static_cast<float>(RESOLUTION::GAME_WIDTH), static_cast<float>(RESOLUTION::GAME_HEIGHT) }, true);
+	Core::GetSingleton()->ResizeWindow({ 0.f, 0.f, static_cast<float>(RESOLUTION::GAME_WIDTH), static_cast<float>(RESOLUTION::GAME_HEIGHT) }, false);
 
 	auto const& input_manager = InputManager::GetSingleton();
 	auto const& camera_manager = CameraManager::GetSingleton();

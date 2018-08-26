@@ -14,6 +14,8 @@ public:
 	int current_y() const;
 	int GetFrameWidth() const;
 	int GetFrameHeight() const;
+	int GetOffsetX() const;
+	int GetOffsetY() const;
 
 	void set_default_clip(std::string const& _tag);
 	void set_current_clip(std::string const& _tag);
@@ -33,6 +35,7 @@ private:
 	bool _Initialize();
 	void _Update(float _time);
 	void _ChangeClip(std::string const& _tag);
+	void _ChangeClipWithDirection(std::string const& _tag);
 	void _ChangeToDefaultClip();
 
 	std::unique_ptr<Animation, std::function<void(Animation*)>> _Clone() const;

@@ -27,6 +27,16 @@ int Animation::GetFrameHeight() const
 	return current_clip_->animation_clip_info_.frame_height;
 }
 
+int Animation::GetOffsetX() const
+{
+	return current_clip_->animation_clip_info_.offset_x;
+}
+
+int Animation::GetOffsetY() const
+{
+	return current_clip_->animation_clip_info_.offset_y;
+}
+
 void Animation::set_default_clip(string const& _tag)
 {
 	default_clip_ = _FindAnimationClip(_tag);
@@ -100,9 +110,9 @@ void Animation::_Update(float _time)
 	{
 		elapsed_time_ -= interval_time;
 
-		if (current_y_ == animation_clip_info.start_y + animation_clip_info.count_y)
+		if (current_y_ >= animation_clip_info.start_y + animation_clip_info.count_y)
 		{
-			if (current_x_ == animation_clip_info.end_x)
+			if (current_x_ >= animation_clip_info.end_x)
 			{
 				current_x_ = animation_clip_info.start_x;
 				current_y_ = animation_clip_info.start_y;
@@ -149,8 +159,29 @@ void Animation::_ChangeClip(string const& _tag)
 	set_current_clip(_tag);
 }
 
+void Animation::_ChangeClipWithDirection(string const& _tag)
+{
+	if (current_clip_->tag() == _tag)
+		return;
+
+	auto related_clip = _FindAnimationClip(_tag);
+
+	if (!related_clip)
+		return;
+
+	int x_gap = current_x_ - current_clip_->animation_clip_info_.start_x;
+
+	current_x_ = related_clip->animation_clip_info_.start_x + x_gap;
+	current_y_ = related_clip->animation_clip_info_.start_y;
+
+	current_clip_ = related_clip;
+}
+
 void Animation::_ChangeToDefaultClip()
 {
+	if (default_clip_ == current_clip_)
+		return;
+
 	current_x_ = default_clip_->animation_clip_info_.start_x;
 	current_y_ = default_clip_->animation_clip_info_.start_y;
 	elapsed_time_ = 0.f;

@@ -48,8 +48,6 @@ void SceneManager::TrySceneChange()
 	if (!next_scene_)
 		return;
 
-	// 마우스 반환?
-
 	ObjectManager::GetSingleton()->ErasePrototype(scene_);
 	scene_ = move(next_scene_);
 }

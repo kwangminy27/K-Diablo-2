@@ -119,7 +119,7 @@ void Player::_Input(float _time)
 	auto mouse_position = InputManager::GetSingleton()->mouse_world_position();
 	float angle = Math::GetAngle(position_, mouse_position);
 
-	int dir_idx = static_cast<int>((static_cast<int>(angle + 270.f) % 360) / 22.5f); // 0 ~ 15
+	int dir_idx = static_cast<int>((static_cast<int>(angle + 281.25) % 360) / 22.5f); // 0 ~ 15
 
 	string town_neutral_tag = "town_neutral_" + to_string(dir_idx);
 	string town_walk_tag = "town_walk_" + to_string(dir_idx);
@@ -135,6 +135,7 @@ void Player::_Input(float _time)
 		{
 			auto LightDirtRun1 = audio_manager->FindSoundEffect("LightDirtRun1")->CreateInstance();
 			LightDirtRun1->SetVolume(5.f);
+			LightDirtRun1->SetPitch(-0.75f);
 			LightDirtRun1->Play(true);
 			audio_manager->AddSoundEffectInstance("LightDirtRun1", move(LightDirtRun1));
 
@@ -144,6 +145,7 @@ void Player::_Input(float _time)
 		{
 			auto LightDirt1 = audio_manager->FindSoundEffect("LightDirt1")->CreateInstance();
 			LightDirt1->SetVolume(5.f);
+			LightDirt1->SetPitch(0.f);
 			LightDirt1->Play(true);
 			audio_manager->AddSoundEffectInstance("LightDirt1", move(LightDirt1));
 
@@ -166,7 +168,10 @@ void Player::_Input(float _time)
 		switch (state_)
 		{
 		case PLAYER::IDLE:
-			ChangeAnimationDirection(dir_idx);
+			if(run_flag_)
+				ChangeToRelatedAnimationClip(run_tag.c_str());
+			else
+				ChangeToRelatedAnimationClip(town_walk_tag.c_str());
 			SetDefaultClip(town_neutral_tag.c_str());
 
 			astar_elapsed_time += _time;
@@ -194,11 +199,29 @@ void Player::_Input(float _time)
 		if (run_flag_)
 		{
 			run_flag_ = false;
+
+			audio_manager->RemoveSoundEffectInstance("LightDirtRun1");
+
+			auto LightDirt1 = audio_manager->FindSoundEffect("LightDirt1")->CreateInstance();
+			LightDirt1->SetVolume(5.f);
+			LightDirt1->SetPitch(0.f);
+			LightDirt1->Play(true);
+			audio_manager->AddSoundEffectInstance("LightDirt1", move(LightDirt1));
+
 			ChangeAnimationClip(town_walk_tag.c_str());
 		}
 		else
 		{
 			run_flag_ = true;
+
+			audio_manager->RemoveSoundEffectInstance("LightDirt1");
+
+			auto LightDirtRun1 = audio_manager->FindSoundEffect("LightDirtRun1")->CreateInstance();
+			LightDirtRun1->SetVolume(5.f);
+			LightDirtRun1->SetPitch(-0.75f);
+			LightDirtRun1->Play(true);
+			audio_manager->AddSoundEffectInstance("LightDirtRun1", move(LightDirtRun1));
+
 			ChangeAnimationClip(run_tag.c_str());
 		}
 		SetDefaultClip(town_neutral_tag.c_str());

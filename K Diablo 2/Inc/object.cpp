@@ -130,9 +130,9 @@ void Object::ChangeAnimationClip(string const& _tag)
 	animation_->_ChangeClip(_tag);
 }
 
-void Object::ChangeAnimationDirection(int _dir_idx)
+void Object::ChangeAnimationClipWithDirection(string const& _tag)
 {
-	animation_->current_y_ = _dir_idx;
+	animation_->_ChangeClipWithDirection(_tag);
 }
 
 void Object::ChangeToDefaultClip()
@@ -228,7 +228,10 @@ void Object::_Render(HDC _device_context, float _time)
 			int frame_left = static_cast<int>(animation_->current_x_ * width);
 			int frame_top = static_cast<int>(animation_->current_y_ * height);
 
-			TransparentBlt(_device_context, left, top, width, height, texture_->memory_device_context(), frame_left, frame_top, width, height, color_key_);
+			int animation_offset_x = animation_->GetOffsetX();
+			int animation_offset_y = animation_->GetOffsetY();
+
+			TransparentBlt(_device_context, left, top, width - animation_offset_x, height - animation_offset_y, texture_->memory_device_context(), frame_left, frame_top, width, height, color_key_);
 		}
 		else
 			TransparentBlt(_device_context, left, top, width, height, texture_->memory_device_context(), 0, 0, texture_->width(), texture_->height(), color_key_);

@@ -253,7 +253,7 @@ void Core::_CreateWindow(wstring const& _class_name, wstring const& _window_name
 	if (!window_)
 		return;
 
-	ResizeWindow({ 0.f, 0.f, static_cast<float>(RESOLUTION::WIDTH), static_cast<float>(RESOLUTION::HEIGHT) }, true);
+	ResizeWindow({ 0.f, 0.f, static_cast<float>(RESOLUTION::WIDTH), static_cast<float>(RESOLUTION::HEIGHT) }, false);
 
 	ShowWindow(window_, SW_SHOW);
 }
