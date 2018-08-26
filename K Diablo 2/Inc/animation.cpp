@@ -64,7 +64,7 @@ void Animation::set_object(shared_ptr<Object> const& _object)
 	object_ = _object;
 }
 
-void Animation::InsertAnimationCallback(string const& _tag, function<void(void)> const& _function)
+void Animation::InsertAnimationCallback(string const& _tag, function<void()> const& _function)
 {
 	auto iter = callback_map_.find(_tag);
 
@@ -128,10 +128,10 @@ void Animation::_Update(float _time)
 					break;
 				case ANIMATION_OPTION::DESTROY:
 					object_.lock()->set_activation(false);
-					break;
+					return;
 				case ANIMATION_OPTION::ONCE:
 					object_.lock()->set_enablement(false);
-					break;
+					return;
 				}
 
 				continue;

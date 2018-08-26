@@ -42,7 +42,8 @@ enum class OBJECT
 	STAGE,
 	TILE,
 	CHARACTER,
-	MISSILE
+	MISSILE,
+	EFFECT
 };
 
 enum class COLLIDER

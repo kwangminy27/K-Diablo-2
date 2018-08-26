@@ -115,7 +115,7 @@ bool Object::AddAnimationClip(string const& _tag)
 	return true;
 }
 
-void Object::SetAnimationCallback(string const& _tag, function<void(void)> const& _function)
+void Object::SetAnimationCallback(string const& _tag, function<void()> const& _function)
 {
 	animation_->InsertAnimationCallback(_tag, _function);
 }
@@ -231,7 +231,7 @@ void Object::_Render(HDC _device_context, float _time)
 			int animation_offset_x = animation_->GetOffsetX();
 			int animation_offset_y = animation_->GetOffsetY();
 
-			TransparentBlt(_device_context, left, top, width - animation_offset_x, height - animation_offset_y, texture_->memory_device_context(), frame_left, frame_top, width, height, color_key_);
+			TransparentBlt(_device_context, left - animation_offset_x, top - animation_offset_y, width, height, texture_->memory_device_context(), frame_left, frame_top, width, height, color_key_);
 		}
 		else
 			TransparentBlt(_device_context, left, top, width, height, texture_->memory_device_context(), 0, 0, texture_->width(), texture_->height(), color_key_);

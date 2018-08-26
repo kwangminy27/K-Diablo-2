@@ -43,7 +43,7 @@ void Player::MoveByAStar(float _time)
 
 	if (astar_complete_flag_)
 	{
-		if(state_ != PLAYER::CASTING)
+		if (state_ != PLAYER::CASTING)
 			ChangeToDefaultClip();
 
 		auto const& audio_manager = AudioManager::GetSingleton();
@@ -125,42 +125,48 @@ void Player::_Input(float _time)
 	string town_walk_tag = "town_walk_" + to_string(dir_idx);
 	string run_tag = "run_" + to_string(dir_idx);
 	string skill_casting_tag = "skill_casting_" + to_string(dir_idx);
+	string skill_casting_special_tag = "skill_casting_special_" + to_string(dir_idx);
 	string ice_bolt_tag = "ice_bolt_" + to_string(dir_idx);
 
 	if (input_manager->KeyPush("MouseLeft"))
 	{
-		state_ = PLAYER::IDLE;
-
-		if (run_flag_)
+		switch (state_)
 		{
-			auto LightDirtRun1 = audio_manager->FindSoundEffect("LightDirtRun1")->CreateInstance();
-			LightDirtRun1->SetVolume(5.f);
-			LightDirtRun1->SetPitch(-0.75f);
-			LightDirtRun1->Play(true);
-			audio_manager->AddSoundEffectInstance("LightDirtRun1", move(LightDirtRun1));
+		case PLAYER::IDLE:
+			if (run_flag_)
+			{
+				auto LightDirtRun1 = audio_manager->FindSoundEffect("LightDirtRun1")->CreateInstance();
+				LightDirtRun1->SetVolume(5.f);
+				LightDirtRun1->SetPitch(-0.75f);
+				LightDirtRun1->Play(true);
+				audio_manager->AddSoundEffectInstance("LightDirtRun1", move(LightDirtRun1));
 
-			ChangeAnimationClip(run_tag.c_str());
-		}
-		else
-		{
-			auto LightDirt1 = audio_manager->FindSoundEffect("LightDirt1")->CreateInstance();
-			LightDirt1->SetVolume(5.f);
-			LightDirt1->SetPitch(0.f);
-			LightDirt1->Play(true);
-			audio_manager->AddSoundEffectInstance("LightDirt1", move(LightDirt1));
+				ChangeAnimationClip(run_tag.c_str());
+			}
+			else
+			{
+				auto LightDirt1 = audio_manager->FindSoundEffect("LightDirt1")->CreateInstance();
+				LightDirt1->SetVolume(5.f);
+				LightDirt1->SetPitch(0.f);
+				LightDirt1->Play(true);
+				audio_manager->AddSoundEffectInstance("LightDirt1", move(LightDirt1));
 
-			ChangeAnimationClip(town_walk_tag.c_str());
-		}
+				ChangeAnimationClip(town_walk_tag.c_str());
+			}
 
-		SetDefaultClip(town_neutral_tag.c_str());
+			SetDefaultClip(town_neutral_tag.c_str());
 
-		travel_path_stack_ = ai_manager->ProcessAStar(position_, mouse_position, dynamic_pointer_cast<Stage>(stage_));
-		if (!travel_path_stack_.empty())
-		{
-			astar_complete_flag_ = false;
-			test_ = false;
-			next_target_point_ = dynamic_pointer_cast<Stage>(stage_)->GetTileCenterPosition(travel_path_stack_.top());
-			final_target_point_ = mouse_position;
+			travel_path_stack_ = ai_manager->ProcessAStar(position_, mouse_position, dynamic_pointer_cast<Stage>(stage_));
+			if (!travel_path_stack_.empty())
+			{
+				astar_complete_flag_ = false;
+				test_ = false;
+				next_target_point_ = dynamic_pointer_cast<Stage>(stage_)->GetTileCenterPosition(travel_path_stack_.top());
+				final_target_point_ = mouse_position;
+			}
+			break;
+		case PLAYER::CASTING:
+			break;
 		}
 	}
 	else if (input_manager->KeyPressed("MouseLeft"))
@@ -168,10 +174,20 @@ void Player::_Input(float _time)
 		switch (state_)
 		{
 		case PLAYER::IDLE:
-			if(run_flag_)
-				ChangeToRelatedAnimationClip(run_tag.c_str());
+			if (run_flag_)
+			{
+				if(animation_->current_clip_->tag() == town_neutral_tag)
+					ChangeAnimationClip(run_tag.c_str());
+				else
+					ChangeAnimationClipWithDirection(run_tag.c_str());
+			}
 			else
-				ChangeToRelatedAnimationClip(town_walk_tag.c_str());
+			{
+				if (animation_->current_clip_->tag() == town_neutral_tag)
+					ChangeAnimationClip(town_walk_tag.c_str());
+				else
+					ChangeAnimationClipWithDirection(town_walk_tag.c_str());
+			}
 			SetDefaultClip(town_neutral_tag.c_str());
 
 			astar_elapsed_time += _time;
@@ -196,49 +212,59 @@ void Player::_Input(float _time)
 
 	if (input_manager->KeyPush("RunToggle"))
 	{
-		if (run_flag_)
+		switch (state_)
 		{
-			run_flag_ = false;
+		case PLAYER::IDLE:
+			if (run_flag_)
+			{
+				run_flag_ = false;
 
-			audio_manager->RemoveSoundEffectInstance("LightDirtRun1");
+				audio_manager->RemoveSoundEffectInstance("LightDirtRun1");
 
-			auto LightDirt1 = audio_manager->FindSoundEffect("LightDirt1")->CreateInstance();
-			LightDirt1->SetVolume(5.f);
-			LightDirt1->SetPitch(0.f);
-			LightDirt1->Play(true);
-			audio_manager->AddSoundEffectInstance("LightDirt1", move(LightDirt1));
+				auto LightDirt1 = audio_manager->FindSoundEffect("LightDirt1")->CreateInstance();
+				LightDirt1->SetVolume(5.f);
+				LightDirt1->SetPitch(0.f);
+				LightDirt1->Play(true);
+				audio_manager->AddSoundEffectInstance("LightDirt1", move(LightDirt1));
 
-			ChangeAnimationClip(town_walk_tag.c_str());
+				ChangeAnimationClip(town_walk_tag.c_str());
+			}
+			else
+			{
+				run_flag_ = true;
+
+				audio_manager->RemoveSoundEffectInstance("LightDirt1");
+
+				auto LightDirtRun1 = audio_manager->FindSoundEffect("LightDirtRun1")->CreateInstance();
+				LightDirtRun1->SetVolume(5.f);
+				LightDirtRun1->SetPitch(-0.75f);
+				LightDirtRun1->Play(true);
+				audio_manager->AddSoundEffectInstance("LightDirtRun1", move(LightDirtRun1));
+
+				ChangeAnimationClip(run_tag.c_str());
+			}
+			SetDefaultClip(town_neutral_tag.c_str());
+		case PLAYER::CASTING:
+			break;
 		}
-		else
-		{
-			run_flag_ = true;
-
-			audio_manager->RemoveSoundEffectInstance("LightDirt1");
-
-			auto LightDirtRun1 = audio_manager->FindSoundEffect("LightDirtRun1")->CreateInstance();
-			LightDirtRun1->SetVolume(5.f);
-			LightDirtRun1->SetPitch(-0.75f);
-			LightDirtRun1->Play(true);
-			audio_manager->AddSoundEffectInstance("LightDirtRun1", move(LightDirtRun1));
-
-			ChangeAnimationClip(run_tag.c_str());
-		}
-		SetDefaultClip(town_neutral_tag.c_str());
 	}
 
 	if (input_manager->KeyPush("MouseRight"))
 	{
 		AudioManager::GetSingleton()->FindSoundEffect("coldcast")->Play();
 
+		auto ice_cast_new_1 = layer()->FindObject("ice_cast_new_1");
+		ice_cast_new_1->set_position(position_ - Point{ 50.f, 70.f });
+		ice_cast_new_1->set_enablement(true);
+
 		state_ = PLAYER::CASTING;
 
 		astar_complete_flag_ = true;
 
-		ChangeAnimationClip(skill_casting_tag.c_str());
+		ChangeAnimationClip(skill_casting_special_tag.c_str());
 		SetDefaultClip(town_neutral_tag.c_str());
 
-		SetAnimationCallback(skill_casting_tag.c_str(), [this, _ice_bolt_tag = ice_bolt_tag, _angle = angle]() {
+		SetAnimationCallback(skill_casting_special_tag.c_str(), [this, _ice_bolt_tag = ice_bolt_tag, _angle = angle]() {
 			auto ice_bolt = dynamic_pointer_cast<Missile>(ObjectManager::GetSingleton()->CreateCloneObject("ice_bolt", layer()));
 			ice_bolt->set_position(position_ + Point{ -50.f, -50.f });
 			ice_bolt->AddAnimationClip(_ice_bolt_tag);

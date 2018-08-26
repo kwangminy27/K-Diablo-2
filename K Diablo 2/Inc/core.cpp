@@ -212,14 +212,6 @@ LRESULT Core::_WindowProc(HWND _window, UINT _message, WPARAM _w_param, LPARAM _
 {
 	switch (_message)
 	{
-	case WM_KEYDOWN:
-		switch (_w_param)
-		{
-		case VK_ESCAPE:
-			DestroyWindow(_window);
-			break;
-		}
-		return 0;
 	case WM_DESTROY:
 		Core::GetSingleton()->set_state(MESSAGE_LOOP::EXIT);
 		PostQuitMessage(0);

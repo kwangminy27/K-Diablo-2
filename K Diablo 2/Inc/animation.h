@@ -21,7 +21,7 @@ public:
 	void set_current_clip(std::string const& _tag);
 	void set_object(std::shared_ptr<Object> const& _object);
 
-	void InsertAnimationCallback(std::string const& _tag, std::function<void(void)> const& _function);
+	void InsertAnimationCallback(std::string const& _tag, std::function<void()> const& _function);
 
 private:
 	Animation() = default;
@@ -52,5 +52,5 @@ private:
 	std::shared_ptr<AnimationClip> default_clip_{};
 	std::shared_ptr<AnimationClip> current_clip_{};
 	std::weak_ptr<Object> object_{};
-	std::unordered_map<std::string, std::function<void(void)>> callback_map_{};
+	std::unordered_map<std::string, std::function<void()>> callback_map_{};
 };

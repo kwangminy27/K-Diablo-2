@@ -11,6 +11,7 @@
 #include "stage.h"
 #include "player.h"
 #include "missile.h"
+#include "effect.h"
 #include "texture.h"
 #include "audio_manager.h"
 #include "point_collider.h"
@@ -78,11 +79,13 @@ bool MainScene::_Initialize()
 		string town_walk_tag = "town_walk_" + to_string(i);
 		string run_tag = "run_" + to_string(i);
 		string skill_casting_tag = "skill_casting_" + to_string(i);
+		string skill_casting_special_tag = "skill_casting_special_" + to_string(i);
 
 		player->AddAnimationClip(town_neutral_tag.c_str());
 		player->AddAnimationClip(town_walk_tag.c_str());
 		player->AddAnimationClip(run_tag.c_str());
 		player->AddAnimationClip(skill_casting_tag.c_str());
+		player->AddAnimationClip(skill_casting_special_tag.c_str());
 	}
 	player->set_color_key(RGB(170, 170, 170));
 	player->set_stage(rogue_encampment);
@@ -91,6 +94,30 @@ bool MainScene::_Initialize()
 	auto player_collider = dynamic_pointer_cast<RectCollider>(player->AddCollider<RectCollider>("PlayerCollider"));
 	player_collider->set_model_info({ 0.f, 0.f, 42.f, 73.f });
 	player_collider->set_pivot({ 0.5f, 0.5f });
+
+	auto ice_cast_new_1 = object_manager->CreateObject<Effect>("ice_cast_new_1", default_layer);
+	ice_cast_new_1->AddAnimationClip("ice_cast_new_1");
+	ice_cast_new_1->SetAnimationCallback("ice_cast_new_1", [_player = player.get()]() {
+		_player->set_state(PLAYER::IDLE);
+	});
+	ice_cast_new_1->set_color_key(RGB(1, 1, 1));
+	ice_cast_new_1->set_enablement(false);
+
+	auto ice_cast_new_2 = object_manager->CreateObject<Effect>("ice_cast_new_2", default_layer);
+	ice_cast_new_2->AddAnimationClip("ice_cast_new_2");
+	ice_cast_new_2->SetAnimationCallback("ice_cast_new_2", [_player = player.get()]() {
+		_player->set_state(PLAYER::IDLE);
+	});
+	ice_cast_new_2->set_color_key(RGB(1, 1, 1));
+	ice_cast_new_2->set_enablement(false);
+
+	auto ice_cast_new_3 = object_manager->CreateObject<Effect>("ice_cast_new_3", default_layer);
+	ice_cast_new_3->AddAnimationClip("ice_cast_new_3");
+	ice_cast_new_3->SetAnimationCallback("ice_cast_new_3", [_player = player.get()]() {
+		_player->set_state(PLAYER::IDLE);
+	});
+	ice_cast_new_3->set_color_key(RGB(1, 1, 1));
+	ice_cast_new_3->set_enablement(false);
 
 	auto character = object_manager->CreateObject<UI>("character", ui_layer);
 	character->set_position({ 0.f, 0.f });

@@ -36,7 +36,7 @@ public:
 	bool AddAnimationClip(std::string const& _tag);
 	template <typename T> std::shared_ptr<Collider> AddCollider(std::string const& _tag);
 
-	void SetAnimationCallback(std::string const& _tag, std::function<void(void)> const& _function);
+	void SetAnimationCallback(std::string const& _tag, std::function<void()> const& _function);
 	void SetDefaultClip(std::string const& _tag);
 	void ChangeAnimationClip(std::string const& _tag);
 	void ChangeAnimationClipWithDirection(std::string const& _tag);

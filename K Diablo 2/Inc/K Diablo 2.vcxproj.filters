@@ -204,6 +204,9 @@
     <ClCompile Include="missile.cpp">
       <Filter>05. Object\03. Missile</Filter>
     </ClCompile>
+    <ClCompile Include="effect.cpp">
+      <Filter>05. Object\05. Effect</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -331,6 +334,9 @@
     </ClInclude>
     <ClInclude Include="missile.h">
       <Filter>05. Object\03. Missile</Filter>
+    </ClInclude>
+    <ClInclude Include="effect.h">
+      <Filter>05. Object\05. Effect</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
