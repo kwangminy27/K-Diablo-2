@@ -27,6 +27,8 @@ bool InputManager::Initialize()
 	_AddKey("Inventory"s, 'I');
 	_AddKey("SkillTree"s, 'T');
 
+	_AddKey("ESC"s, VK_ESCAPE);
+
 	ShowCursor(false);
 
 	return true;

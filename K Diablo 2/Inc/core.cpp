@@ -245,7 +245,7 @@ void Core::_CreateWindow(wstring const& _class_name, wstring const& _window_name
 	if (!window_)
 		return;
 
-	ResizeWindow({ 0.f, 0.f, static_cast<float>(RESOLUTION::WIDTH), static_cast<float>(RESOLUTION::HEIGHT) }, false);
+	ResizeWindow({ 0.f, 0.f, static_cast<float>(RESOLUTION::WIDTH), static_cast<float>(RESOLUTION::HEIGHT) }, static_cast<bool>(DISPLAY::MODE));
 
 	ShowWindow(window_, SW_SHOW);
 }
@@ -280,8 +280,8 @@ bool Core::_CreatePen()
 
 bool Core::_CreateTimer()
 {
-	timer_ = unique_ptr<Timer, function<void(Timer*)>>(new Timer, [](Timer* p) {
-		delete p;
+	timer_ = unique_ptr<Timer, function<void(Timer*)>>(new Timer, [](Timer* _p) {
+		delete _p;
 	});
 	time_scale_ = 1.f;
 

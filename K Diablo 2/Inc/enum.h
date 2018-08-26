@@ -1,5 +1,10 @@
 #pragma once
 
+enum class DISPLAY
+{
+	MODE = 0 // 0: window, 1: full_screen
+};
+
 enum class RESOLUTION
 {
 	WIDTH = 800,

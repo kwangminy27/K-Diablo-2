@@ -171,19 +171,28 @@ void Player::_Input(float _time)
 	}
 	else if (input_manager->KeyPressed("MouseLeft"))
 	{
+		bool is_neutral = false;
+		string animation_tag = animation_->current_clip_->tag();
+
+		for (auto i = 0; i < 16; ++i)
+		{
+			if (animation_tag == "town_neutral_"s + to_string(i))
+				is_neutral = true;
+		}
+
 		switch (state_)
 		{
 		case PLAYER::IDLE:
 			if (run_flag_)
 			{
-				if(animation_->current_clip_->tag() == town_neutral_tag)
+				if(is_neutral)
 					ChangeAnimationClip(run_tag.c_str());
 				else
 					ChangeAnimationClipWithDirection(run_tag.c_str());
 			}
 			else
 			{
-				if (animation_->current_clip_->tag() == town_neutral_tag)
+				if (is_neutral)
 					ChangeAnimationClip(town_walk_tag.c_str());
 				else
 					ChangeAnimationClipWithDirection(town_walk_tag.c_str());

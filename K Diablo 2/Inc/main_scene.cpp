@@ -5,13 +5,16 @@
 #include "math.h"
 #include "input_manager.h"
 #include "camera_manager.h"
+#include "scene_manager.h"
 #include "scene.h"
+#include "logo_scene.h"
 #include "object_manager.h"
 #include "ui.h"
 #include "stage.h"
 #include "player.h"
 #include "missile.h"
 #include "effect.h"
+#include "button.h"
 #include "texture.h"
 #include "audio_manager.h"
 #include "point_collider.h"
@@ -33,7 +36,7 @@ void MainScene::_Release()
 
 bool MainScene::_Initialize()
 {
-	Core::GetSingleton()->ResizeWindow({ 0.f, 0.f, static_cast<float>(RESOLUTION::GAME_WIDTH), static_cast<float>(RESOLUTION::GAME_HEIGHT) }, false);
+	Core::GetSingleton()->ResizeWindow({ 0.f, 0.f, static_cast<float>(RESOLUTION::GAME_WIDTH), static_cast<float>(RESOLUTION::GAME_HEIGHT) }, static_cast<bool>(DISPLAY::MODE));
 
 	auto const& input_manager = InputManager::GetSingleton();
 	auto const& camera_manager = CameraManager::GetSingleton();
@@ -177,11 +180,77 @@ bool MainScene::_Initialize()
 	loading_screen->AddAnimationClip("loading_screen");
 	loading_screen->set_color_key(RGB(1, 1, 1));
 
+	auto pentspin_left = object_manager->CreateObject<UI>("pentspin_left", ui_layer);
+	pentspin_left->set_position({ 20.f, 165.f });
+	pentspin_left->AddAnimationClip("pentspin_left");
+	pentspin_left->set_color_key(RGB(1, 1, 1));
+	pentspin_left->set_enablement(false);
+
+	auto pentspin_right = object_manager->CreateObject<UI>("pentspin_right", ui_layer);
+	pentspin_right->set_position({ 568.f, 165.f });
+	pentspin_right->AddAnimationClip("pentspin_right");
+	pentspin_right->set_color_key(RGB(1, 1, 1));
+	pentspin_right->set_enablement(false);
+
+	auto exit = dynamic_pointer_cast<Button>(object_manager->CreateObject<Button>("exit", ui_layer));
+	exit->set_position({ 223.f, 169.f });
+	exit->set_size({ 194.f, 38.f });
+	exit->set_texture("exit");
+	exit->set_color_key(RGB(0, 0, 0));
+	exit->set_enablement(false);
+	exit->set_callback([this](float _time) {
+		auto const& audio_manager = AudioManager::GetSingleton();
+		audio_manager->RemoveSoundEffectInstance("town1");
+		audio_manager->RemoveSoundEffectInstance("rain2");
+		audio_manager->RemoveSoundEffectInstance("LightDirt1");
+		audio_manager->RemoveSoundEffectInstance("LightDirtRun1");
+
+		Core::GetSingleton()->ResizeWindow({ 0.f, 0.f, static_cast<float>(RESOLUTION::WIDTH), static_cast<float>(RESOLUTION::HEIGHT) }, static_cast<bool>(DISPLAY::MODE));
+
+		SceneManager::GetSingleton()->CreateNextScene<LogoScene>("LogoScene");
+	});
+	auto exit_collider = dynamic_pointer_cast<RectCollider>(exit->GetCollider("Button"));
+	exit_collider->set_model_info({ 0.f, 0.f, 194.f, 38.f });
+	exit_collider->set_collision_group_tag("UI");
+	exit_collider->SetCallBack([this](shared_ptr<Collider> const& _src, shared_ptr<Collider> const& _dest, float _time) {
+		auto const& ui_layer = scene()->FindLayer("UI");
+
+		ui_layer->FindObject("pentspin_left")->set_position({ 20.f, 165.f });
+		ui_layer->FindObject("pentspin_right")->set_position({ 568.f, 165.f });
+	}, COLLISION_CALLBACK::ENTER);
+
+	auto return_to_game = dynamic_pointer_cast<Button>(object_manager->CreateObject<Button>("return_to_game", ui_layer));
+	return_to_game->set_position({ 199.f, 217.f });
+	return_to_game->set_size({ 242.f, 38.f });
+	return_to_game->set_texture("return_to_game");
+	return_to_game->set_color_key(RGB(0, 0, 0));
+	return_to_game->set_enablement(false);
+	return_to_game->set_callback([this](float _time) {
+		AudioManager::GetSingleton()->FindSoundEffect("select")->Play();
+
+		auto const& ui_layer = scene()->FindLayer("UI");
+
+		ui_layer->FindObject("pentspin_left")->set_enablement(false);
+		ui_layer->FindObject("pentspin_right")->set_enablement(false);
+		ui_layer->FindObject("exit")->set_enablement(false);
+		ui_layer->FindObject("return_to_game")->set_enablement(false);
+	});
+	auto return_to_game_collider = dynamic_pointer_cast<RectCollider>(return_to_game->GetCollider("Button"));
+	return_to_game_collider->set_model_info({ 0.f, 0.f, 242.f, 38.f });
+	return_to_game_collider->set_collision_group_tag("UI");
+	return_to_game_collider->SetCallBack([this](shared_ptr<Collider> const& _src, shared_ptr<Collider> const& _dest, float _time) {
+		auto const& ui_layer = scene()->FindLayer("UI");
+
+		ui_layer->FindObject("pentspin_left")->set_position({ 20.f, 217.f });
+		ui_layer->FindObject("pentspin_right")->set_position({ 568.f, 217.f });
+	}, COLLISION_CALLBACK::ENTER);
+
 	return true;
 }
 
 void MainScene::_Input(float _time)
 {
+	auto const& core = Core::GetSingleton();
 	auto const& input_manager = InputManager::GetSingleton();
 	
 	auto const& ui_layer = scene()->FindLayer("UI");
@@ -202,6 +271,14 @@ void MainScene::_Input(float _time)
 	{
 		auto enablement = ui_layer->FindObject("cold_skill")->enablement();
 		ui_layer->FindObject("cold_skill")->set_enablement(enablement ^ true);
+	}
+
+	if (input_manager->KeyPush("ESC"))
+	{
+		ui_layer->FindObject("pentspin_left")->set_enablement(true);
+		ui_layer->FindObject("pentspin_right")->set_enablement(true);
+		ui_layer->FindObject("exit")->set_enablement(true);
+		ui_layer->FindObject("return_to_game")->set_enablement(true);
 	}
 }
 
