@@ -20,4 +20,8 @@ private:
 	virtual void _LateUpdate(float _time) override;
 	virtual void _Collision(float _time) override;
 	virtual void _Render(HDC _device_context, float _time) override;
+
+	void _CreateCharacterWindow();
+
+	void _ToggleCharacterWindow();
 };

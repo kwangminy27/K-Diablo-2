@@ -15,6 +15,7 @@
 #include "missile.h"
 #include "effect.h"
 #include "button.h"
+#include "text.h"
 #include "texture.h"
 #include "audio_manager.h"
 #include "point_collider.h"
@@ -122,13 +123,10 @@ bool MainScene::_Initialize()
 	ice_cast_new_3->set_color_key(RGB(1, 1, 1));
 	ice_cast_new_3->set_enablement(false);
 
-	auto character = object_manager->CreateObject<UI>("character", ui_layer);
-	character->set_position({ 0.f, 0.f });
-	character->set_size({ 320.f, 432.f });
-	character->set_texture("character");
-	character->set_color_key(RGB(1, 1, 1));
-	character->set_enablement(false);
+	// character
+	_CreateCharacterWindow();
 
+	// inventory
 	auto inventory = object_manager->CreateObject<UI>("inventory", ui_layer);
 	inventory->set_position({ 320.f, 0.f });
 	inventory->set_size({ 320.f, 432.f });
@@ -256,10 +254,7 @@ void MainScene::_Input(float _time)
 	auto const& ui_layer = scene()->FindLayer("UI");
 
 	if (input_manager->KeyPush("Character"))
-	{
-		auto enablement = ui_layer->FindObject("character")->enablement();
-		ui_layer->FindObject("character")->set_enablement(enablement ^ true);
-	}
+		_ToggleCharacterWindow();
 
 	if (input_manager->KeyPush("Inventory"))
 	{
@@ -296,4 +291,126 @@ void MainScene::_Collision(float _time)
 
 void MainScene::_Render(HDC _device_context, float _time)
 {
+}
+
+void MainScene::_CreateCharacterWindow()
+{
+	auto const& object_manager = ObjectManager::GetSingleton();
+	auto const& ui_layer = scene()->FindLayer("UI");
+
+	auto character = object_manager->CreateObject<UI>("character", ui_layer);
+	character->set_position({ 0.f, 0.f });
+	character->set_size({ 320.f, 432.f });
+	character->set_texture("character");
+	character->set_color_key(RGB(1, 1, 1));
+	character->set_enablement(false);
+
+	auto sorceress_text = dynamic_pointer_cast<Text>(object_manager->CreateObject<Text>("sorceress_text", ui_layer));
+	sorceress_text->set_position({ 50.f, 10.f });
+	sorceress_text->set_font_size(FONT_SIZE::_16);
+	sorceress_text->set_string("sorceress");
+	sorceress_text->set_enablement(false);
+
+	auto Sorceress_text = dynamic_pointer_cast<Text>(object_manager->CreateObject<Text>("Sorceress_text", ui_layer));
+	Sorceress_text->set_position({ 200.f, 10.f });
+	Sorceress_text->set_font_size(FONT_SIZE::_16);
+	Sorceress_text->set_string("Sorceress");
+	Sorceress_text->set_enablement(false);
+
+	auto strength_number = dynamic_pointer_cast<Text>(object_manager->CreateObject<Text>("strength_number", ui_layer));
+	strength_number->set_position({ 73.f, 83.f });
+	strength_number->set_font_size(FONT_SIZE::_16);
+	strength_number->set_string("10");
+	strength_number->set_enablement(false);
+
+	auto dexterity_number = dynamic_pointer_cast<Text>(object_manager->CreateObject<Text>("dexterity_number", ui_layer));
+	dexterity_number->set_position({ 73.f, 145.f });
+	dexterity_number->set_font_size(FONT_SIZE::_16);
+	dexterity_number->set_string("25");
+	dexterity_number->set_enablement(false);
+
+	auto vitality_number = dynamic_pointer_cast<Text>(object_manager->CreateObject<Text>("vitality_number", ui_layer));
+	vitality_number->set_position({ 73.f, 231.f });
+	vitality_number->set_font_size(FONT_SIZE::_16);
+	vitality_number->set_string("10");
+	vitality_number->set_enablement(false);
+
+	auto energy_number = dynamic_pointer_cast<Text>(object_manager->CreateObject<Text>("energy_number", ui_layer));
+	energy_number->set_position({ 73.f, 293.f });
+	energy_number->set_font_size(FONT_SIZE::_16);
+	energy_number->set_string("35");
+	energy_number->set_enablement(false);
+
+	auto defence_number = dynamic_pointer_cast<Text>(object_manager->CreateObject<Text>("defence_number", ui_layer));
+	defence_number->set_position({ 270.f, 193.f });
+	defence_number->set_font_size(FONT_SIZE::_16);
+	defence_number->set_string("0");
+	defence_number->set_enablement(false);
+
+	auto stamina_number = dynamic_pointer_cast<Text>(object_manager->CreateObject<Text>("stamina_number", ui_layer));
+	stamina_number->set_position({ 270.f, 231.f });
+	stamina_number->set_font_size(FONT_SIZE::_16);
+	stamina_number->set_string("100");
+	stamina_number->set_enablement(false);
+
+	auto life_number = dynamic_pointer_cast<Text>(object_manager->CreateObject<Text>("life_number", ui_layer));
+	life_number->set_position({ 270.f, 255.f });
+	life_number->set_font_size(FONT_SIZE::_16);
+	life_number->set_string("40");
+	life_number->set_enablement(false);
+
+	auto mana_number = dynamic_pointer_cast<Text>(object_manager->CreateObject<Text>("mana_number", ui_layer));
+	mana_number->set_position({ 270.f, 293.f });
+	mana_number->set_font_size(FONT_SIZE::_16);
+	mana_number->set_string("60");
+	mana_number->set_enablement(false);
+
+	auto fire_resistance_number = dynamic_pointer_cast<Text>(object_manager->CreateObject<Text>("fire_resistance_number", ui_layer));
+	fire_resistance_number->set_position({ 270.f, 331.f });
+	fire_resistance_number->set_font_size(FONT_SIZE::_16);
+	fire_resistance_number->set_string("0");
+	fire_resistance_number->set_enablement(false);
+
+	auto cold_resistance_number = dynamic_pointer_cast<Text>(object_manager->CreateObject<Text>("cold_resistance_number", ui_layer));
+	cold_resistance_number->set_position({ 270.f, 355.f });
+	cold_resistance_number->set_font_size(FONT_SIZE::_16);
+	cold_resistance_number->set_string("0");
+	cold_resistance_number->set_enablement(false);
+
+	auto lightening_resistance_number = dynamic_pointer_cast<Text>(object_manager->CreateObject<Text>("lightening_resistance_number", ui_layer));
+	lightening_resistance_number->set_position({ 270.f, 379.f });
+	lightening_resistance_number->set_font_size(FONT_SIZE::_16);
+	lightening_resistance_number->set_string("0");
+	lightening_resistance_number->set_enablement(false);
+
+	auto poison_resistance_number = dynamic_pointer_cast<Text>(object_manager->CreateObject<Text>("poison_resistance_number", ui_layer));
+	poison_resistance_number->set_position({ 270.f, 403.f });
+	poison_resistance_number->set_font_size(FONT_SIZE::_16);
+	poison_resistance_number->set_string("0");
+	poison_resistance_number->set_enablement(false);
+}
+
+void MainScene::_ToggleCharacterWindow()
+{
+	auto const& ui_layer = scene()->FindLayer("UI");
+
+	auto enablement = ui_layer->FindObject("character")->enablement();
+	ui_layer->FindObject("character")->set_enablement(enablement ^ true);
+	ui_layer->FindObject("sorceress_text")->set_enablement(enablement ^ true);
+	ui_layer->FindObject("Sorceress_text")->set_enablement(enablement ^ true);
+
+	ui_layer->FindObject("strength_number")->set_enablement(enablement ^ true);
+	ui_layer->FindObject("dexterity_number")->set_enablement(enablement ^ true);
+	ui_layer->FindObject("vitality_number")->set_enablement(enablement ^ true);
+	ui_layer->FindObject("energy_number")->set_enablement(enablement ^ true);
+
+	ui_layer->FindObject("defence_number")->set_enablement(enablement ^ true);
+	ui_layer->FindObject("stamina_number")->set_enablement(enablement ^ true);
+	ui_layer->FindObject("life_number")->set_enablement(enablement ^ true);
+	ui_layer->FindObject("mana_number")->set_enablement(enablement ^ true);
+
+	ui_layer->FindObject("fire_resistance_number")->set_enablement(enablement ^ true);
+	ui_layer->FindObject("cold_resistance_number")->set_enablement(enablement ^ true);
+	ui_layer->FindObject("lightening_resistance_number")->set_enablement(enablement ^ true);
+	ui_layer->FindObject("poison_resistance_number")->set_enablement(enablement ^ true);
 }

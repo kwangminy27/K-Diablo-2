@@ -5,6 +5,11 @@ enum class DISPLAY
 	MODE = 0 // 0: window, 1: full_screen
 };
 
+enum class FONT_FRAME
+{
+	WIDTH_IDX = 16
+};
+
 enum class RESOLUTION
 {
 	WIDTH = 800,
@@ -48,7 +53,8 @@ enum class OBJECT
 	TILE,
 	CHARACTER,
 	MISSILE,
-	EFFECT
+	EFFECT,
+	TEXT
 };
 
 enum class COLLIDER
@@ -101,4 +107,11 @@ enum class PLAYER
 {
 	IDLE,
 	CASTING
+};
+
+enum class FONT_SIZE
+{
+	_6,
+	_8,
+	_16
 };

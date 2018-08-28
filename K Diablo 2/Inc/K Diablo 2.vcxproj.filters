@@ -82,6 +82,9 @@
     <Filter Include="12. AI">
       <UniqueIdentifier>{bf70ff6f-668c-45db-8b3e-9d8efb3397ea}</UniqueIdentifier>
     </Filter>
+    <Filter Include="05. Object\07. Text">
+      <UniqueIdentifier>{81cfec90-e2ae-48f3-9ac7-3b6dd550b173}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -206,6 +209,9 @@
     </ClCompile>
     <ClCompile Include="effect.cpp">
       <Filter>05. Object\05. Effect</Filter>
+    </ClCompile>
+    <ClCompile Include="text.cpp">
+      <Filter>05. Object\07. Text</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -337,6 +343,9 @@
     </ClInclude>
     <ClInclude Include="effect.h">
       <Filter>05. Object\05. Effect</Filter>
+    </ClInclude>
+    <ClInclude Include="text.h">
+      <Filter>05. Object\07. Text</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
