@@ -25,6 +25,8 @@ bool SpinIceBolt::_Initialize()
 {
 	Missile::_Initialize();
 
+	move_speed_ = 600.f;
+
 	return true;
 }
 
@@ -38,9 +40,10 @@ void SpinIceBolt::_Update(float _time)
 	Object::_Update(_time);
 
 	float angle = Math::GetAngle({ 0.f, 0.f }, dir_);
-	float stride = move_speed_ * _time; // 납작하게 날라가야 함, 속도 조절필요
+	float stride = move_speed_ * _time;
+	float isometric_correction_factor = sqrtf(1.f - cos(Math::ConvertToRadians(angle)) * cos(Math::ConvertToRadians(angle)) * 0.25f) * 0.5f;
 
-	if (move_range_ <= 950.f && spin_point_1_)
+	if (move_range_ <= 970.f && spin_point_1_)
 	{
 		spin_point_1_ = false;
 
@@ -52,7 +55,7 @@ void SpinIceBolt::_Update(float _time)
 		AddAnimationClip("ice_bolt_"s + to_string(dir_idx));
 		ChangeAnimationClip("ice_bolt_"s + to_string(dir_idx));
 	}
-	else if (move_range_ <= 900.f && spin_point_2_)
+	else if (move_range_ <= 940.f && spin_point_2_)
 	{
 		spin_point_2_ = false;
 
@@ -65,7 +68,7 @@ void SpinIceBolt::_Update(float _time)
 		ChangeAnimationClip("ice_bolt_"s + to_string(dir_idx));
 	}
 
-	position_ += dir_ * stride;
+	position_ += {dir_.x * stride, dir_.y * stride * isometric_correction_factor};
 	move_range_ -= stride;
 
 	if (move_range_ <= 0.f)

@@ -213,8 +213,12 @@
     <ClCompile Include="text.cpp">
       <Filter>05. Object\07. Text</Filter>
     </ClCompile>
-    <ClCompile Include="frozen_orb.cpp" />
-    <ClCompile Include="spin_ice_bolt.cpp" />
+    <ClCompile Include="frozen_orb.cpp">
+      <Filter>05. Object\03. Missile</Filter>
+    </ClCompile>
+    <ClCompile Include="spin_ice_bolt.cpp">
+      <Filter>05. Object\03. Missile</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -349,8 +353,12 @@
     <ClInclude Include="text.h">
       <Filter>05. Object\07. Text</Filter>
     </ClInclude>
-    <ClInclude Include="frozen_orb.h" />
-    <ClInclude Include="spin_ice_bolt.h" />
+    <ClInclude Include="spin_ice_bolt.h">
+      <Filter>05. Object\03. Missile</Filter>
+    </ClInclude>
+    <ClInclude Include="frozen_orb.h">
+      <Filter>05. Object\03. Missile</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="singleton.inl">

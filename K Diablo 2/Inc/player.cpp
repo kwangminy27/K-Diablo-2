@@ -78,11 +78,16 @@ void Player::MoveByAStar(float _time)
 	}
 
 	auto dir = (next_target_point_ - position_) / Math::GetDistance(position_, next_target_point_);
+	float angle = Math::GetAngle({ 0.f, 0.f }, dir);
+	float isometric_correction_factor = sqrtf(1.f - cos(Math::ConvertToRadians(angle)) * cos(Math::ConvertToRadians(angle)) * 0.25f) * 0.5f;
+	float stride{};
 
 	if (run_flag_)
-		position_ += dir * kPlayerRunSpeed * _time;
+		stride = kPlayerRunSpeed * _time;
 	else
-		position_ += dir * kPlayerWalkSpeed * _time;
+		stride = kPlayerWalkSpeed * _time;
+
+	position_ += {dir.x * stride, dir.y * stride * isometric_correction_factor};
 
 	if (Math::GetDistance(position_, final_target_point_) <= 1.f)
 		astar_complete_flag_ = true;

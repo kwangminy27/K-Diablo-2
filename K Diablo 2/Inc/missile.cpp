@@ -1,6 +1,8 @@
 #include "stdafx.h"
 #include "missile.h"
 
+#include "math.h"
+
 using namespace std;
 using namespace TYPE;
 
@@ -58,9 +60,11 @@ void Missile::_Update(float _time)
 {
 	Object::_Update(_time);
 
+	float angle = Math::GetAngle({ 0.f, 0.f }, dir_);
 	float stride = move_speed_ * _time;
+	float isometric_correction_factor = sqrtf(1.f - cos(Math::ConvertToRadians(angle)) * cos(Math::ConvertToRadians(angle)) * 0.25f) * 0.5f;
 
-	position_ += dir_ * stride;
+	position_ += {dir_.x * stride, dir_.y * stride * isometric_correction_factor};
 	move_range_ -= stride;
 
 	if (move_range_ <= 0.f)
