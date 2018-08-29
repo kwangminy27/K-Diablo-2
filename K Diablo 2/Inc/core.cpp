@@ -214,6 +214,7 @@ LRESULT Core::_WindowProc(HWND _window, UINT _message, WPARAM _w_param, LPARAM _
 	{
 	case WM_DESTROY:
 		Core::GetSingleton()->set_state(MESSAGE_LOOP::EXIT);
+		AudioManager::GetSingleton()->Suspend();
 		PostQuitMessage(0);
 		return 0;
 	}

@@ -56,9 +56,6 @@ void UI::_Collision(float _time)
 
 void UI::_Render(HDC _device_context, float _time)
 {
-	if (tag_ == "left_skill_tap")
-		int a = 3;
-
 	int left = static_cast<int>(position_.x - size_.x * pivot_.x);
 	int top = static_cast<int>(position_.y - size_.y * pivot_.y);
 	int width = static_cast<int>(size_.x);

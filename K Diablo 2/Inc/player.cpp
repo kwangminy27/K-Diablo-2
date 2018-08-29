@@ -8,7 +8,11 @@
 #include "object_manager.h"
 #include "stage.h"
 #include "missile.h"
+#include "effect.h"
+#include "frozen_armor.h"
 #include "frozen_orb.h"
+#include "nova.h"
+#include "point_collider.h"
 #include "animation.h"
 #include "animation_clip.h"
 #include "audio_manager.h"
@@ -138,6 +142,7 @@ void Player::_Input(float _time)
 	string skill_casting_tag = "skill_casting_" + to_string(dir_idx);
 	string skill_casting_special_tag = "skill_casting_special_" + to_string(dir_idx);
 	string ice_bolt_tag = "ice_bolt_" + to_string(dir_idx);
+	string ice_blast_tag = "ice_blast_" + to_string(dir_idx);
 
 	if (input_manager->KeyPush("MouseLeft"))
 	{
@@ -293,7 +298,7 @@ void Player::_Input(float _time)
 			ChangeAnimationClip(skill_casting_special_tag.c_str());
 			SetDefaultClip(town_neutral_tag.c_str());
 
-			SetAnimationCallback(skill_casting_special_tag.c_str(), [this, _ice_bolt_tag = ice_bolt_tag, _angle = angle]() {
+			SetAnimationCallback(skill_casting_special_tag.c_str(), [this, _ice_bolt_tag = ice_bolt_tag, _angle = angle, _dir_idx = dir_idx]() {
 				random_device r;
 				default_random_engine gen(r());
 				uniform_int_distribution uniform_dist(1, 3);
@@ -305,6 +310,60 @@ void Player::_Input(float _time)
 				ice_bolt->set_position(position_ - Point{ 50.f, 50.f });
 				ice_bolt->AddAnimationClip(_ice_bolt_tag);
 				ice_bolt->set_dir({ cos(Math::ConvertToRadians(_angle)), sin(Math::ConvertToRadians(_angle)) });
+
+				auto ice_bolt_collider = dynamic_pointer_cast<PointCollider>(ice_bolt->AddCollider<PointCollider>("ice_bolt_collider"));
+
+				switch (_dir_idx)
+				{
+				case 0:
+					ice_bolt_collider->set_model_info({ 52.f, 60.f });
+					break;
+				case 1:
+					ice_bolt_collider->set_model_info({ 31.f, 59.f });
+					break;
+				case 2:
+					ice_bolt_collider->set_model_info({ 15.f, 46.f });
+					break;
+				case 3:
+					ice_bolt_collider->set_model_info({ 7.f, 33.f });
+					break;
+				case 4:
+					ice_bolt_collider->set_model_info({ 1.f, 29.f });
+					break;
+				case 5:
+					ice_bolt_collider->set_model_info({ -5.f, 22.f });
+					break;
+				case 6:
+					ice_bolt_collider->set_model_info({ 7.f, 15.f });
+					break;
+				case 7:
+					ice_bolt_collider->set_model_info({ 20.f, 10.f });
+					break;
+				case 8:
+					ice_bolt_collider->set_model_info({ 50.f, -4.f });
+					break;
+				case 9:
+					ice_bolt_collider->set_model_info({ 82.f, 6.f });
+					break;
+				case 10:
+					ice_bolt_collider->set_model_info({ 96.f, 13.f });
+					break;
+				case 11:
+					ice_bolt_collider->set_model_info({ 103.f, 22.f });
+					break;
+				case 12:
+					ice_bolt_collider->set_model_info({ 102.f, 30.f });
+					break;
+				case 13:
+					ice_bolt_collider->set_model_info({ 93.f, 33.f });
+					break;
+				case 14:
+					ice_bolt_collider->set_model_info({ 85.f, 46.f });
+					break;
+				case 15:
+					ice_bolt_collider->set_model_info({ 71.f, 57.f });
+					break;
+				}
 			});
 		}
 			break;
@@ -328,6 +387,125 @@ void Player::_Input(float _time)
 				ice_orb->set_dir({ cos(Math::ConvertToRadians(_angle)), sin(Math::ConvertToRadians(_angle)) });
 				ice_orb->set_move_range(300.f);
 				ice_orb->set_move_speed(200.f);
+			});
+		}
+			break;
+		case SKILL::FROZEN_ARMOR:
+		{
+			AudioManager::GetSingleton()->FindSoundEffect("coldcast")->Play();
+
+			auto ice_cast_new_3 = layer()->FindObject("ice_cast_new_3");
+			ice_cast_new_3->set_position(position_ - Point{ 65.f, 70.f });
+			ice_cast_new_3->set_enablement(true);
+
+			ChangeAnimationClip(skill_casting_special_tag.c_str());
+			SetDefaultClip(town_neutral_tag.c_str());
+
+			SetAnimationCallback(skill_casting_special_tag.c_str(), [this]() {
+				AudioManager::GetSingleton()->FindSoundEffect("frozenarmor")->Play();
+
+				auto frozen_armor = layer()->FindObject("frozen_armor");
+				frozen_armor->set_enablement(true);
+			});
+		}
+			break;
+		case SKILL::FROST_NOVA:
+		{
+			AudioManager::GetSingleton()->FindSoundEffect("coldcast")->Play();
+
+			auto ice_cast_new_2 = layer()->FindObject("ice_cast_new_2");
+			ice_cast_new_2->set_position(position_ - Point{ 65.f, 70.f });
+			ice_cast_new_2->set_enablement(true);
+
+			ChangeAnimationClip(skill_casting_tag.c_str());
+			SetDefaultClip(town_neutral_tag.c_str());
+
+			SetAnimationCallback(skill_casting_tag.c_str(), [this]() {
+				AudioManager::GetSingleton()->FindSoundEffect("novaice")->Play();
+
+				auto frost_nova = dynamic_pointer_cast<Nova>(ObjectManager::GetSingleton()->CreateCloneObject("frost_nova", layer()));
+				frost_nova->set_position(position_ - Point{ 60.f, 10.f });
+			});
+		}
+			break;
+		case SKILL::ICE_BLAST:
+		{
+			AudioManager::GetSingleton()->FindSoundEffect("coldcast")->Play();
+
+			auto ice_cast_new_1 = layer()->FindObject("ice_cast_new_1");
+			ice_cast_new_1->set_position(position_ - Point{ 50.f, 70.f });
+			ice_cast_new_1->set_enablement(true);
+
+			ChangeAnimationClip(skill_casting_special_tag.c_str());
+			SetDefaultClip(town_neutral_tag.c_str());
+
+			SetAnimationCallback(skill_casting_special_tag.c_str(), [this, _ice_blast_tag = ice_blast_tag, _angle = angle, _dir_idx = dir_idx]() {
+				random_device r;
+				default_random_engine gen(r());
+				uniform_int_distribution uniform_dist(1, 3);
+				auto i = uniform_dist(gen);
+
+				AudioManager::GetSingleton()->FindSoundEffect("icebolt"s + to_string(i))->Play();
+
+				auto ice_blast = dynamic_pointer_cast<Missile>(ObjectManager::GetSingleton()->CreateCloneObject("ice_blast", layer()));
+				ice_blast->set_position(position_ - Point{ 50.f, 50.f });
+				ice_blast->AddAnimationClip(_ice_blast_tag);
+				ice_blast->set_color_key(RGB(1, 1, 1));
+				ice_blast->set_dir({ cos(Math::ConvertToRadians(_angle)), sin(Math::ConvertToRadians(_angle)) });
+
+				auto ice_blast_collider = dynamic_pointer_cast<PointCollider>(ice_blast->AddCollider<PointCollider>("ice_blast_collider"));
+
+				switch (_dir_idx)
+				{
+				case 0:
+					ice_blast_collider->set_model_info({ 52.f, 88.f });
+					break;
+				case 1:
+					ice_blast_collider->set_model_info({ 35.f, 68.f });
+					break;
+				case 2:
+					ice_blast_collider->set_model_info({ 10.f, 50.f });
+					break;
+				case 3:
+					ice_blast_collider->set_model_info({ 3.f, 45.f });
+					break;
+				case 4:
+					ice_blast_collider->set_model_info({ -17.f, 35.f });
+					break;
+				case 5:
+					ice_blast_collider->set_model_info({ -5.f, 22.f });
+					break;
+				case 6:
+					ice_blast_collider->set_model_info({ 5.f, 10.f });
+					break;
+				case 7:
+					ice_blast_collider->set_model_info({ 30.f, 5.f });
+					break;
+				case 8:
+					ice_blast_collider->set_model_info({ 55.f, -5.f });
+					break;
+				case 9:
+					ice_blast_collider->set_model_info({ 85.f, 15.f });
+					break;
+				case 10:
+					ice_blast_collider->set_model_info({ 105.f, 20.f });
+					break;
+				case 11:
+					ice_blast_collider->set_model_info({ 115.f, 20.f });
+					break;
+				case 12:
+					ice_blast_collider->set_model_info({ 145.f, 30.f });
+					break;
+				case 13:
+					ice_blast_collider->set_model_info({ 125.f, 45.f });
+					break;
+				case 14:
+					ice_blast_collider->set_model_info({ 95.f, 50.f });
+					break;
+				case 15:
+					ice_blast_collider->set_model_info({ 85.f, 50.f });
+					break;
+				}
 			});
 		}
 			break;

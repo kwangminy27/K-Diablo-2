@@ -219,6 +219,12 @@
     <ClCompile Include="spin_ice_bolt.cpp">
       <Filter>05. Object\03. Missile</Filter>
     </ClCompile>
+    <ClCompile Include="frozen_armor.cpp">
+      <Filter>05. Object\05. Effect</Filter>
+    </ClCompile>
+    <ClCompile Include="nova.cpp">
+      <Filter>05. Object\03. Missile</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -357,6 +363,12 @@
       <Filter>05. Object\03. Missile</Filter>
     </ClInclude>
     <ClInclude Include="frozen_orb.h">
+      <Filter>05. Object\03. Missile</Filter>
+    </ClInclude>
+    <ClInclude Include="frozen_armor.h">
+      <Filter>05. Object\05. Effect</Filter>
+    </ClInclude>
+    <ClInclude Include="nova.h">
       <Filter>05. Object\03. Missile</Filter>
     </ClInclude>
   </ItemGroup>

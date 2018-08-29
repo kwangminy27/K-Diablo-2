@@ -78,6 +78,9 @@ bool PointCollider::_Collision(weak_ptr<Collider> const& _dest)
 
 void PointCollider::_Render(HDC _device_context, float _time)
 {
+	if (tag_ == "ice_blast_collider")
+		int a = 3;
+
 #ifdef _DEBUG
 	if (object_.expired())
 		return;

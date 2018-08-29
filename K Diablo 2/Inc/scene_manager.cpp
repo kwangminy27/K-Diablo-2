@@ -3,16 +3,24 @@
 
 #include "scene.h"
 #include "logo_scene.h"
+#include "main_scene.h"
 #include "object_manager.h"
 
 using namespace std;
 
 bool SceneManager::Initialize()
 {
-	if (!(scene_ = _CreateScene("Logo")))
+	//if (!(scene_ = _CreateScene("Logo")))
+	//	return false;
+
+	//if (!(scene_->scene_component_ = scene_->_CreateSceneComponent<LogoScene>("Logo")))
+	//	return false;
+
+	// test
+	if (!(scene_ = _CreateScene("Main")))
 		return false;
 
-	if (!(scene_->scene_component_ = scene_->_CreateSceneComponent<LogoScene>("Logo")))
+	if (!(scene_->scene_component_ = scene_->_CreateSceneComponent<MainScene>("Main")))
 		return false;
 
 	return true;

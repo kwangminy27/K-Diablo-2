@@ -15,7 +15,9 @@
 #include "missile.h"
 #include "spin_ice_bolt.h"
 #include "frozen_orb.h"
+#include "nova.h"
 #include "effect.h"
+#include "frozen_armor.h"
 #include "button.h"
 #include "text.h"
 #include "texture.h"
@@ -49,10 +51,19 @@ bool MainScene::_Initialize()
 	if (!object_manager->CreatePrototype<Missile>("ice_bolt", scene()))
 		return false;
 
+	if (!object_manager->CreatePrototype<FrozenOrb>("ice_orb", scene()))
+		return false;
+
 	if (!object_manager->CreatePrototype<SpinIceBolt>("spin_ice_bolt", scene()))
 		return false;
 
-	if (!object_manager->CreatePrototype<FrozenOrb>("ice_orb", scene()))
+	if (!object_manager->CreatePrototype<Nova>("frost_nova", scene()))
+		return false;
+
+	if (!object_manager->CreatePrototype<Missile>("frost_nova_piece", scene()))
+		return false;
+
+	if (!object_manager->CreatePrototype<Missile>("ice_blast", scene()))
 		return false;
 
 	auto town1 = audio_manager->FindSoundEffect("town1")->CreateInstance();
@@ -130,6 +141,11 @@ bool MainScene::_Initialize()
 	});
 	ice_cast_new_3->set_color_key(RGB(1, 1, 1));
 	ice_cast_new_3->set_enablement(false);
+
+	auto frozen_armor = dynamic_pointer_cast<FrozenArmor>(ObjectManager::GetSingleton()->CreateObject<FrozenArmor>("frozen_armor", default_layer));
+	frozen_armor->AddAnimationClip("frozen_armor");
+	frozen_armor->set_color_key(RGB(1, 1, 1));
+	frozen_armor->set_enablement(false);
 
 	// character
 	_CreateCharacterWindow();
@@ -220,7 +236,7 @@ bool MainScene::_Initialize()
 	});
 
 	auto left_skill_tap_text = dynamic_pointer_cast<Text>(object_manager->CreateObject<Text>("left_skill_tap_text", ui_layer));
-	left_skill_tap_text->set_position({ 108.f, 412.f });
+	left_skill_tap_text->set_position({ 98.f, 412.f });
 	left_skill_tap_text->set_font_size(FONT_SIZE::_16);
 	left_skill_tap_text->set_string("NORMAL ATTACK");
 	left_skill_tap_text->set_enablement(false);
@@ -245,7 +261,7 @@ bool MainScene::_Initialize()
 	});
 
 	auto right_skill_tap_text = dynamic_pointer_cast<Text>(object_manager->CreateObject<Text>("right_skill_tap_text", ui_layer));
-	right_skill_tap_text->set_position({ 476.f, 412.f });
+	right_skill_tap_text->set_position({ 456.f, 412.f });
 	right_skill_tap_text->set_font_size(FONT_SIZE::_16);
 	right_skill_tap_text->set_string("ICE BOLT");
 	right_skill_tap_text->set_enablement(false);
