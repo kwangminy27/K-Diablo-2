@@ -25,6 +25,7 @@
 #include <sstream>
 #include <stack>
 #include <string>
+#include <random>
 
 // DirectX
 #include <wrl/client.h>

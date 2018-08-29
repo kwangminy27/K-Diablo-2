@@ -11,6 +11,7 @@ public:
 	void set_state(PLAYER _state);
 	void set_stage(std::shared_ptr<Object> const& _stage);
 	void set_astar_interval(float _interval);
+	void set_skill(SKILL _skill);
 
 	void MoveByAStar(float _time);
 
@@ -41,4 +42,5 @@ protected:
 	TYPE::Point next_target_point_{};
 	TYPE::Point final_target_point_{};
 	float astar_interval_{};
+	SKILL skill_{};
 };

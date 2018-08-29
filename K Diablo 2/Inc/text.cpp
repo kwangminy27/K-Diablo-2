@@ -17,13 +17,13 @@ void Text::set_font_size(FONT_SIZE _font_size)
 
 	switch (font_size_)
 	{
-	/*case FONT_SIZE::_6:
-		set_size({ 9.f, 11.f });
-		set_texture("font6");
-		break;
+	//case FONT_SIZE::_6:
+	//	set_size({ 9.f, 11.f });
+	//	set_texture("font6");
+	//	break;
 	case FONT_SIZE::_8:
 		set_size({ 15.f, 14.f });
-		set_texture("font8");*/
+		set_texture("font8");
 		break;
 	case FONT_SIZE::_16:
 		set_size({ 14.f, 16.f });
@@ -107,6 +107,13 @@ void Text::_Render(HDC _device_context, float _time)
 		case FONT_SIZE::_6:
 			break;
 		case FONT_SIZE::_8:
+			if (ascii == 'W' || ascii == '@') {}
+			else if (ascii == '#' || ascii == '%' || ascii == '+' || ascii == '=' || ascii == 'D' || ascii == 'M' || ascii == 'O' 
+				|| ascii == 'Q' || ascii == 'm' || ascii == 'w')
+				offset_x -= 4;
+			else
+				offset_x -= 8;
+
 			break;
 		case FONT_SIZE::_16:
 			if (ascii == 'W') {}

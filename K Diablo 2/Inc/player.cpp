@@ -8,6 +8,7 @@
 #include "object_manager.h"
 #include "stage.h"
 #include "missile.h"
+#include "frozen_orb.h"
 #include "animation.h"
 #include "animation_clip.h"
 #include "audio_manager.h"
@@ -34,6 +35,11 @@ void Player::set_stage(shared_ptr<Object> const& _stage)
 void Player::set_astar_interval(float _interval)
 {
 	astar_interval_ = _interval;
+}
+
+void Player::set_skill(SKILL _skill)
+{
+	skill_ = _skill;
 }
 
 void Player::MoveByAStar(float _time)
@@ -168,6 +174,9 @@ void Player::_Input(float _time)
 		case PLAYER::CASTING:
 			break;
 		}
+
+		// test
+		cout << input_manager->mouse_client_position().x << ", " << input_manager->mouse_client_position().y << endl;
 	}
 	else if (input_manager->KeyPressed("MouseLeft"))
 	{
@@ -260,25 +269,64 @@ void Player::_Input(float _time)
 
 	if (input_manager->KeyPush("MouseRight"))
 	{
-		AudioManager::GetSingleton()->FindSoundEffect("coldcast")->Play();
-
-		auto ice_cast_new_1 = layer()->FindObject("ice_cast_new_1");
-		ice_cast_new_1->set_position(position_ - Point{ 50.f, 70.f });
-		ice_cast_new_1->set_enablement(true);
-
 		state_ = PLAYER::CASTING;
 
 		astar_complete_flag_ = true;
 
-		ChangeAnimationClip(skill_casting_special_tag.c_str());
-		SetDefaultClip(town_neutral_tag.c_str());
+		set_skill(SKILL::FROZEN_ORB);
 
-		SetAnimationCallback(skill_casting_special_tag.c_str(), [this, _ice_bolt_tag = ice_bolt_tag, _angle = angle]() {
-			auto ice_bolt = dynamic_pointer_cast<Missile>(ObjectManager::GetSingleton()->CreateCloneObject("ice_bolt", layer()));
-			ice_bolt->set_position(position_ + Point{ -50.f, -50.f });
-			ice_bolt->AddAnimationClip(_ice_bolt_tag);
-			ice_bolt->set_dir({ cos(Math::ConvertToRadians(_angle)), sin(Math::ConvertToRadians(_angle)) });
-		});
+		switch (skill_)
+		{
+		case SKILL::ICE_BOLT:
+		{
+			AudioManager::GetSingleton()->FindSoundEffect("coldcast")->Play();
+
+			auto ice_cast_new_1 = layer()->FindObject("ice_cast_new_1");
+			ice_cast_new_1->set_position(position_ - Point{ 50.f, 70.f });
+			ice_cast_new_1->set_enablement(true);
+
+			ChangeAnimationClip(skill_casting_special_tag.c_str());
+			SetDefaultClip(town_neutral_tag.c_str());
+
+			SetAnimationCallback(skill_casting_special_tag.c_str(), [this, _ice_bolt_tag = ice_bolt_tag, _angle = angle]() {
+				random_device r;
+				default_random_engine gen(r());
+				uniform_int_distribution uniform_dist(1, 3);
+				auto i = uniform_dist(gen);
+
+				AudioManager::GetSingleton()->FindSoundEffect("icebolt"s + to_string(i))->Play();
+
+				auto ice_bolt = dynamic_pointer_cast<Missile>(ObjectManager::GetSingleton()->CreateCloneObject("ice_bolt", layer()));
+				ice_bolt->set_position(position_ - Point{ 50.f, 50.f });
+				ice_bolt->AddAnimationClip(_ice_bolt_tag);
+				ice_bolt->set_dir({ cos(Math::ConvertToRadians(_angle)), sin(Math::ConvertToRadians(_angle)) });
+			});
+		}
+			break;
+		case SKILL::FROZEN_ORB:
+		{
+			AudioManager::GetSingleton()->FindSoundEffect("coldcast")->Play();
+
+			auto ice_cast_new_3 = layer()->FindObject("ice_cast_new_3");
+			ice_cast_new_3->set_position(position_ - Point{ 65.f, 70.f });
+			ice_cast_new_3->set_enablement(true);
+
+			ChangeAnimationClip(skill_casting_special_tag.c_str());
+			SetDefaultClip(town_neutral_tag.c_str());
+
+			SetAnimationCallback(skill_casting_special_tag.c_str(), [this, _angle = angle]() {
+				AudioManager::GetSingleton()->FindSoundEffect("blizzloop")->Play();
+
+				auto ice_orb = dynamic_pointer_cast<FrozenOrb>(ObjectManager::GetSingleton()->CreateCloneObject("ice_orb", layer()));
+				ice_orb->set_position(position_ - Point{ 25.f, 25.f });
+				ice_orb->AddAnimationClip("ice_orb");
+				ice_orb->set_dir({ cos(Math::ConvertToRadians(_angle)), sin(Math::ConvertToRadians(_angle)) });
+				ice_orb->set_move_range(300.f);
+				ice_orb->set_move_speed(200.f);
+			});
+		}
+			break;
+		};
 	}
 }
 

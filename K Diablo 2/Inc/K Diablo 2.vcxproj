@@ -168,6 +168,7 @@
     <ClCompile Include="collision_manager.cpp" />
     <ClCompile Include="core.cpp" />
     <ClCompile Include="effect.cpp" />
+    <ClCompile Include="frozen_orb.cpp" />
     <ClCompile Include="input_manager.cpp" />
     <ClCompile Include="K Diablo 2.cpp" />
     <ClCompile Include="layer.cpp" />
@@ -186,6 +187,7 @@
     <ClCompile Include="scene.cpp" />
     <ClCompile Include="scene_component.cpp" />
     <ClCompile Include="scene_manager.cpp" />
+    <ClCompile Include="spin_ice_bolt.cpp" />
     <ClCompile Include="stage.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
@@ -216,6 +218,7 @@
     <ClInclude Include="core.h" />
     <ClInclude Include="effect.h" />
     <ClInclude Include="enum.h" />
+    <ClInclude Include="frozen_orb.h" />
     <ClInclude Include="input_manager.h" />
     <ClInclude Include="layer.h" />
     <ClInclude Include="logo_scene.h" />
@@ -235,6 +238,7 @@
     <ClInclude Include="scene_component.h" />
     <ClInclude Include="scene_manager.h" />
     <ClInclude Include="singleton.h" />
+    <ClInclude Include="spin_ice_bolt.h" />
     <ClInclude Include="stage.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="tag.h" />

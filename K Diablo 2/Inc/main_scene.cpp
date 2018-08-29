@@ -13,6 +13,8 @@
 #include "stage.h"
 #include "player.h"
 #include "missile.h"
+#include "spin_ice_bolt.h"
+#include "frozen_orb.h"
 #include "effect.h"
 #include "button.h"
 #include "text.h"
@@ -45,6 +47,12 @@ bool MainScene::_Initialize()
 	auto const& audio_manager = AudioManager::GetSingleton();
 
 	if (!object_manager->CreatePrototype<Missile>("ice_bolt", scene()))
+		return false;
+
+	if (!object_manager->CreatePrototype<SpinIceBolt>("spin_ice_bolt", scene()))
+		return false;
+
+	if (!object_manager->CreatePrototype<FrozenOrb>("ice_orb", scene()))
 		return false;
 
 	auto town1 = audio_manager->FindSoundEffect("town1")->CreateInstance();
@@ -127,13 +135,9 @@ bool MainScene::_Initialize()
 	_CreateCharacterWindow();
 
 	// inventory
-	auto inventory = object_manager->CreateObject<UI>("inventory", ui_layer);
-	inventory->set_position({ 320.f, 0.f });
-	inventory->set_size({ 320.f, 432.f });
-	inventory->set_texture("inventory");
-	inventory->set_color_key(RGB(1, 1, 1));
-	inventory->set_enablement(false);
+	_CreateInventoryWindow();
 
+	// skill_tree
 	auto cold_skill = object_manager->CreateObject<UI>("cold_skill", ui_layer);
 	cold_skill->set_position({ 320.f, 0.f });
 	cold_skill->set_size({ 320.f, 432.f });
@@ -155,6 +159,7 @@ bool MainScene::_Initialize()
 	fire_skill->set_color_key(RGB(1, 1, 1));
 	fire_skill->set_enablement(false);
 
+	// ui
 	auto control_panel = object_manager->CreateObject<UI>("control_panel", ui_layer);
 	control_panel->set_position({ 0.f, 376.f });
 	control_panel->set_size({ 640.f, 104.f });
@@ -167,17 +172,100 @@ bool MainScene::_Initialize()
 	health->set_texture("health");
 	health->set_color_key(RGB(0, 0, 0));
 
+	auto health_text = dynamic_pointer_cast<Text>(object_manager->CreateObject<Text>("health_text", ui_layer));
+	health_text->set_position({ 10.f, 367.f });
+	health_text->set_font_size(FONT_SIZE::_16);
+	health_text->set_string("LIFE: 40 / 40");
+	health_text->set_enablement(false);
+
+	auto health_collider = dynamic_pointer_cast<RectCollider>(health->AddCollider<RectCollider>("health_collider"));
+	health_collider->set_collision_group_tag("UI");
+	health_collider->set_model_info({ 0.f, 0.f, 80.f, 80.f });
+	health_collider->SetCallBack([_health_text = health_text.get()](shared_ptr<Collider> const& _src, shared_ptr<Collider> const& _dest, float _time) {
+		_health_text->set_enablement(true);
+	}, COLLISION_CALLBACK::ENTER);
+	health_collider->SetCallBack([_health_text = health_text.get()](shared_ptr<Collider> const& _src, shared_ptr<Collider> const& _dest, float _time) {
+		_health_text->set_enablement(false);
+	}, COLLISION_CALLBACK::LEAVE);
+
 	auto mana = object_manager->CreateObject<UI>("mana", ui_layer);
 	mana->set_position({ 529.f, 387.f });
 	mana->set_size({ 80.f, 80.f });
 	mana->set_texture("mana");
 	mana->set_color_key(RGB(0, 0, 0));
 
+	auto mana_text = dynamic_pointer_cast<Text>(object_manager->CreateObject<Text>("mana_text", ui_layer));
+	mana_text->set_position({ 499.f, 367.f });
+	mana_text->set_font_size(FONT_SIZE::_16);
+	mana_text->set_string("MANA: 60 / 60");
+	mana_text->set_enablement(false);
+
+	auto mana_collider = dynamic_pointer_cast<RectCollider>(mana->AddCollider<RectCollider>("mana_collider"));
+	mana_collider->set_collision_group_tag("UI");
+	mana_collider->set_model_info({ 0.f, 0.f, 80.f, 80.f });
+	mana_collider->SetCallBack([_mana_text = mana_text.get()](shared_ptr<Collider> const& _src, shared_ptr<Collider> const& _dest, float _time) {
+		_mana_text->set_enablement(true);
+	}, COLLISION_CALLBACK::ENTER);
+	mana_collider->SetCallBack([_mana_text = mana_text.get()](shared_ptr<Collider> const& _src, shared_ptr<Collider> const& _dest, float _time) {
+		_mana_text->set_enablement(false);
+	}, COLLISION_CALLBACK::LEAVE);
+
+	auto left_skill_tap = dynamic_pointer_cast<Button>(object_manager->CreateObject<Button>("left_skill_tap", ui_layer));
+	left_skill_tap->set_position({ 118.f, 432.f });
+	left_skill_tap->set_size({ 48.f, 48.f });
+	left_skill_tap->set_texture("attack_icon");
+	left_skill_tap->set_color_key(RGB(0, 0, 0));
+	left_skill_tap->set_offset_flag(true);
+	left_skill_tap->set_callback([this](float _time) {
+	});
+
+	auto left_skill_tap_text = dynamic_pointer_cast<Text>(object_manager->CreateObject<Text>("left_skill_tap_text", ui_layer));
+	left_skill_tap_text->set_position({ 108.f, 412.f });
+	left_skill_tap_text->set_font_size(FONT_SIZE::_16);
+	left_skill_tap_text->set_string("NORMAL ATTACK");
+	left_skill_tap_text->set_enablement(false);
+
+	auto left_skill_tap_collider = dynamic_pointer_cast<RectCollider>(left_skill_tap->GetCollider("Button"));
+	left_skill_tap_collider->set_model_info({ 0.f, 0.f, 48.f, 48.f });
+	left_skill_tap_collider->set_collision_group_tag("UI");
+	left_skill_tap_collider->SetCallBack([_left_skill_tap_text = left_skill_tap_text.get()](shared_ptr<Collider> const& _src, shared_ptr<Collider> const& _dest, float _time) {
+		_left_skill_tap_text->set_enablement(true);
+	}, COLLISION_CALLBACK::ENTER);
+	left_skill_tap_collider->SetCallBack([_left_skill_tap_text = left_skill_tap_text.get()](shared_ptr<Collider> const& _src, shared_ptr<Collider> const& _dest, float _time) {
+		_left_skill_tap_text->set_enablement(false);
+	}, COLLISION_CALLBACK::LEAVE);
+
+	auto right_skill_tap = dynamic_pointer_cast<Button>(object_manager->CreateObject<Button>("right_skill_tap", ui_layer));
+	right_skill_tap->set_position({ 476.f, 434.f });
+	right_skill_tap->set_size({ 48.f, 48.f });
+	right_skill_tap->set_texture("ice_bolt_icon");
+	right_skill_tap->set_color_key(RGB(0, 0, 0));
+	right_skill_tap->set_offset_flag(false);
+	right_skill_tap->set_callback([this](float _time) {
+	});
+
+	auto right_skill_tap_text = dynamic_pointer_cast<Text>(object_manager->CreateObject<Text>("right_skill_tap_text", ui_layer));
+	right_skill_tap_text->set_position({ 476.f, 412.f });
+	right_skill_tap_text->set_font_size(FONT_SIZE::_16);
+	right_skill_tap_text->set_string("ICE BOLT");
+	right_skill_tap_text->set_enablement(false);
+
+	auto right_skill_tap_collider = dynamic_pointer_cast<RectCollider>(right_skill_tap->GetCollider("Button"));
+	right_skill_tap_collider->set_model_info({ 0.f, 0.f, 48.f, 48.f });
+	right_skill_tap_collider->set_collision_group_tag("UI");
+	right_skill_tap_collider->SetCallBack([_right_skill_tap_text = right_skill_tap_text.get()](shared_ptr<Collider> const& _src, shared_ptr<Collider> const& _dest, float _time) {
+		_right_skill_tap_text->set_enablement(true);
+	}, COLLISION_CALLBACK::ENTER);
+	right_skill_tap_collider->SetCallBack([_right_skill_tap_text = right_skill_tap_text.get()](shared_ptr<Collider> const& _src, shared_ptr<Collider> const& _dest, float _time) {
+		_right_skill_tap_text->set_enablement(false);
+	}, COLLISION_CALLBACK::LEAVE);
+
 	auto loading_screen = object_manager->CreateObject<UI>("loading_screen", ui_layer);
 	loading_screen->set_position({ 194.f, 62.f });
 	loading_screen->AddAnimationClip("loading_screen");
 	loading_screen->set_color_key(RGB(1, 1, 1));
 
+	// option
 	auto pentspin_left = object_manager->CreateObject<UI>("pentspin_left", ui_layer);
 	pentspin_left->set_position({ 20.f, 165.f });
 	pentspin_left->AddAnimationClip("pentspin_left");
@@ -257,10 +345,7 @@ void MainScene::_Input(float _time)
 		_ToggleCharacterWindow();
 
 	if (input_manager->KeyPush("Inventory"))
-	{
-		auto enablement = ui_layer->FindObject("inventory")->enablement();
-		ui_layer->FindObject("inventory")->set_enablement(enablement ^ true);
-	}
+		_ToggleInventoryWindow();
 
 	if (input_manager->KeyPush("SkillTree"))
 	{
@@ -317,6 +402,12 @@ void MainScene::_CreateCharacterWindow()
 	Sorceress_text->set_string("Sorceress");
 	Sorceress_text->set_enablement(false);
 
+	auto Level_number = dynamic_pointer_cast<Text>(object_manager->CreateObject<Text>("Level_number", ui_layer));
+	Level_number->set_position({ 20.f, 45.f });
+	Level_number->set_font_size(FONT_SIZE::_16);
+	Level_number->set_string("1");
+	Level_number->set_enablement(false);
+
 	auto strength_number = dynamic_pointer_cast<Text>(object_manager->CreateObject<Text>("strength_number", ui_layer));
 	strength_number->set_position({ 73.f, 83.f });
 	strength_number->set_font_size(FONT_SIZE::_16);
@@ -342,25 +433,25 @@ void MainScene::_CreateCharacterWindow()
 	energy_number->set_enablement(false);
 
 	auto defence_number = dynamic_pointer_cast<Text>(object_manager->CreateObject<Text>("defence_number", ui_layer));
-	defence_number->set_position({ 270.f, 193.f });
+	defence_number->set_position({ 290.f, 193.f });
 	defence_number->set_font_size(FONT_SIZE::_16);
 	defence_number->set_string("0");
 	defence_number->set_enablement(false);
 
 	auto stamina_number = dynamic_pointer_cast<Text>(object_manager->CreateObject<Text>("stamina_number", ui_layer));
-	stamina_number->set_position({ 270.f, 231.f });
+	stamina_number->set_position({ 280.f, 231.f });
 	stamina_number->set_font_size(FONT_SIZE::_16);
 	stamina_number->set_string("100");
 	stamina_number->set_enablement(false);
 
 	auto life_number = dynamic_pointer_cast<Text>(object_manager->CreateObject<Text>("life_number", ui_layer));
-	life_number->set_position({ 270.f, 255.f });
+	life_number->set_position({ 280.f, 255.f });
 	life_number->set_font_size(FONT_SIZE::_16);
 	life_number->set_string("40");
 	life_number->set_enablement(false);
 
 	auto mana_number = dynamic_pointer_cast<Text>(object_manager->CreateObject<Text>("mana_number", ui_layer));
-	mana_number->set_position({ 270.f, 293.f });
+	mana_number->set_position({ 280.f, 293.f });
 	mana_number->set_font_size(FONT_SIZE::_16);
 	mana_number->set_string("60");
 	mana_number->set_enablement(false);
@@ -388,6 +479,165 @@ void MainScene::_CreateCharacterWindow()
 	poison_resistance_number->set_font_size(FONT_SIZE::_16);
 	poison_resistance_number->set_string("0");
 	poison_resistance_number->set_enablement(false);
+
+	auto Level_text = dynamic_pointer_cast<Text>(object_manager->CreateObject<Text>("Level_text", ui_layer));
+	Level_text->set_position({ 0.f, 32.f });
+	Level_text->set_font_size(FONT_SIZE::_8);
+	Level_text->set_string("Level");
+	Level_text->set_enablement(false);
+
+	auto Expression_text = dynamic_pointer_cast<Text>(object_manager->CreateObject<Text>("Expression_text", ui_layer));
+	Expression_text->set_position({ 70.f, 32.f });
+	Expression_text->set_font_size(FONT_SIZE::_8);
+	Expression_text->set_string("Expression");
+	Expression_text->set_enablement(false);
+
+	auto Next_Level_text = dynamic_pointer_cast<Text>(object_manager->CreateObject<Text>("Next_Level_text", ui_layer));
+	Next_Level_text->set_position({ 200.f, 32.f });
+	Next_Level_text->set_font_size(FONT_SIZE::_8);
+	Next_Level_text->set_string("Next_Level");
+	Next_Level_text->set_enablement(false);
+
+	auto Strength_text = dynamic_pointer_cast<Text>(object_manager->CreateObject<Text>("Strength_text", ui_layer));
+	Strength_text->set_position({ 0.f, 83.f });
+	Strength_text->set_font_size(FONT_SIZE::_8);
+	Strength_text->set_string("Strength");
+	Strength_text->set_enablement(false);
+
+	auto Dexterity_text = dynamic_pointer_cast<Text>(object_manager->CreateObject<Text>("Dexterity_text", ui_layer));
+	Dexterity_text->set_position({ 0.f, 145.f });
+	Dexterity_text->set_font_size(FONT_SIZE::_8);
+	Dexterity_text->set_string("Dexterity");
+	Dexterity_text->set_enablement(false);
+
+	auto Vitality_text = dynamic_pointer_cast<Text>(object_manager->CreateObject<Text>("Vitality_text", ui_layer));
+	Vitality_text->set_position({ 0.f, 231.f });
+	Vitality_text->set_font_size(FONT_SIZE::_8);
+	Vitality_text->set_string("Vitality");
+	Vitality_text->set_enablement(false);
+
+	auto Energy_text = dynamic_pointer_cast<Text>(object_manager->CreateObject<Text>("Energy_text", ui_layer));
+	Energy_text->set_position({ 0.f, 293.f });
+	Energy_text->set_font_size(FONT_SIZE::_8);
+	Energy_text->set_string("Energy");
+	Energy_text->set_enablement(false);
+
+	auto Defence_text = dynamic_pointer_cast<Text>(object_manager->CreateObject<Text>("Defence_text", ui_layer));
+	Defence_text->set_position({ 150.f, 193.f });
+	Defence_text->set_font_size(FONT_SIZE::_8);
+	Defence_text->set_string("Defence");
+	Defence_text->set_enablement(false);
+
+	auto Stamina_text = dynamic_pointer_cast<Text>(object_manager->CreateObject<Text>("Stamina_text", ui_layer));
+	Stamina_text->set_position({ 150.f, 231.f });
+	Stamina_text->set_font_size(FONT_SIZE::_8);
+	Stamina_text->set_string("Stamina");
+	Stamina_text->set_enablement(false);
+
+	auto Life_text = dynamic_pointer_cast<Text>(object_manager->CreateObject<Text>("Life_text", ui_layer));
+	Life_text->set_position({ 150.f, 255.f });
+	Life_text->set_font_size(FONT_SIZE::_8);
+	Life_text->set_string("Life");
+	Life_text->set_enablement(false);
+
+	auto Mana_text = dynamic_pointer_cast<Text>(object_manager->CreateObject<Text>("Mana_text", ui_layer));
+	Mana_text->set_position({ 150.f, 293.f });
+	Mana_text->set_font_size(FONT_SIZE::_8);
+	Mana_text->set_string("Mana");
+	Mana_text->set_enablement(false);
+
+	auto Fire_Resistance_text = dynamic_pointer_cast<Text>(object_manager->CreateObject<Text>("Fire_Resistance_text", ui_layer));
+	Fire_Resistance_text->set_position({ 170.f, 331.f });
+	Fire_Resistance_text->set_font_size(FONT_SIZE::_8);
+	Fire_Resistance_text->set_string("Fire\nResistance");
+	Fire_Resistance_text->set_enablement(false);
+
+	auto Cold_Resistance_text = dynamic_pointer_cast<Text>(object_manager->CreateObject<Text>("Cold_Resistance_text", ui_layer));
+	Cold_Resistance_text->set_position({ 170.f, 355.f });
+	Cold_Resistance_text->set_font_size(FONT_SIZE::_8);
+	Cold_Resistance_text->set_string("Cold\nResistance");
+	Cold_Resistance_text->set_enablement(false);
+
+	auto Lightening_Resistance_text = dynamic_pointer_cast<Text>(object_manager->CreateObject<Text>("Lightening_Resistance_text", ui_layer));
+	Lightening_Resistance_text->set_position({ 170.f, 379.f });
+	Lightening_Resistance_text->set_font_size(FONT_SIZE::_8);
+	Lightening_Resistance_text->set_string("Lightening\nResistance");
+	Lightening_Resistance_text->set_enablement(false);
+
+	auto Poison_Resistance_text = dynamic_pointer_cast<Text>(object_manager->CreateObject<Text>("Poison_Resistance_text", ui_layer));
+	Poison_Resistance_text->set_position({ 170.f, 403.f });
+	Poison_Resistance_text->set_font_size(FONT_SIZE::_8);
+	Poison_Resistance_text->set_string("Poison\nResistance");
+	Poison_Resistance_text->set_enablement(false);
+
+	auto character_window_CLOSE_text = dynamic_pointer_cast<Text>(object_manager->CreateObject<Text>("character_window_CLOSE_text", ui_layer));
+	character_window_CLOSE_text->set_position({ 114.f, 368.f });
+	character_window_CLOSE_text->set_font_size(FONT_SIZE::_16);
+	character_window_CLOSE_text->set_string("CLOSE");
+	character_window_CLOSE_text->set_enablement(false);
+
+	auto character_window_cancel_button = dynamic_pointer_cast<Button>(object_manager->CreateObject<Button>("character_window_cancel_button", ui_layer));
+	character_window_cancel_button->set_position({ 128.f, 388.f });
+	character_window_cancel_button->set_size({ 32.f, 32.f });
+	character_window_cancel_button->set_texture("cancel_button");
+	character_window_cancel_button->set_offset_flag(true);
+	character_window_cancel_button->set_enablement(false);
+	character_window_cancel_button->set_callback([this, _character_window_CLOSE_text = character_window_CLOSE_text.get()](float _time) {
+		AudioManager::GetSingleton()->FindSoundEffect("button")->Play();
+		_character_window_CLOSE_text->set_enablement(false);
+		_ToggleCharacterWindow();
+	});
+
+	auto character_window_cancel_button_collider = dynamic_pointer_cast<RectCollider>(character_window_cancel_button->GetCollider("Button"));
+	character_window_cancel_button_collider->set_model_info({ 0.f, 0.f, 32.f, 32.f });
+	character_window_cancel_button_collider->set_collision_group_tag("UI");
+	character_window_cancel_button_collider->SetCallBack([_character_window_CLOSE_text = character_window_CLOSE_text.get()](shared_ptr<Collider> const& _src, shared_ptr<Collider> const& _dest, float _time) {
+		_character_window_CLOSE_text->set_enablement(true);
+	}, COLLISION_CALLBACK::ENTER);
+	character_window_cancel_button_collider->SetCallBack([_character_window_CLOSE_text = character_window_CLOSE_text.get()](shared_ptr<Collider> const& _src, shared_ptr<Collider> const& _dest, float _time) {
+		_character_window_CLOSE_text->set_enablement(false);
+	}, COLLISION_CALLBACK::LEAVE);
+}
+
+void MainScene::_CreateInventoryWindow()
+{
+	auto const& object_manager = ObjectManager::GetSingleton();
+	auto const& ui_layer = scene()->FindLayer("UI");
+
+	auto inventory = object_manager->CreateObject<UI>("inventory", ui_layer);
+	inventory->set_position({ 320.f, 0.f });
+	inventory->set_size({ 320.f, 432.f });
+	inventory->set_texture("inventory");
+	inventory->set_color_key(RGB(1, 1, 1));
+	inventory->set_enablement(false);
+
+	auto inventory_window_CLOSE_text = dynamic_pointer_cast<Text>(object_manager->CreateObject<Text>("inventory_window_CLOSE_text", ui_layer));
+	inventory_window_CLOSE_text->set_position({ 324.f, 368.f });
+	inventory_window_CLOSE_text->set_font_size(FONT_SIZE::_16);
+	inventory_window_CLOSE_text->set_string("CLOSE");
+	inventory_window_CLOSE_text->set_enablement(false);
+
+	auto inventory_window_cancel_button = dynamic_pointer_cast<Button>(object_manager->CreateObject<Button>("inventory_window_cancel_button", ui_layer));
+	inventory_window_cancel_button->set_position({ 338.f, 384.f });
+	inventory_window_cancel_button->set_size({ 32.f, 32.f });
+	inventory_window_cancel_button->set_texture("cancel_button");
+	inventory_window_cancel_button->set_offset_flag(true);
+	inventory_window_cancel_button->set_enablement(false);
+	inventory_window_cancel_button->set_callback([this, _inventory_window_CLOSE_text = inventory_window_CLOSE_text.get()](float _time) {
+		AudioManager::GetSingleton()->FindSoundEffect("button")->Play();
+		_inventory_window_CLOSE_text->set_enablement(false);
+		_ToggleInventoryWindow();
+	});
+
+	auto inventory_window_cancel_button_collider = dynamic_pointer_cast<RectCollider>(inventory_window_cancel_button->GetCollider("Button"));
+	inventory_window_cancel_button_collider->set_model_info({ 0.f, 0.f, 32.f, 32.f });
+	inventory_window_cancel_button_collider->set_collision_group_tag("UI");
+	inventory_window_cancel_button_collider->SetCallBack([_inventory_window_CLOSE_text = inventory_window_CLOSE_text.get()](shared_ptr<Collider> const& _src, shared_ptr<Collider> const& _dest, float _time) {
+		_inventory_window_CLOSE_text->set_enablement(true);
+	}, COLLISION_CALLBACK::ENTER);
+	inventory_window_cancel_button_collider->SetCallBack([_inventory_window_CLOSE_text = inventory_window_CLOSE_text.get()](shared_ptr<Collider> const& _src, shared_ptr<Collider> const& _dest, float _time) {
+		_inventory_window_CLOSE_text->set_enablement(false);
+	}, COLLISION_CALLBACK::LEAVE);
 }
 
 void MainScene::_ToggleCharacterWindow()
@@ -395,9 +645,12 @@ void MainScene::_ToggleCharacterWindow()
 	auto const& ui_layer = scene()->FindLayer("UI");
 
 	auto enablement = ui_layer->FindObject("character")->enablement();
+
 	ui_layer->FindObject("character")->set_enablement(enablement ^ true);
 	ui_layer->FindObject("sorceress_text")->set_enablement(enablement ^ true);
 	ui_layer->FindObject("Sorceress_text")->set_enablement(enablement ^ true);
+
+	ui_layer->FindObject("Level_number")->set_enablement(enablement ^ true);
 
 	ui_layer->FindObject("strength_number")->set_enablement(enablement ^ true);
 	ui_layer->FindObject("dexterity_number")->set_enablement(enablement ^ true);
@@ -413,4 +666,36 @@ void MainScene::_ToggleCharacterWindow()
 	ui_layer->FindObject("cold_resistance_number")->set_enablement(enablement ^ true);
 	ui_layer->FindObject("lightening_resistance_number")->set_enablement(enablement ^ true);
 	ui_layer->FindObject("poison_resistance_number")->set_enablement(enablement ^ true);
+
+	ui_layer->FindObject("Level_text")->set_enablement(enablement ^ true);
+	ui_layer->FindObject("Expression_text")->set_enablement(enablement ^ true);
+	ui_layer->FindObject("Next_Level_text")->set_enablement(enablement ^ true);
+
+	ui_layer->FindObject("Strength_text")->set_enablement(enablement ^ true);
+	ui_layer->FindObject("Dexterity_text")->set_enablement(enablement ^ true);
+	ui_layer->FindObject("Vitality_text")->set_enablement(enablement ^ true);
+	ui_layer->FindObject("Energy_text")->set_enablement(enablement ^ true);
+
+	ui_layer->FindObject("Defence_text")->set_enablement(enablement ^ true);
+	ui_layer->FindObject("Stamina_text")->set_enablement(enablement ^ true);
+	ui_layer->FindObject("Life_text")->set_enablement(enablement ^ true);
+	ui_layer->FindObject("Mana_text")->set_enablement(enablement ^ true);
+
+	ui_layer->FindObject("Fire_Resistance_text")->set_enablement(enablement ^ true);
+	ui_layer->FindObject("Cold_Resistance_text")->set_enablement(enablement ^ true);
+	ui_layer->FindObject("Lightening_Resistance_text")->set_enablement(enablement ^ true);
+	ui_layer->FindObject("Poison_Resistance_text")->set_enablement(enablement ^ true);
+
+	ui_layer->FindObject("character_window_cancel_button")->set_enablement(enablement ^ true);
+}
+
+void MainScene::_ToggleInventoryWindow()
+{
+	auto const& ui_layer = scene()->FindLayer("UI");
+
+	auto enablement = ui_layer->FindObject("inventory")->enablement();
+
+	ui_layer->FindObject("inventory")->set_enablement(enablement ^ true);
+
+	ui_layer->FindObject("inventory_window_cancel_button")->set_enablement(enablement ^ true);
 }

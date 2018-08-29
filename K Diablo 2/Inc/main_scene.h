@@ -22,6 +22,8 @@ private:
 	virtual void _Render(HDC _device_context, float _time) override;
 
 	void _CreateCharacterWindow();
+	void _CreateInventoryWindow();
 
 	void _ToggleCharacterWindow();
+	void _ToggleInventoryWindow();
 };

@@ -115,3 +115,9 @@ enum class FONT_SIZE
 	_8,
 	_16
 };
+
+enum class SKILL
+{
+	ICE_BOLT,
+	FROZEN_ORB
+};

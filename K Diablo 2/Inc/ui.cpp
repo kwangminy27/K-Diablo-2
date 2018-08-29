@@ -56,6 +56,9 @@ void UI::_Collision(float _time)
 
 void UI::_Render(HDC _device_context, float _time)
 {
+	if (tag_ == "left_skill_tap")
+		int a = 3;
+
 	int left = static_cast<int>(position_.x - size_.x * pivot_.x);
 	int top = static_cast<int>(position_.y - size_.y * pivot_.y);
 	int width = static_cast<int>(size_.x);
@@ -74,7 +77,7 @@ void UI::_Render(HDC _device_context, float _time)
 			TransparentBlt(_device_context, left, top, width, height, texture_->memory_device_context(), frame_left, frame_top, width, height, color_key_);
 		}
 		else
-			TransparentBlt(_device_context, left, top, width, height, texture_->memory_device_context(), static_cast<int>(offset_.x), static_cast<int>(offset_.y), texture_->width(), texture_->height(), color_key_);
+			TransparentBlt(_device_context, left, top, width, height, texture_->memory_device_context(), static_cast<int>(offset_.x), static_cast<int>(offset_.y), width, height, color_key_);
 	}
 	else
 		BitBlt(_device_context, left, top, width, height, texture_->memory_device_context(), static_cast<int>(offset_.x), static_cast<int>(offset_.y), SRCCOPY);
