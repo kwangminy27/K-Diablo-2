@@ -66,17 +66,7 @@ void Layer::_Input(float _time)
 	{
 		object_list_.sort([](shared_ptr<Object> const _first, shared_ptr<Object> const _second) -> bool {
 			if (_first->animation() && _second->animation())
-			{
-				float first_value = _first->position().y + _first->animation()->GetFrameHeight();
-				float second_value = _second->position().y + _second->animation()->GetFrameHeight();
-
-				if (_first->tag() == "player")
-					first_value = _first->position().y + _first->animation()->GetFrameHeight() * 0.5f;
-				if (_second->tag() == "player")
-					second_value = _second->position().y + _second->animation()->GetFrameHeight() * 0.5f;
-
-				return first_value < second_value;
-			}
+				return _first->position().y < _second->position().y;
 			else
 				return _first->position().y < _second->position().y;
 		});

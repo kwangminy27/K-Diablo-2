@@ -12,6 +12,7 @@
 #include "ui.h"
 #include "stage.h"
 #include "player.h"
+#include "melee_monster.h"
 #include "missile.h"
 #include "spin_ice_bolt.h"
 #include "frozen_orb.h"
@@ -24,6 +25,8 @@
 #include "audio_manager.h"
 #include "point_collider.h"
 #include "rect_collider.h"
+#include "circle_collider.h"
+#include "ai_manager.h"
 
 using namespace std;
 
@@ -48,6 +51,7 @@ bool MainScene::_Initialize()
 	auto const& object_manager = ObjectManager::GetSingleton();
 	auto const& audio_manager = AudioManager::GetSingleton();
 
+	// prototype
 	if (!object_manager->CreatePrototype<Missile>("ice_bolt", scene()))
 		return false;
 
@@ -66,6 +70,7 @@ bool MainScene::_Initialize()
 	if (!object_manager->CreatePrototype<Missile>("ice_blast", scene()))
 		return false;
 
+	// sound
 	auto town1 = audio_manager->FindSoundEffect("town1")->CreateInstance();
 	town1->Play(true);
 	audio_manager->AddSoundEffectInstance("town1", move(town1));
@@ -92,10 +97,11 @@ bool MainScene::_Initialize()
 	rogue_encampment->CreateTile(STAGE::ISOMETRIC, 100, 100, { 16000.f, 8000.f }, { 160.f, 80.f }, "base");
 	camera_manager->set_world_size({ rogue_encampment->stage_size().x, rogue_encampment->stage_size().y });
 
+	// player
 	auto player = dynamic_pointer_cast<Player>(object_manager->CreateObject<Player>("player", default_layer));
 	player->set_position({ 8000, 4000.f });
 	player->set_size({ 42.f, 73.f });
-	player->set_pivot({ 0.5f, 0.5f });
+	player->set_pivot({ 0.5f, 1.f });
 	for (int i = 0; i < 16; ++i)
 	{
 		string town_neutral_tag = "town_neutral_" + to_string(i);
@@ -116,7 +122,7 @@ bool MainScene::_Initialize()
 	camera_manager->set_target(player);
 	auto player_collider = dynamic_pointer_cast<RectCollider>(player->AddCollider<RectCollider>("PlayerCollider"));
 	player_collider->set_model_info({ 0.f, 0.f, 42.f, 73.f });
-	player_collider->set_pivot({ 0.5f, 0.5f });
+	player_collider->set_pivot({ 0.5f, 1.f });
 
 	auto ice_cast_new_1 = object_manager->CreateObject<Effect>("ice_cast_new_1", ui_layer);
 	ice_cast_new_1->AddAnimationClip("ice_cast_new_1");
@@ -231,7 +237,7 @@ bool MainScene::_Initialize()
 	left_skill_tap->set_size({ 48.f, 48.f });
 	left_skill_tap->set_texture("attack_icon");
 	left_skill_tap->set_color_key(RGB(0, 0, 0));
-	left_skill_tap->set_offset_flag(true);
+	left_skill_tap->set_offset_flag(false);
 	left_skill_tap->set_callback([this](float _time) {
 	});
 
@@ -347,6 +353,151 @@ bool MainScene::_Initialize()
 		ui_layer->FindObject("pentspin_right")->set_position({ 568.f, 217.f });
 	}, COLLISION_CALLBACK::ENTER);
 
+	// monster
+	auto hell_bovine = dynamic_pointer_cast<MeleeMonster>(object_manager->CreateObject<MeleeMonster>("hell_bovine", default_layer));
+	hell_bovine->set_position({ 8000, 4000.f });
+	hell_bovine->set_size({ 141.f, 144.f });
+	hell_bovine->set_pivot({ 0.5f, 1.f });
+	hell_bovine->set_walk_speed(100.f);
+	hell_bovine->set_run_speed(200.f);
+	for (int i = 0; i < 8; ++i)
+	{
+		string hell_bovine_neutral = "hell_bovine_neutral_"s + to_string(i);
+		string hell_bovine_walk = "hell_bovine_walk_"s + to_string(i);
+		string hell_bovine_attack1 = "hell_bovine_attack1_"s + to_string(i);
+		string hell_bovine_attack2 = "hell_bovine_attack2_"s + to_string(i);
+		string hell_bovine_get_hit = "hell_bovine_get_hit_"s + to_string(i);
+		string hell_bovine_death = "hell_bovine_death_"s + to_string(i);
+		string hell_bovine_dead = "hell_bovine_dead_"s + to_string(i);
+
+		hell_bovine->AddAnimationClip(hell_bovine_neutral.c_str());
+		hell_bovine->AddAnimationClip(hell_bovine_walk.c_str());
+		hell_bovine->AddAnimationClip(hell_bovine_attack1.c_str());
+		hell_bovine->AddAnimationClip(hell_bovine_attack2.c_str());
+		hell_bovine->AddAnimationClip(hell_bovine_get_hit.c_str());
+		hell_bovine->AddAnimationClip(hell_bovine_death.c_str());
+		hell_bovine->AddAnimationClip(hell_bovine_dead.c_str());
+	}
+	hell_bovine->set_color_key(RGB(170, 170, 170));
+	hell_bovine->set_territory_radius(200.f);
+
+	auto hell_bovine_collider = dynamic_pointer_cast<CircleCollider>(hell_bovine->AddCollider<CircleCollider>("hell_bovine_collider"));
+	hell_bovine_collider->set_model_info({ 0.f, 0.f, hell_bovine->territory_radius() });
+	hell_bovine_collider->SetCallBack([_hell_bovine = hell_bovine.get()](shared_ptr<Collider> const _src, shared_ptr<Collider> const _dest, float _time) {
+		if (_src->tag() == "PlayerCollider")
+		{
+			auto const& player = dynamic_pointer_cast<Player>(_src->object());
+			auto const& stage = dynamic_pointer_cast<Stage>(player->stage());
+
+			_hell_bovine->set_target(player);
+			_hell_bovine->set_stage(stage);
+			_hell_bovine->set_prev_state(_hell_bovine->state());
+			_hell_bovine->set_state(MONSTER_STATE::WALK);
+			
+			auto& travel_path_stack = _hell_bovine->travel_path_stack();
+
+			travel_path_stack = AIManager::GetSingleton()->ProcessAStar(_hell_bovine->position(), player->position(), stage);
+			if (!travel_path_stack.empty())
+			{
+				_hell_bovine->set_astar_complete_flag(false);
+				_hell_bovine->set_arrival_flag(false);
+				_hell_bovine->set_next_target_point(stage->GetTileCenterPosition(travel_path_stack.top()));
+				_hell_bovine->set_final_target_point(player->position());
+			}
+		}
+		else if (_dest->tag() == "PlayerCollider")
+		{
+			auto const& player = dynamic_pointer_cast<Player>(_dest->object());
+			auto const& stage = dynamic_pointer_cast<Stage>(player->stage());
+
+			_hell_bovine->set_target(player);
+			_hell_bovine->set_stage(stage);
+			_hell_bovine->set_prev_state(_hell_bovine->state());
+			_hell_bovine->set_state(MONSTER_STATE::WALK);
+
+			auto& travel_path_stack = _hell_bovine->travel_path_stack();
+
+			travel_path_stack = AIManager::GetSingleton()->ProcessAStar(_hell_bovine->position(), player->position(), stage);
+			if (!travel_path_stack.empty())
+			{
+				_hell_bovine->set_astar_complete_flag(false);
+				_hell_bovine->set_arrival_flag(false);
+				_hell_bovine->set_next_target_point(stage->GetTileCenterPosition(travel_path_stack.top()));
+				_hell_bovine->set_final_target_point(player->position());
+			}
+		}
+	}, COLLISION_CALLBACK::ENTER);
+	hell_bovine_collider->SetCallBack([_hell_bovine = hell_bovine.get()](shared_ptr<Collider> const _src, shared_ptr<Collider> const _dest, float _time) {
+		if (_src->tag() == "PlayerCollider")
+		{
+			auto const& player = dynamic_pointer_cast<Player>(_src->object());
+			auto const& stage = dynamic_pointer_cast<Stage>(player->stage());
+
+			_hell_bovine->set_target(player);
+			_hell_bovine->set_stage(stage);
+
+			auto& travel_path_stack = _hell_bovine->travel_path_stack();
+
+			_hell_bovine->set_astar_elapsed_time(_hell_bovine->astar_elapsed_time() + _time);
+			if (_hell_bovine->astar_elapsed_time() >= _hell_bovine->astar_interval())
+			{
+				_hell_bovine->set_astar_elapsed_time(_hell_bovine->astar_elapsed_time() - _hell_bovine->astar_interval());
+
+				travel_path_stack = AIManager::GetSingleton()->ProcessAStar(_hell_bovine->position(), player->position(), stage);
+				if (!travel_path_stack.empty())
+				{
+					_hell_bovine->set_prev_state(_hell_bovine->state());
+					_hell_bovine->set_state(MONSTER_STATE::WALK);
+
+					_hell_bovine->set_astar_complete_flag(false);
+					_hell_bovine->set_arrival_flag(false);
+					_hell_bovine->set_next_target_point(stage->GetTileCenterPosition(travel_path_stack.top()));
+					_hell_bovine->set_final_target_point(player->position());
+				}
+			}
+		}
+		else if (_dest->tag() == "PlayerCollider")
+		{
+			auto const& player = dynamic_pointer_cast<Player>(_dest->object());
+			auto const& stage = dynamic_pointer_cast<Stage>(player->stage());
+
+			_hell_bovine->set_target(player);
+			_hell_bovine->set_stage(stage);
+
+			auto& travel_path_stack = _hell_bovine->travel_path_stack();
+
+			_hell_bovine->set_astar_elapsed_time(_hell_bovine->astar_elapsed_time() + _time);
+			if (_hell_bovine->astar_elapsed_time() >= _hell_bovine->astar_interval())
+			{
+				_hell_bovine->set_astar_elapsed_time(_hell_bovine->astar_elapsed_time() - _hell_bovine->astar_interval());
+
+				travel_path_stack = AIManager::GetSingleton()->ProcessAStar(_hell_bovine->position(), player->position(), stage);
+				if (!travel_path_stack.empty())
+				{
+					_hell_bovine->set_prev_state(_hell_bovine->state());
+					_hell_bovine->set_state(MONSTER_STATE::WALK);
+
+					_hell_bovine->set_astar_complete_flag(false);
+					_hell_bovine->set_arrival_flag(false);
+					_hell_bovine->set_next_target_point(stage->GetTileCenterPosition(travel_path_stack.top()));
+					_hell_bovine->set_final_target_point(player->position());
+				}
+			}
+		}
+	}, COLLISION_CALLBACK::STAY);
+	hell_bovine_collider->SetCallBack([_hell_bovine = hell_bovine.get()](shared_ptr<Collider> const _src, shared_ptr<Collider> const _dest, float _time) {
+		if (_src->tag() == "PlayerCollider")
+		{
+			_hell_bovine->clear_target();
+			_hell_bovine->set_state(MONSTER_STATE::NEUTRAL);
+		}
+		else if (_dest->tag() == "PlayerCollider")
+		{
+			_hell_bovine->clear_target();
+			_hell_bovine->set_state(MONSTER_STATE::NEUTRAL);
+		}
+	}, COLLISION_CALLBACK::LEAVE);
+
 	return true;
 }
 
@@ -449,25 +600,25 @@ void MainScene::_CreateCharacterWindow()
 	energy_number->set_enablement(false);
 
 	auto defence_number = dynamic_pointer_cast<Text>(object_manager->CreateObject<Text>("defence_number", ui_layer));
-	defence_number->set_position({ 290.f, 193.f });
+	defence_number->set_position({ 265.f, 193.f });
 	defence_number->set_font_size(FONT_SIZE::_16);
 	defence_number->set_string("0");
 	defence_number->set_enablement(false);
 
 	auto stamina_number = dynamic_pointer_cast<Text>(object_manager->CreateObject<Text>("stamina_number", ui_layer));
-	stamina_number->set_position({ 280.f, 231.f });
+	stamina_number->set_position({ 265.f, 231.f });
 	stamina_number->set_font_size(FONT_SIZE::_16);
 	stamina_number->set_string("100");
 	stamina_number->set_enablement(false);
 
 	auto life_number = dynamic_pointer_cast<Text>(object_manager->CreateObject<Text>("life_number", ui_layer));
-	life_number->set_position({ 280.f, 255.f });
+	life_number->set_position({ 265.f, 255.f });
 	life_number->set_font_size(FONT_SIZE::_16);
 	life_number->set_string("40");
 	life_number->set_enablement(false);
 
 	auto mana_number = dynamic_pointer_cast<Text>(object_manager->CreateObject<Text>("mana_number", ui_layer));
-	mana_number->set_position({ 280.f, 293.f });
+	mana_number->set_position({ 265.f, 293.f });
 	mana_number->set_font_size(FONT_SIZE::_16);
 	mana_number->set_string("60");
 	mana_number->set_enablement(false);

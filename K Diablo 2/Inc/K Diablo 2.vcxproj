@@ -176,7 +176,9 @@
     <ClCompile Include="logo_scene.cpp" />
     <ClCompile Include="main_scene.cpp" />
     <ClCompile Include="math.cpp" />
+    <ClCompile Include="melee_monster.cpp" />
     <ClCompile Include="missile.cpp" />
+    <ClCompile Include="monster.cpp" />
     <ClCompile Include="nova.cpp" />
     <ClCompile Include="object.cpp" />
     <ClCompile Include="object_manager.cpp" />
@@ -185,6 +187,7 @@
     <ClCompile Include="pixel_collider.cpp" />
     <ClCompile Include="player.cpp" />
     <ClCompile Include="point_collider.cpp" />
+    <ClCompile Include="ranged_monster.cpp" />
     <ClCompile Include="rect_collider.cpp" />
     <ClCompile Include="scene.cpp" />
     <ClCompile Include="scene_component.cpp" />
@@ -227,7 +230,9 @@
     <ClInclude Include="logo_scene.h" />
     <ClInclude Include="main_scene.h" />
     <ClInclude Include="math.h" />
+    <ClInclude Include="melee_monster.h" />
     <ClInclude Include="missile.h" />
+    <ClInclude Include="monster.h" />
     <ClInclude Include="nova.h" />
     <ClInclude Include="object.h" />
     <ClInclude Include="object_manager.h" />
@@ -236,6 +241,7 @@
     <ClInclude Include="pixel_collider.h" />
     <ClInclude Include="player.h" />
     <ClInclude Include="point_collider.h" />
+    <ClInclude Include="ranged_monster.h" />
     <ClInclude Include="rect_collider.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="scene.h" />

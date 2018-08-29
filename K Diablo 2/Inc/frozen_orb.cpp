@@ -71,52 +71,52 @@ void FrozenOrb::_Update(float _time)
 		switch (dir_idx)
 		{
 		case 0:
-			ice_bolt_1_collider->set_model_info({ 52.f, 60.f });
+			ice_bolt_1_collider->set_model_info({ 52.f, 10.f });
 			break;
 		case 1:
-			ice_bolt_1_collider->set_model_info({ 31.f, 59.f });
+			ice_bolt_1_collider->set_model_info({ 31.f, 9.f });
 			break;
 		case 2:
-			ice_bolt_1_collider->set_model_info({ 15.f, 46.f });
+			ice_bolt_1_collider->set_model_info({ 15.f, -4.f });
 			break;
 		case 3:
-			ice_bolt_1_collider->set_model_info({ 7.f, 33.f });
+			ice_bolt_1_collider->set_model_info({ 7.f, -17.f });
 			break;
 		case 4:
-			ice_bolt_1_collider->set_model_info({ 1.f, 29.f });
+			ice_bolt_1_collider->set_model_info({ 1.f, -21.f });
 			break;
 		case 5:
-			ice_bolt_1_collider->set_model_info({ -5.f, 22.f });
+			ice_bolt_1_collider->set_model_info({ -5.f, -28.f });
 			break;
 		case 6:
-			ice_bolt_1_collider->set_model_info({ 7.f, 15.f });
+			ice_bolt_1_collider->set_model_info({ 7.f, -35.f });
 			break;
 		case 7:
-			ice_bolt_1_collider->set_model_info({ 20.f, 10.f });
+			ice_bolt_1_collider->set_model_info({ 20.f, -40.f });
 			break;
 		case 8:
-			ice_bolt_1_collider->set_model_info({ 50.f, -4.f });
+			ice_bolt_1_collider->set_model_info({ 50.f, -54.f });
 			break;
 		case 9:
-			ice_bolt_1_collider->set_model_info({ 82.f, 6.f });
+			ice_bolt_1_collider->set_model_info({ 82.f, -44.f });
 			break;
 		case 10:
-			ice_bolt_1_collider->set_model_info({ 96.f, 13.f });
+			ice_bolt_1_collider->set_model_info({ 96.f, -37.f });
 			break;
 		case 11:
-			ice_bolt_1_collider->set_model_info({ 103.f, 22.f });
+			ice_bolt_1_collider->set_model_info({ 103.f, -28.f });
 			break;
 		case 12:
-			ice_bolt_1_collider->set_model_info({ 102.f, 30.f });
+			ice_bolt_1_collider->set_model_info({ 102.f, -20.f });
 			break;
 		case 13:
-			ice_bolt_1_collider->set_model_info({ 93.f, 33.f });
+			ice_bolt_1_collider->set_model_info({ 93.f, -17.f });
 			break;
 		case 14:
-			ice_bolt_1_collider->set_model_info({ 85.f, 46.f });
+			ice_bolt_1_collider->set_model_info({ 85.f, -4.f });
 			break;
 		case 15:
-			ice_bolt_1_collider->set_model_info({ 71.f, 57.f });
+			ice_bolt_1_collider->set_model_info({ 71.f, 7.f });
 			break;
 		}
 
@@ -134,52 +134,52 @@ void FrozenOrb::_Update(float _time)
 		switch (dir_idx)
 		{
 		case 0:
-			ice_bolt_2_collider->set_model_info({ 52.f, 60.f });
+			ice_bolt_2_collider->set_model_info({ 52.f, 10.f });
 			break;
 		case 1:
-			ice_bolt_2_collider->set_model_info({ 31.f, 59.f });
+			ice_bolt_2_collider->set_model_info({ 31.f, 9.f });
 			break;
 		case 2:
-			ice_bolt_2_collider->set_model_info({ 15.f, 46.f });
+			ice_bolt_2_collider->set_model_info({ 15.f, -4.f });
 			break;
 		case 3:
-			ice_bolt_2_collider->set_model_info({ 7.f, 33.f });
+			ice_bolt_2_collider->set_model_info({ 7.f, -17.f });
 			break;
 		case 4:
-			ice_bolt_2_collider->set_model_info({ 1.f, 29.f });
+			ice_bolt_2_collider->set_model_info({ 1.f, -21.f });
 			break;
 		case 5:
-			ice_bolt_2_collider->set_model_info({ -5.f, 22.f });
+			ice_bolt_2_collider->set_model_info({ -5.f, -28.f });
 			break;
 		case 6:
-			ice_bolt_2_collider->set_model_info({ 7.f, 15.f });
+			ice_bolt_2_collider->set_model_info({ 7.f, -35.f });
 			break;
 		case 7:
-			ice_bolt_2_collider->set_model_info({ 20.f, 10.f });
+			ice_bolt_2_collider->set_model_info({ 20.f, -40.f });
 			break;
 		case 8:
-			ice_bolt_2_collider->set_model_info({ 50.f, -4.f });
+			ice_bolt_2_collider->set_model_info({ 50.f, -54.f });
 			break;
 		case 9:
-			ice_bolt_2_collider->set_model_info({ 82.f, 6.f });
+			ice_bolt_2_collider->set_model_info({ 82.f, -44.f });
 			break;
 		case 10:
-			ice_bolt_2_collider->set_model_info({ 96.f, 13.f });
+			ice_bolt_2_collider->set_model_info({ 96.f, -37.f });
 			break;
 		case 11:
-			ice_bolt_2_collider->set_model_info({ 103.f, 22.f });
+			ice_bolt_2_collider->set_model_info({ 103.f, -28.f });
 			break;
 		case 12:
-			ice_bolt_2_collider->set_model_info({ 102.f, 30.f });
+			ice_bolt_2_collider->set_model_info({ 102.f, -20.f });
 			break;
 		case 13:
-			ice_bolt_2_collider->set_model_info({ 93.f, 33.f });
+			ice_bolt_2_collider->set_model_info({ 93.f, -17.f });
 			break;
 		case 14:
-			ice_bolt_2_collider->set_model_info({ 85.f, 46.f });
+			ice_bolt_2_collider->set_model_info({ 85.f, -4.f });
 			break;
 		case 15:
-			ice_bolt_2_collider->set_model_info({ 71.f, 57.f });
+			ice_bolt_2_collider->set_model_info({ 71.f, 7.f });
 			break;
 		}
 
@@ -197,52 +197,52 @@ void FrozenOrb::_Update(float _time)
 		switch (dir_idx)
 		{
 		case 0:
-			ice_bolt_3_collider->set_model_info({ 52.f, 60.f });
+			ice_bolt_3_collider->set_model_info({ 52.f, 10.f });
 			break;
 		case 1:
-			ice_bolt_3_collider->set_model_info({ 31.f, 59.f });
+			ice_bolt_3_collider->set_model_info({ 31.f, 9.f });
 			break;
 		case 2:
-			ice_bolt_3_collider->set_model_info({ 15.f, 46.f });
+			ice_bolt_3_collider->set_model_info({ 15.f, -4.f });
 			break;
 		case 3:
-			ice_bolt_3_collider->set_model_info({ 7.f, 33.f });
+			ice_bolt_3_collider->set_model_info({ 7.f, -17.f });
 			break;
 		case 4:
-			ice_bolt_3_collider->set_model_info({ 1.f, 29.f });
+			ice_bolt_3_collider->set_model_info({ 1.f, -21.f });
 			break;
 		case 5:
-			ice_bolt_3_collider->set_model_info({ -5.f, 22.f });
+			ice_bolt_3_collider->set_model_info({ -5.f, -28.f });
 			break;
 		case 6:
-			ice_bolt_3_collider->set_model_info({ 7.f, 15.f });
+			ice_bolt_3_collider->set_model_info({ 7.f, -35.f });
 			break;
 		case 7:
-			ice_bolt_3_collider->set_model_info({ 20.f, 10.f });
+			ice_bolt_3_collider->set_model_info({ 20.f, -40.f });
 			break;
 		case 8:
-			ice_bolt_3_collider->set_model_info({ 50.f, -4.f });
+			ice_bolt_3_collider->set_model_info({ 50.f, -54.f });
 			break;
 		case 9:
-			ice_bolt_3_collider->set_model_info({ 82.f, 6.f });
+			ice_bolt_3_collider->set_model_info({ 82.f, -44.f });
 			break;
 		case 10:
-			ice_bolt_3_collider->set_model_info({ 96.f, 13.f });
+			ice_bolt_3_collider->set_model_info({ 96.f, -37.f });
 			break;
 		case 11:
-			ice_bolt_3_collider->set_model_info({ 103.f, 22.f });
+			ice_bolt_3_collider->set_model_info({ 103.f, -28.f });
 			break;
 		case 12:
-			ice_bolt_3_collider->set_model_info({ 102.f, 30.f });
+			ice_bolt_3_collider->set_model_info({ 102.f, -20.f });
 			break;
 		case 13:
-			ice_bolt_3_collider->set_model_info({ 93.f, 33.f });
+			ice_bolt_3_collider->set_model_info({ 93.f, -17.f });
 			break;
 		case 14:
-			ice_bolt_3_collider->set_model_info({ 85.f, 46.f });
+			ice_bolt_3_collider->set_model_info({ 85.f, -4.f });
 			break;
 		case 15:
-			ice_bolt_3_collider->set_model_info({ 71.f, 57.f });
+			ice_bolt_3_collider->set_model_info({ 71.f, 7.f });
 			break;
 		}
 
@@ -260,52 +260,52 @@ void FrozenOrb::_Update(float _time)
 		switch (dir_idx)
 		{
 		case 0:
-			ice_bolt_4_collider->set_model_info({ 52.f, 60.f });
+			ice_bolt_4_collider->set_model_info({ 52.f, 10.f });
 			break;
 		case 1:
-			ice_bolt_4_collider->set_model_info({ 31.f, 59.f });
+			ice_bolt_4_collider->set_model_info({ 31.f, 9.f });
 			break;
 		case 2:
-			ice_bolt_4_collider->set_model_info({ 15.f, 46.f });
+			ice_bolt_4_collider->set_model_info({ 15.f, -4.f });
 			break;
 		case 3:
-			ice_bolt_4_collider->set_model_info({ 7.f, 33.f });
+			ice_bolt_4_collider->set_model_info({ 7.f, -17.f });
 			break;
 		case 4:
-			ice_bolt_4_collider->set_model_info({ 1.f, 29.f });
+			ice_bolt_4_collider->set_model_info({ 1.f, -21.f });
 			break;
 		case 5:
-			ice_bolt_4_collider->set_model_info({ -5.f, 22.f });
+			ice_bolt_4_collider->set_model_info({ -5.f, -28.f });
 			break;
 		case 6:
-			ice_bolt_4_collider->set_model_info({ 7.f, 15.f });
+			ice_bolt_4_collider->set_model_info({ 7.f, -35.f });
 			break;
 		case 7:
-			ice_bolt_4_collider->set_model_info({ 20.f, 10.f });
+			ice_bolt_4_collider->set_model_info({ 20.f, -40.f });
 			break;
 		case 8:
-			ice_bolt_4_collider->set_model_info({ 50.f, -4.f });
+			ice_bolt_4_collider->set_model_info({ 50.f, -54.f });
 			break;
 		case 9:
-			ice_bolt_4_collider->set_model_info({ 82.f, 6.f });
+			ice_bolt_4_collider->set_model_info({ 82.f, -44.f });
 			break;
 		case 10:
-			ice_bolt_4_collider->set_model_info({ 96.f, 13.f });
+			ice_bolt_4_collider->set_model_info({ 96.f, -37.f });
 			break;
 		case 11:
-			ice_bolt_4_collider->set_model_info({ 103.f, 22.f });
+			ice_bolt_4_collider->set_model_info({ 103.f, -28.f });
 			break;
 		case 12:
-			ice_bolt_4_collider->set_model_info({ 102.f, 30.f });
+			ice_bolt_4_collider->set_model_info({ 102.f, -20.f });
 			break;
 		case 13:
-			ice_bolt_4_collider->set_model_info({ 93.f, 33.f });
+			ice_bolt_4_collider->set_model_info({ 93.f, -17.f });
 			break;
 		case 14:
-			ice_bolt_4_collider->set_model_info({ 85.f, 46.f });
+			ice_bolt_4_collider->set_model_info({ 85.f, -4.f });
 			break;
 		case 15:
-			ice_bolt_4_collider->set_model_info({ 71.f, 57.f });
+			ice_bolt_4_collider->set_model_info({ 71.f, 7.f });
 			break;
 		}
 	}
@@ -326,52 +326,52 @@ void FrozenOrb::_Update(float _time)
 			switch (i)
 			{
 			case 0:
-				spin_ice_bolt_collider->set_model_info({ 52.f, 60.f });
+				spin_ice_bolt_collider->set_model_info({ 52.f, 10.f });
 				break;
 			case 1:
-				spin_ice_bolt_collider->set_model_info({ 31.f, 59.f });
+				spin_ice_bolt_collider->set_model_info({ 31.f, 9.f });
 				break;
 			case 2:
-				spin_ice_bolt_collider->set_model_info({ 15.f, 46.f });
+				spin_ice_bolt_collider->set_model_info({ 15.f, -4.f });
 				break;
 			case 3:
-				spin_ice_bolt_collider->set_model_info({ 7.f, 33.f });
+				spin_ice_bolt_collider->set_model_info({ 7.f, -17.f });
 				break;
 			case 4:
-				spin_ice_bolt_collider->set_model_info({ 1.f, 29.f });
+				spin_ice_bolt_collider->set_model_info({ 1.f, -21.f });
 				break;
 			case 5:
-				spin_ice_bolt_collider->set_model_info({ -5.f, 22.f });
+				spin_ice_bolt_collider->set_model_info({ -5.f, -28.f });
 				break;
 			case 6:
-				spin_ice_bolt_collider->set_model_info({ 7.f, 15.f });
+				spin_ice_bolt_collider->set_model_info({ 7.f, -35.f });
 				break;
 			case 7:
-				spin_ice_bolt_collider->set_model_info({ 20.f, 10.f });
+				spin_ice_bolt_collider->set_model_info({ 20.f, -40.f });
 				break;
 			case 8:
-				spin_ice_bolt_collider->set_model_info({ 50.f, -4.f });
+				spin_ice_bolt_collider->set_model_info({ 50.f, -54.f });
 				break;
 			case 9:
-				spin_ice_bolt_collider->set_model_info({ 82.f, 6.f });
+				spin_ice_bolt_collider->set_model_info({ 82.f, -44.f });
 				break;
 			case 10:
-				spin_ice_bolt_collider->set_model_info({ 96.f, 13.f });
+				spin_ice_bolt_collider->set_model_info({ 96.f, -37.f });
 				break;
 			case 11:
-				spin_ice_bolt_collider->set_model_info({ 103.f, 22.f });
+				spin_ice_bolt_collider->set_model_info({ 103.f, -28.f });
 				break;
 			case 12:
-				spin_ice_bolt_collider->set_model_info({ 102.f, 30.f });
+				spin_ice_bolt_collider->set_model_info({ 102.f, -20.f });
 				break;
 			case 13:
-				spin_ice_bolt_collider->set_model_info({ 93.f, 33.f });
+				spin_ice_bolt_collider->set_model_info({ 93.f, -17.f });
 				break;
 			case 14:
-				spin_ice_bolt_collider->set_model_info({ 85.f, 46.f });
+				spin_ice_bolt_collider->set_model_info({ 85.f, -4.f });
 				break;
 			case 15:
-				spin_ice_bolt_collider->set_model_info({ 71.f, 57.f });
+				spin_ice_bolt_collider->set_model_info({ 71.f, 7.f });
 				break;
 			}
 		}

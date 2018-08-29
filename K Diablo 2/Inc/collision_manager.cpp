@@ -139,7 +139,7 @@ bool CollisionManager::_CreateCollisionGroup(string const& _tag)
 
 	auto collision_group = vector<std::weak_ptr<Collider>>{};
 
-	collision_group.reserve(100);
+	collision_group.reserve(1000);
 
 	collision_group_map_.insert(make_pair(_tag, move(collision_group)));
 

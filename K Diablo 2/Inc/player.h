@@ -7,6 +7,7 @@ class Player final : public Character
 	friend class ObjectManager;
 public:
 	PLAYER state() const;
+	std::shared_ptr<Object> stage() const;
 
 	void set_state(PLAYER _state);
 	void set_stage(std::shared_ptr<Object> const& _stage);
@@ -35,10 +36,10 @@ protected:
 
 	PLAYER state_{};
 	bool run_flag_{};
-	std::shared_ptr<Object> stage_{};
+	std::weak_ptr<Object> stage_{};
 	std::stack<std::pair<int, int>> travel_path_stack_{};
 	bool astar_complete_flag_{ true };
-	bool test_{};
+	bool arrival_flag_{};
 	TYPE::Point next_target_point_{};
 	TYPE::Point final_target_point_{};
 	float astar_interval_{};

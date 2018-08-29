@@ -85,6 +85,12 @@
     <Filter Include="05. Object\07. Text">
       <UniqueIdentifier>{81cfec90-e2ae-48f3-9ac7-3b6dd550b173}</UniqueIdentifier>
     </Filter>
+    <Filter Include="05. Object\02. Character\01. Player">
+      <UniqueIdentifier>{ef05bc18-05ca-41b1-8459-9195b0ddd411}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="05. Object\02. Character\02. Monster">
+      <UniqueIdentifier>{afbda82c-111c-4f93-a44e-17e75a71d8a9}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -195,9 +201,6 @@
     <ClCompile Include="character.cpp">
       <Filter>05. Object\02. Character</Filter>
     </ClCompile>
-    <ClCompile Include="player.cpp">
-      <Filter>05. Object\02. Character</Filter>
-    </ClCompile>
     <ClCompile Include="tile.cpp">
       <Filter>05. Object\01. Stage\01. Tile</Filter>
     </ClCompile>
@@ -224,6 +227,18 @@
     </ClCompile>
     <ClCompile Include="nova.cpp">
       <Filter>05. Object\03. Missile</Filter>
+    </ClCompile>
+    <ClCompile Include="melee_monster.cpp">
+      <Filter>05. Object\02. Character\02. Monster</Filter>
+    </ClCompile>
+    <ClCompile Include="monster.cpp">
+      <Filter>05. Object\02. Character\02. Monster</Filter>
+    </ClCompile>
+    <ClCompile Include="ranged_monster.cpp">
+      <Filter>05. Object\02. Character\02. Monster</Filter>
+    </ClCompile>
+    <ClCompile Include="player.cpp">
+      <Filter>05. Object\02. Character\01. Player</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -341,9 +356,6 @@
     <ClInclude Include="character.h">
       <Filter>05. Object\02. Character</Filter>
     </ClInclude>
-    <ClInclude Include="player.h">
-      <Filter>05. Object\02. Character</Filter>
-    </ClInclude>
     <ClInclude Include="tile.h">
       <Filter>05. Object\01. Stage\01. Tile</Filter>
     </ClInclude>
@@ -370,6 +382,18 @@
     </ClInclude>
     <ClInclude Include="nova.h">
       <Filter>05. Object\03. Missile</Filter>
+    </ClInclude>
+    <ClInclude Include="ranged_monster.h">
+      <Filter>05. Object\02. Character\02. Monster</Filter>
+    </ClInclude>
+    <ClInclude Include="melee_monster.h">
+      <Filter>05. Object\02. Character\02. Monster</Filter>
+    </ClInclude>
+    <ClInclude Include="monster.h">
+      <Filter>05. Object\02. Character\02. Monster</Filter>
+    </ClInclude>
+    <ClInclude Include="player.h">
+      <Filter>05. Object\02. Character\01. Player</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -58,52 +58,52 @@ void SpinIceBolt::_Update(float _time)
 		switch (dir_idx)
 		{
 		case 0:
-			collider->set_model_info({ 52.f, 60.f });
+			collider->set_model_info({ 52.f, 10.f });
 			break;
 		case 1:
-			collider->set_model_info({ 31.f, 59.f });
+			collider->set_model_info({ 31.f, 9.f });
 			break;
 		case 2:
-			collider->set_model_info({ 15.f, 46.f });
+			collider->set_model_info({ 15.f, -4.f });
 			break;
 		case 3:
-			collider->set_model_info({ 7.f, 33.f });
+			collider->set_model_info({ 7.f, -17.f });
 			break;
 		case 4:
-			collider->set_model_info({ 1.f, 29.f });
+			collider->set_model_info({ 1.f, -21.f });
 			break;
 		case 5:
-			collider->set_model_info({ -5.f, 22.f });
+			collider->set_model_info({ -5.f, -28.f });
 			break;
 		case 6:
-			collider->set_model_info({ 7.f, 15.f });
+			collider->set_model_info({ 7.f, -35.f });
 			break;
 		case 7:
-			collider->set_model_info({ 20.f, 10.f });
+			collider->set_model_info({ 20.f, -40.f });
 			break;
 		case 8:
-			collider->set_model_info({ 50.f, -4.f });
+			collider->set_model_info({ 50.f, -54.f });
 			break;
 		case 9:
-			collider->set_model_info({ 82.f, 6.f });
+			collider->set_model_info({ 82.f, -44.f });
 			break;
 		case 10:
-			collider->set_model_info({ 96.f, 13.f });
+			collider->set_model_info({ 96.f, -37.f });
 			break;
 		case 11:
-			collider->set_model_info({ 103.f, 22.f });
+			collider->set_model_info({ 103.f, -28.f });
 			break;
 		case 12:
-			collider->set_model_info({ 102.f, 30.f });
+			collider->set_model_info({ 102.f, -20.f });
 			break;
 		case 13:
-			collider->set_model_info({ 93.f, 33.f });
+			collider->set_model_info({ 93.f, -17.f });
 			break;
 		case 14:
-			collider->set_model_info({ 85.f, 46.f });
+			collider->set_model_info({ 85.f, -4.f });
 			break;
 		case 15:
-			collider->set_model_info({ 71.f, 57.f });
+			collider->set_model_info({ 71.f, 7.f });
 			break;
 		}
 
@@ -123,52 +123,52 @@ void SpinIceBolt::_Update(float _time)
 		switch (dir_idx)
 		{
 		case 0:
-			collider->set_model_info({ 52.f, 60.f });
+			collider->set_model_info({ 52.f, 10.f });
 			break;
 		case 1:
-			collider->set_model_info({ 31.f, 59.f });
+			collider->set_model_info({ 31.f, 9.f });
 			break;
 		case 2:
-			collider->set_model_info({ 15.f, 46.f });
+			collider->set_model_info({ 15.f, -4.f });
 			break;
 		case 3:
-			collider->set_model_info({ 7.f, 33.f });
+			collider->set_model_info({ 7.f, -17.f });
 			break;
 		case 4:
-			collider->set_model_info({ 1.f, 29.f });
+			collider->set_model_info({ 1.f, -21.f });
 			break;
 		case 5:
-			collider->set_model_info({ -5.f, 22.f });
+			collider->set_model_info({ -5.f, -28.f });
 			break;
 		case 6:
-			collider->set_model_info({ 7.f, 15.f });
+			collider->set_model_info({ 7.f, -35.f });
 			break;
 		case 7:
-			collider->set_model_info({ 20.f, 10.f });
+			collider->set_model_info({ 20.f, -40.f });
 			break;
 		case 8:
-			collider->set_model_info({ 50.f, -4.f });
+			collider->set_model_info({ 50.f, -54.f });
 			break;
 		case 9:
-			collider->set_model_info({ 82.f, 6.f });
+			collider->set_model_info({ 82.f, -44.f });
 			break;
 		case 10:
-			collider->set_model_info({ 96.f, 13.f });
+			collider->set_model_info({ 96.f, -37.f });
 			break;
 		case 11:
-			collider->set_model_info({ 103.f, 22.f });
+			collider->set_model_info({ 103.f, -28.f });
 			break;
 		case 12:
-			collider->set_model_info({ 102.f, 30.f });
+			collider->set_model_info({ 102.f, -20.f });
 			break;
 		case 13:
-			collider->set_model_info({ 93.f, 33.f });
+			collider->set_model_info({ 93.f, -17.f });
 			break;
 		case 14:
-			collider->set_model_info({ 85.f, 46.f });
+			collider->set_model_info({ 85.f, -4.f });
 			break;
 		case 15:
-			collider->set_model_info({ 71.f, 57.f });
+			collider->set_model_info({ 71.f, 7.f });
 			break;
 		}
 
