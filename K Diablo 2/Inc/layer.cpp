@@ -6,6 +6,7 @@
 #include "button.h"
 #include "collision_manager.h"
 #include "collider.h"
+#include "animation.h"
 
 using namespace std;
 
@@ -61,6 +62,26 @@ bool Layer::_Initialize()
 
 void Layer::_Input(float _time)
 {
+	if (tag() == "Default")
+	{
+		object_list_.sort([](shared_ptr<Object> const _first, shared_ptr<Object> const _second) -> bool {
+			if (_first->animation() && _second->animation())
+			{
+				float first_value = _first->position().y + _first->animation()->GetFrameHeight();
+				float second_value = _second->position().y + _second->animation()->GetFrameHeight();
+
+				if (_first->tag() == "player")
+					first_value = _first->position().y + _first->animation()->GetFrameHeight() * 0.5f;
+				if (_second->tag() == "player")
+					second_value = _second->position().y + _second->animation()->GetFrameHeight() * 0.5f;
+
+				return first_value < second_value;
+			}
+			else
+				return _first->position().y < _second->position().y;
+		});
+	}
+
 	for (auto iter = object_list_.begin(); iter != object_list_.end();)
 	{
 		if (!(*iter)->activation())

@@ -118,7 +118,7 @@ bool MainScene::_Initialize()
 	player_collider->set_model_info({ 0.f, 0.f, 42.f, 73.f });
 	player_collider->set_pivot({ 0.5f, 0.5f });
 
-	auto ice_cast_new_1 = object_manager->CreateObject<Effect>("ice_cast_new_1", default_layer);
+	auto ice_cast_new_1 = object_manager->CreateObject<Effect>("ice_cast_new_1", ui_layer);
 	ice_cast_new_1->AddAnimationClip("ice_cast_new_1");
 	ice_cast_new_1->SetAnimationCallback("ice_cast_new_1", [_player = player.get()]() {
 		_player->set_state(PLAYER::IDLE);
@@ -126,7 +126,7 @@ bool MainScene::_Initialize()
 	ice_cast_new_1->set_color_key(RGB(1, 1, 1));
 	ice_cast_new_1->set_enablement(false);
 
-	auto ice_cast_new_2 = object_manager->CreateObject<Effect>("ice_cast_new_2", default_layer);
+	auto ice_cast_new_2 = object_manager->CreateObject<Effect>("ice_cast_new_2", ui_layer);
 	ice_cast_new_2->AddAnimationClip("ice_cast_new_2");
 	ice_cast_new_2->SetAnimationCallback("ice_cast_new_2", [_player = player.get()]() {
 		_player->set_state(PLAYER::IDLE);
@@ -134,7 +134,7 @@ bool MainScene::_Initialize()
 	ice_cast_new_2->set_color_key(RGB(1, 1, 1));
 	ice_cast_new_2->set_enablement(false);
 
-	auto ice_cast_new_3 = object_manager->CreateObject<Effect>("ice_cast_new_3", default_layer);
+	auto ice_cast_new_3 = object_manager->CreateObject<Effect>("ice_cast_new_3", ui_layer);
 	ice_cast_new_3->AddAnimationClip("ice_cast_new_3");
 	ice_cast_new_3->SetAnimationCallback("ice_cast_new_3", [_player = player.get()]() {
 		_player->set_state(PLAYER::IDLE);

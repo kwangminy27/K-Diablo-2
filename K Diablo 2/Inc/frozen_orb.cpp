@@ -62,7 +62,7 @@ void FrozenOrb::_Update(float _time)
 		int dir_idx = static_cast<int>((static_cast<int>(angle + 281.25) % 360) / 22.5f);
 
 		auto ice_bolt_1 = dynamic_pointer_cast<Missile>(object_manager->CreateCloneObject("ice_bolt", layer()));
-		ice_bolt_1->set_position(position_ - Point{ 20.f, 0.f });
+		ice_bolt_1->set_position(position_ - Point{ 20.f, -50.f });
 		ice_bolt_1->AddAnimationClip("ice_bolt_"s + to_string(dir_idx));
 		ice_bolt_1->set_dir({ cos(Math::ConvertToRadians(angle)), sin(Math::ConvertToRadians(angle)) });
 
@@ -125,7 +125,7 @@ void FrozenOrb::_Update(float _time)
 		dir_idx = static_cast<int>((static_cast<int>(angle + 281.25) % 360) / 22.5f);
 
 		auto ice_bolt_2 = dynamic_pointer_cast<Missile>(object_manager->CreateCloneObject("ice_bolt", layer()));
-		ice_bolt_2->set_position(position_ - Point{ 20.f, 0.f });
+		ice_bolt_2->set_position(position_ - Point{ 20.f, -50.f });
 		ice_bolt_2->AddAnimationClip("ice_bolt_"s + to_string(dir_idx));
 		ice_bolt_2->set_dir({ cos(Math::ConvertToRadians(angle)), sin(Math::ConvertToRadians(angle)) });
 
@@ -188,7 +188,7 @@ void FrozenOrb::_Update(float _time)
 		dir_idx = static_cast<int>((static_cast<int>(angle + 281.25) % 360) / 22.5f);
 
 		auto ice_bolt_3 = dynamic_pointer_cast<Missile>(object_manager->CreateCloneObject("ice_bolt", layer()));
-		ice_bolt_3->set_position(position_ - Point{ 20.f, 0.f });
+		ice_bolt_3->set_position(position_ - Point{ 20.f, -50.f });
 		ice_bolt_3->AddAnimationClip("ice_bolt_"s + to_string(dir_idx));
 		ice_bolt_3->set_dir({ cos(Math::ConvertToRadians(angle)), sin(Math::ConvertToRadians(angle)) });
 
@@ -251,7 +251,7 @@ void FrozenOrb::_Update(float _time)
 		dir_idx = static_cast<int>((static_cast<int>(angle + 281.25) % 360) / 22.5f);
 
 		auto ice_bolt_4 = dynamic_pointer_cast<Missile>(object_manager->CreateCloneObject("ice_bolt", layer()));
-		ice_bolt_4->set_position(position_ - Point{ 20.f, 0.f });
+		ice_bolt_4->set_position(position_ - Point{ 20.f, -50.f });
 		ice_bolt_4->AddAnimationClip("ice_bolt_"s + to_string(dir_idx));
 		ice_bolt_4->set_dir({ cos(Math::ConvertToRadians(angle)), sin(Math::ConvertToRadians(angle)) });
 
@@ -315,7 +315,7 @@ void FrozenOrb::_Update(float _time)
 		for (int i = 0; i < 16; ++i)
 		{
 			auto spin_ice_bolt = dynamic_pointer_cast<SpinIceBolt>(object_manager->CreateCloneObject("spin_ice_bolt", layer()));
-			spin_ice_bolt->set_position(position_ - Point{ 20.f, 0.f });
+			spin_ice_bolt->set_position(position_ - Point{ 20.f, -50.f });
 			spin_ice_bolt->AddAnimationClip("ice_bolt_"s + to_string(i));
 
 			float angle = static_cast<float>(static_cast<int>(i * 22.5f + 281.25) % 360);

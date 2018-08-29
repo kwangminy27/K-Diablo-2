@@ -51,6 +51,11 @@ COLORREF const& Object::color_key() const
 	return color_key_;
 }
 
+unique_ptr<Animation, function<void(Animation*)>> const & Object::animation() const
+{
+	return animation_;
+}
+
 list<shared_ptr<Collider>>& Object::collider_list()
 {
 	return collider_list_;

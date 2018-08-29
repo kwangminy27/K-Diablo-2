@@ -22,6 +22,7 @@ public:
 	std::shared_ptr<Layer> layer() const;
 	std::shared_ptr<Texture> texture() const;
 	COLORREF const& color_key() const;
+	std::unique_ptr<Animation, std::function<void(Animation*)>> const& animation() const;
 	std::list<std::shared_ptr<Collider>>& collider_list();
 
 	void set_position(TYPE::Point const& _position);

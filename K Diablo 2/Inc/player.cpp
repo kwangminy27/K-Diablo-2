@@ -13,6 +13,7 @@
 #include "frozen_orb.h"
 #include "nova.h"
 #include "point_collider.h"
+#include "text.h"
 #include "animation.h"
 #include "animation_clip.h"
 #include "audio_manager.h"
@@ -44,6 +45,35 @@ void Player::set_astar_interval(float _interval)
 void Player::set_skill(SKILL _skill)
 {
 	skill_ = _skill;
+
+	auto const& ui_layer = scene()->FindLayer("UI");
+
+	auto right_skill_tap = ui_layer->FindObject("right_skill_tap");
+	auto right_skill_tap_text = dynamic_pointer_cast<Text>(ui_layer->FindObject("right_skill_tap_text"));
+
+	switch (skill_)
+	{
+	case SKILL::ICE_BOLT:
+		right_skill_tap->set_texture("ice_bolt_icon");
+		right_skill_tap_text->set_string("ICE BOLT");
+		break;
+	case SKILL::ICE_BLAST:
+		right_skill_tap->set_texture("ice_blast_icon");
+		right_skill_tap_text->set_string("ICE_BLAST");
+		break;
+	case SKILL::FROST_NOVA:
+		right_skill_tap->set_texture("frost_nova_icon");
+		right_skill_tap_text->set_string("FROST_NOVA");
+		break;
+	case SKILL::FROZEN_ORB:
+		right_skill_tap->set_texture("frozen_orb_icon");
+		right_skill_tap_text->set_string("FROZEN_ORB");
+		break;
+	case SKILL::FROZEN_ARMOR:
+		right_skill_tap->set_texture("frozen_armor_icon");
+		right_skill_tap_text->set_string("FROZEN_ARMOR");
+		break;
+	}
 }
 
 void Player::MoveByAStar(float _time)
@@ -184,9 +214,6 @@ void Player::_Input(float _time)
 		case PLAYER::CASTING:
 			break;
 		}
-
-		// test
-		cout << input_manager->mouse_client_position().x << ", " << input_manager->mouse_client_position().y << endl;
 	}
 	else if (input_manager->KeyPressed("MouseLeft"))
 	{
@@ -283,15 +310,13 @@ void Player::_Input(float _time)
 
 		astar_complete_flag_ = true;
 
-		set_skill(SKILL::FROZEN_ORB);
-
 		switch (skill_)
 		{
 		case SKILL::ICE_BOLT:
 		{
 			AudioManager::GetSingleton()->FindSoundEffect("coldcast")->Play();
 
-			auto ice_cast_new_1 = layer()->FindObject("ice_cast_new_1");
+			auto ice_cast_new_1 = scene()->FindLayer("UI")->FindObject("ice_cast_new_1");
 			ice_cast_new_1->set_position(position_ - Point{ 50.f, 70.f });
 			ice_cast_new_1->set_enablement(true);
 
@@ -307,7 +332,7 @@ void Player::_Input(float _time)
 				AudioManager::GetSingleton()->FindSoundEffect("icebolt"s + to_string(i))->Play();
 
 				auto ice_bolt = dynamic_pointer_cast<Missile>(ObjectManager::GetSingleton()->CreateCloneObject("ice_bolt", layer()));
-				ice_bolt->set_position(position_ - Point{ 50.f, 50.f });
+				ice_bolt->set_position(position_ - Point{ 50.f, 0.f });
 				ice_bolt->AddAnimationClip(_ice_bolt_tag);
 				ice_bolt->set_dir({ cos(Math::ConvertToRadians(_angle)), sin(Math::ConvertToRadians(_angle)) });
 
@@ -371,7 +396,7 @@ void Player::_Input(float _time)
 		{
 			AudioManager::GetSingleton()->FindSoundEffect("coldcast")->Play();
 
-			auto ice_cast_new_3 = layer()->FindObject("ice_cast_new_3");
+			auto ice_cast_new_3 = scene()->FindLayer("UI")->FindObject("ice_cast_new_3");
 			ice_cast_new_3->set_position(position_ - Point{ 65.f, 70.f });
 			ice_cast_new_3->set_enablement(true);
 
@@ -394,7 +419,7 @@ void Player::_Input(float _time)
 		{
 			AudioManager::GetSingleton()->FindSoundEffect("coldcast")->Play();
 
-			auto ice_cast_new_3 = layer()->FindObject("ice_cast_new_3");
+			auto ice_cast_new_3 = scene()->FindLayer("UI")->FindObject("ice_cast_new_3");
 			ice_cast_new_3->set_position(position_ - Point{ 65.f, 70.f });
 			ice_cast_new_3->set_enablement(true);
 
@@ -413,7 +438,7 @@ void Player::_Input(float _time)
 		{
 			AudioManager::GetSingleton()->FindSoundEffect("coldcast")->Play();
 
-			auto ice_cast_new_2 = layer()->FindObject("ice_cast_new_2");
+			auto ice_cast_new_2 = scene()->FindLayer("UI")->FindObject("ice_cast_new_2");
 			ice_cast_new_2->set_position(position_ - Point{ 65.f, 70.f });
 			ice_cast_new_2->set_enablement(true);
 
@@ -432,7 +457,7 @@ void Player::_Input(float _time)
 		{
 			AudioManager::GetSingleton()->FindSoundEffect("coldcast")->Play();
 
-			auto ice_cast_new_1 = layer()->FindObject("ice_cast_new_1");
+			auto ice_cast_new_1 = scene()->FindLayer("UI")->FindObject("ice_cast_new_1");
 			ice_cast_new_1->set_position(position_ - Point{ 50.f, 70.f });
 			ice_cast_new_1->set_enablement(true);
 
@@ -448,7 +473,7 @@ void Player::_Input(float _time)
 				AudioManager::GetSingleton()->FindSoundEffect("icebolt"s + to_string(i))->Play();
 
 				auto ice_blast = dynamic_pointer_cast<Missile>(ObjectManager::GetSingleton()->CreateCloneObject("ice_blast", layer()));
-				ice_blast->set_position(position_ - Point{ 50.f, 50.f });
+				ice_blast->set_position(position_ - Point{ 50.f, 0.f });
 				ice_blast->AddAnimationClip(_ice_blast_tag);
 				ice_blast->set_color_key(RGB(1, 1, 1));
 				ice_blast->set_dir({ cos(Math::ConvertToRadians(_angle)), sin(Math::ConvertToRadians(_angle)) });
@@ -511,6 +536,18 @@ void Player::_Input(float _time)
 			break;
 		};
 	}
+
+	if (input_manager->KeyPush("Skill1"))
+		set_skill(SKILL::ICE_BOLT);
+
+	if (input_manager->KeyPush("Skill2"))
+		set_skill(SKILL::ICE_BLAST);
+
+	if (input_manager->KeyPush("Skill3"))
+		set_skill(SKILL::FROST_NOVA);
+
+	if (input_manager->KeyPush("Skill4"))
+		set_skill(SKILL::FROZEN_ORB);
 }
 
 void Player::_Update(float _time)

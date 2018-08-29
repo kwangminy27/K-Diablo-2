@@ -29,6 +29,11 @@ bool InputManager::Initialize()
 
 	_AddKey("ESC"s, VK_ESCAPE);
 
+	_AddKey("Skill1"s, '1');
+	_AddKey("Skill2"s, '2');
+	_AddKey("Skill3"s, '3');
+	_AddKey("Skill4"s, '4');
+
 	ShowCursor(false);
 
 	return true;
