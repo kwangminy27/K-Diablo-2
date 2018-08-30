@@ -36,7 +36,7 @@ void FrozenArmor::_Update(float _time)
 	Effect::_Update(_time);
 
 	auto player = scene()->FindLayer("Default")->FindObject("player");
-	set_position(player->position() - Point{37.f, 70.f});
+	set_position(player->position() - Point{37.f, 112.f});
 }
 
 void FrozenArmor::_LateUpdate(float _time)

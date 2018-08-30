@@ -54,3 +54,53 @@ unique_ptr<Object, function<void(Object*)>> Character::_Clone() const
 		delete dynamic_cast<Character*>(_p);
 	}};
 }
+
+float Character::hp() const
+{
+	return hp_;
+}
+
+float Character::max_hp() const
+{
+	return max_hp_;
+}
+
+float Character::mp() const
+{
+	return mp_;
+}
+
+float Character::max_mp() const
+{
+	return max_mp_;
+}
+
+void Character::set_hp(float _hp)
+{
+	hp_ = _hp;
+}
+
+void Character::set_max_hp(float _hp)
+{
+	max_hp_ = _hp;
+}
+
+void Character::set_mp(float _mp)
+{
+	mp_ = _mp;
+}
+
+void Character::set_max_mp(float _mp)
+{
+	max_mp_ = _mp;
+}
+
+void Character::AddHp(float _amount)
+{
+	hp_ += _amount;
+}
+
+void Character::AddMp(float _amount)
+{
+	mp_ += _amount;
+}

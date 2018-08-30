@@ -33,6 +33,7 @@ bool InputManager::Initialize()
 	_AddKey("Skill2"s, '2');
 	_AddKey("Skill3"s, '3');
 	_AddKey("Skill4"s, '4');
+	_AddKey("Skill5"s, '5');
 
 	ShowCursor(false);
 

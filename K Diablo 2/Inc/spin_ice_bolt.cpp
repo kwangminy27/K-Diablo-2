@@ -2,10 +2,14 @@
 #include "spin_ice_bolt.h"
 
 #include "math.h"
-//#include "collider.h"
+#include "monster.h"
 #include "point_collider.h"
+#include "object_manager.h"
+#include "audio_manager.h"
+#include "effect.h"
 
 using namespace std;
+using namespace TYPE;
 
 SpinIceBolt::SpinIceBolt(SpinIceBolt const& _other) : Missile(_other)
 {
@@ -54,6 +58,50 @@ void SpinIceBolt::_Update(float _time)
 
 		int dir_idx = static_cast<int>((static_cast<int>(angle + 281.25) % 360) / 22.5f);
 		auto collider = dynamic_pointer_cast<PointCollider>(collider_list_.front());
+		collider->SetCallBack([](shared_ptr<Collider> const& _src, shared_ptr<Collider> const& _dest, float _time) {
+			random_device r;
+			default_random_engine gen(r());
+			uniform_int_distribution uniform_dist(1, 3);
+			int number = uniform_dist(gen);
+
+			if (_src->tag() == "MonsterBody")
+			{
+				auto const& src_object = dynamic_pointer_cast<Monster>(_src->object());
+				auto const& dest_object = _dest->object();
+
+				AudioManager::GetSingleton()->FindSoundEffect("blizzboom"s + to_string(number))->Play();
+				src_object->AddHp(-10.f);
+				if (src_object->hp() > 0.f)
+					src_object->set_state(MONSTER_STATE::GET_HIT);
+				else
+					src_object->set_state(MONSTER_STATE::DEATH);
+				dest_object->set_activation(false);
+
+				auto ice_hit_big = dynamic_pointer_cast<Effect>(ObjectManager::GetSingleton()->CreateObject<Effect>("ice_hit_big", dest_object->layer()));
+				ice_hit_big->set_position(dest_object->position() - Point{ 0.f, 100.f });
+				ice_hit_big->AddAnimationClip("ice_hit_big");
+				ice_hit_big->set_color_key(RGB(0, 0, 0));
+			}
+			else if (_dest->tag() == "MonsterBody")
+			{
+				auto const& src_object = _src->object();
+				auto const& dest_object = dynamic_pointer_cast<Monster>(_dest->object());
+
+				AudioManager::GetSingleton()->FindSoundEffect("blizzboom"s + to_string(number))->Play();
+				dest_object->AddHp(-10.f);
+				if (dest_object->hp() > 0.f)
+					dest_object->set_state(MONSTER_STATE::GET_HIT);
+				else
+					dest_object->set_state(MONSTER_STATE::DEATH);
+				src_object->set_activation(false);
+
+				auto ice_hit_big = dynamic_pointer_cast<Effect>(ObjectManager::GetSingleton()->CreateObject<Effect>("ice_hit_big", src_object->layer()));
+				ice_hit_big->set_position(src_object->position() - Point{ 0.f, 100.f });
+				ice_hit_big->AddAnimationClip("ice_hit_big");
+				ice_hit_big->set_color_key(RGB(0, 0, 0));
+			}
+
+		}, COLLISION_CALLBACK::ENTER);
 
 		switch (dir_idx)
 		{
@@ -119,6 +167,50 @@ void SpinIceBolt::_Update(float _time)
 
 		int dir_idx = static_cast<int>((static_cast<int>(angle + 281.25) % 360) / 22.5f);
 		auto collider = dynamic_pointer_cast<PointCollider>(collider_list_.front());
+		collider->SetCallBack([](shared_ptr<Collider> const& _src, shared_ptr<Collider> const& _dest, float _time) {
+			random_device r;
+			default_random_engine gen(r());
+			uniform_int_distribution uniform_dist(1, 3);
+			int number = uniform_dist(gen);
+
+			if (_src->tag() == "MonsterBody")
+			{
+				auto const& src_object = dynamic_pointer_cast<Monster>(_src->object());
+				auto const& dest_object = _dest->object();
+
+				AudioManager::GetSingleton()->FindSoundEffect("blizzboom"s + to_string(number))->Play();
+				src_object->AddHp(-10.f);
+				if (src_object->hp() > 0.f)
+					src_object->set_state(MONSTER_STATE::GET_HIT);
+				else
+					src_object->set_state(MONSTER_STATE::DEATH);
+				dest_object->set_activation(false);
+
+				auto ice_hit_big = dynamic_pointer_cast<Effect>(ObjectManager::GetSingleton()->CreateObject<Effect>("ice_hit_big", dest_object->layer()));
+				ice_hit_big->set_position(dest_object->position() - Point{ 0.f, 100.f });
+				ice_hit_big->AddAnimationClip("ice_hit_big");
+				ice_hit_big->set_color_key(RGB(0, 0, 0));
+			}
+			else if (_dest->tag() == "MonsterBody")
+			{
+				auto const& src_object = _src->object();
+				auto const& dest_object = dynamic_pointer_cast<Monster>(_dest->object());
+
+				AudioManager::GetSingleton()->FindSoundEffect("blizzboom"s + to_string(number))->Play();
+				dest_object->AddHp(-10.f);
+				if (dest_object->hp() > 0.f)
+					dest_object->set_state(MONSTER_STATE::GET_HIT);
+				else
+					dest_object->set_state(MONSTER_STATE::DEATH);
+				src_object->set_activation(false);
+
+				auto ice_hit_big = dynamic_pointer_cast<Effect>(ObjectManager::GetSingleton()->CreateObject<Effect>("ice_hit_big", src_object->layer()));
+				ice_hit_big->set_position(src_object->position() - Point{ 0.f, 100.f });
+				ice_hit_big->AddAnimationClip("ice_hit_big");
+				ice_hit_big->set_color_key(RGB(0, 0, 0));
+			}
+
+		}, COLLISION_CALLBACK::ENTER);
 
 		switch (dir_idx)
 		{

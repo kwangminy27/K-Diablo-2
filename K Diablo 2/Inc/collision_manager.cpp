@@ -51,6 +51,9 @@ void CollisionManager::Collision(float _time)
 				if (src_object == dest_object)
 					continue;
 
+				if ((src_object->type() == OBJECT::MONSTER) && (dest_object->type() == OBJECT::MONSTER))
+					continue;
+
 				if (src->_Collision(dest))
 				{
 					dest->set_intersect_point(src->intersect_point());

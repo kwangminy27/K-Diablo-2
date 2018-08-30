@@ -3,6 +3,10 @@
 
 #include "math.h"
 #include "object_manager.h"
+#include "point_collider.h"
+#include "monster.h"
+#include "audio_manager.h"
+#include "effect.h"
 
 using namespace std;
 using namespace TYPE;
@@ -37,9 +41,45 @@ void Nova::_Update(float _time)
 		frost_nova_piece->AddAnimationClip("frost_nova_"s + to_string(i / 2));
 		frost_nova_piece->set_move_range(300.f);
 		frost_nova_piece->set_move_speed(600.f);
+		frost_nova_piece->set_isometric_move_flag(true);
 
 		float angle = static_cast<float>(static_cast<int>(i * 11.25f + 281.25) % 360);
 		frost_nova_piece->set_dir({ cos(Math::ConvertToRadians(angle)), sin(Math::ConvertToRadians(angle)) });
+
+		auto frost_nova_piece_collider = dynamic_pointer_cast<PointCollider>(frost_nova_piece->AddCollider<PointCollider>("frost_nova_piece_collider"));
+		frost_nova_piece_collider->set_model_info({ 60.f, 30.f });
+		frost_nova_piece_collider->SetCallBack([](shared_ptr<Collider> const& _src, shared_ptr<Collider> const& _dest, float _time) {
+			random_device r;
+			default_random_engine gen(r());
+			uniform_int_distribution uniform_dist(1, 3);
+			int number = uniform_dist(gen);
+
+			if (_src->tag() == "MonsterBody")
+			{
+				auto const& src_object = dynamic_pointer_cast<Monster>(_src->object());
+				auto const& dest_object = _dest->object();
+
+				src_object->AddHp(-50.f);
+				if (src_object->hp() > 0.f)
+					src_object->set_state(MONSTER_STATE::GET_HIT);
+				else
+					src_object->set_state(MONSTER_STATE::DEATH);
+				dest_object->set_activation(false);
+			}
+			else if (_dest->tag() == "MonsterBody")
+			{
+				auto const& src_object = _src->object();
+				auto const& dest_object = dynamic_pointer_cast<Monster>(_dest->object());
+
+				dest_object->AddHp(-50.f);
+				if (dest_object->hp() > 0.f)
+					dest_object->set_state(MONSTER_STATE::GET_HIT);
+				else
+					dest_object->set_state(MONSTER_STATE::DEATH);
+				src_object->set_activation(false);
+			}
+
+		}, COLLISION_CALLBACK::ENTER);
 	}
 
 	set_activation(false);

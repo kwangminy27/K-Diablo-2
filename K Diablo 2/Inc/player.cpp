@@ -18,6 +18,7 @@
 #include "animation_clip.h"
 #include "audio_manager.h"
 #include "ai_manager.h"
+#include "monster.h"
 
 using namespace std;
 using namespace TYPE;
@@ -169,7 +170,7 @@ void Player::_Input(float _time)
 	auto const& caching_stage = stage();
 
 	auto mouse_position = InputManager::GetSingleton()->mouse_world_position();
-	float angle = Math::GetAngle(position_, mouse_position);
+	float angle = Math::GetAngle(position_ - Point{ 0.f, size_.y }, mouse_position);
 
 	int dir_idx = static_cast<int>((static_cast<int>(angle + 281.25f) % 360) / 22.5f); // 0 ~ 15
 
@@ -321,6 +322,8 @@ void Player::_Input(float _time)
 		{
 		case SKILL::ICE_BOLT:
 		{
+			AddMp(-2.f);
+
 			AudioManager::GetSingleton()->FindSoundEffect("coldcast")->Play();
 
 			auto ice_cast_new_1 = scene()->FindLayer("UI")->FindObject("ice_cast_new_1");
@@ -344,6 +347,51 @@ void Player::_Input(float _time)
 				ice_bolt->set_dir({ cos(Math::ConvertToRadians(_angle)), sin(Math::ConvertToRadians(_angle)) });
 
 				auto ice_bolt_collider = dynamic_pointer_cast<PointCollider>(ice_bolt->AddCollider<PointCollider>("ice_bolt_collider"));
+				ice_bolt_collider->SetCallBack([](shared_ptr<Collider> const& _src, shared_ptr<Collider> const& _dest, float _time) {
+					// 함수화 하자
+					random_device r;
+					default_random_engine gen(r());
+					uniform_int_distribution uniform_dist(1, 3);
+					int number = uniform_dist(gen);
+
+					if (_src->tag() == "MonsterBody")
+					{
+						auto const& src_object = dynamic_pointer_cast<Monster>(_src->object());
+						auto const& dest_object = _dest->object();
+
+						AudioManager::GetSingleton()->FindSoundEffect("blizzboom"s + to_string(number))->Play();
+						src_object->AddHp(-10.f);
+						if(src_object->hp() > 0.f)
+							src_object->set_state(MONSTER_STATE::GET_HIT);
+						else
+							src_object->set_state(MONSTER_STATE::DEATH);
+						dest_object->set_activation(false);
+
+						auto ice_hit_big = dynamic_pointer_cast<Effect>(ObjectManager::GetSingleton()->CreateObject<Effect>("ice_hit_big", dest_object->layer()));
+						ice_hit_big->set_position(src_object->position() - src_object->size() * src_object->pivot());
+						ice_hit_big->AddAnimationClip("ice_hit_big");
+						ice_hit_big->set_color_key(RGB(0, 0, 0));
+					}
+					else if (_dest->tag() == "MonsterBody")
+					{
+						auto const& src_object = _src->object();
+						auto const& dest_object = dynamic_pointer_cast<Monster>(_dest->object());
+
+						AudioManager::GetSingleton()->FindSoundEffect("blizzboom"s + to_string(number))->Play();
+						dest_object->AddHp(-10.f);
+						if (dest_object->hp() > 0.f)
+							dest_object->set_state(MONSTER_STATE::GET_HIT);
+						else
+							dest_object->set_state(MONSTER_STATE::DEATH);
+						src_object->set_activation(false);
+
+						auto ice_hit_big = dynamic_pointer_cast<Effect>(ObjectManager::GetSingleton()->CreateObject<Effect>("ice_hit_big", src_object->layer()));
+						ice_hit_big->set_position(dest_object->position() - dest_object->size() * dest_object->pivot());
+						ice_hit_big->AddAnimationClip("ice_hit_big");
+						ice_hit_big->set_color_key(RGB(0, 0, 0));
+					}
+
+				}, COLLISION_CALLBACK::ENTER);
 
 				switch (_dir_idx)
 				{
@@ -401,6 +449,8 @@ void Player::_Input(float _time)
 			break;
 		case SKILL::FROZEN_ORB:
 		{
+			AddMp(-10.f);
+
 			AudioManager::GetSingleton()->FindSoundEffect("coldcast")->Play();
 
 			auto ice_cast_new_3 = scene()->FindLayer("UI")->FindObject("ice_cast_new_3");
@@ -427,6 +477,8 @@ void Player::_Input(float _time)
 			break;
 		case SKILL::FROZEN_ARMOR:
 		{
+			AddMp(-1.f);
+
 			AudioManager::GetSingleton()->FindSoundEffect("coldcast")->Play();
 
 			auto ice_cast_new_3 = scene()->FindLayer("UI")->FindObject("ice_cast_new_3");
@@ -446,6 +498,8 @@ void Player::_Input(float _time)
 			break;
 		case SKILL::FROST_NOVA:
 		{
+			AddMp(-5.f);
+
 			AudioManager::GetSingleton()->FindSoundEffect("coldcast")->Play();
 
 			auto ice_cast_new_2 = scene()->FindLayer("UI")->FindObject("ice_cast_new_2");
@@ -465,6 +519,8 @@ void Player::_Input(float _time)
 			break;
 		case SKILL::ICE_BLAST:
 		{
+			AddMp(-3.f);
+
 			AudioManager::GetSingleton()->FindSoundEffect("coldcast")->Play();
 
 			auto ice_cast_new_1 = scene()->FindLayer("UI")->FindObject("ice_cast_new_1");
@@ -489,6 +545,50 @@ void Player::_Input(float _time)
 				ice_blast->set_dir({ cos(Math::ConvertToRadians(_angle)), sin(Math::ConvertToRadians(_angle)) });
 
 				auto ice_blast_collider = dynamic_pointer_cast<PointCollider>(ice_blast->AddCollider<PointCollider>("ice_blast_collider"));
+				ice_blast_collider->SetCallBack([](shared_ptr<Collider> const& _src, shared_ptr<Collider> const& _dest, float _time) {
+					random_device r;
+					default_random_engine gen(r());
+					uniform_int_distribution uniform_dist(1, 3);
+					int number = uniform_dist(gen);
+
+					if (_src->tag() == "MonsterBody")
+					{
+						auto const& src_object = dynamic_pointer_cast<Monster>(_src->object());
+						auto const& dest_object = _dest->object();
+
+						AudioManager::GetSingleton()->FindSoundEffect("blizzboom"s + to_string(number))->Play();
+						src_object->AddHp(-20.f);
+						if (src_object->hp() > 0.f)
+							src_object->set_state(MONSTER_STATE::GET_HIT);
+						else
+							src_object->set_state(MONSTER_STATE::DEATH);
+						dest_object->set_activation(false);
+
+						auto ice_hit_big = dynamic_pointer_cast<Effect>(ObjectManager::GetSingleton()->CreateObject<Effect>("ice_hit_big", dest_object->layer()));
+						ice_hit_big->set_position(src_object->position() - src_object->size() * src_object->pivot());
+						ice_hit_big->AddAnimationClip("ice_hit_big");
+						ice_hit_big->set_color_key(RGB(0, 0, 0));
+					}
+					else if (_dest->tag() == "MonsterBody")
+					{
+						auto const& src_object = _src->object();
+						auto const& dest_object = dynamic_pointer_cast<Monster>(_dest->object());
+
+						AudioManager::GetSingleton()->FindSoundEffect("blizzboom"s + to_string(number))->Play();
+						dest_object->AddHp(-20.f);
+						if (dest_object->hp() > 0.f)
+							dest_object->set_state(MONSTER_STATE::GET_HIT);
+						else
+							dest_object->set_state(MONSTER_STATE::DEATH);
+						src_object->set_activation(false);
+
+						auto ice_hit_big = dynamic_pointer_cast<Effect>(ObjectManager::GetSingleton()->CreateObject<Effect>("ice_hit_big", src_object->layer()));
+						ice_hit_big->set_position(dest_object->position() - dest_object->size() * dest_object->pivot());
+						ice_hit_big->AddAnimationClip("ice_hit_big");
+						ice_hit_big->set_color_key(RGB(0, 0, 0));
+					}
+
+				}, COLLISION_CALLBACK::ENTER);
 
 				switch (_dir_idx)
 				{
@@ -558,6 +658,9 @@ void Player::_Input(float _time)
 
 	if (input_manager->KeyPush("Skill4"))
 		set_skill(SKILL::FROZEN_ORB);
+
+	if (input_manager->KeyPush("Skill5"))
+		set_skill(SKILL::FROZEN_ARMOR);
 }
 
 void Player::_Update(float _time)
@@ -565,6 +668,12 @@ void Player::_Update(float _time)
 	Character::_Update(_time);
 
 	MoveByAStar(_time);
+
+	auto const& ui_layer = scene()->FindLayer("UI");
+	auto const& health_text = dynamic_pointer_cast<Text>(ui_layer->FindObject("health_text"));
+	health_text->set_string("LIFE: "s + to_string(static_cast<int>(hp_)) + " / "s + to_string(static_cast<int>(max_hp_)));
+	auto const& mana_text = dynamic_pointer_cast<Text>(ui_layer->FindObject("mana_text"));
+	mana_text->set_string("MANA: "s + to_string(static_cast<int>(mp_)) + " / "s + to_string(static_cast<int>(max_mp_)));
 }
 
 void Player::_LateUpdate(float _time)

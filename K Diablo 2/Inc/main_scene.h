@@ -26,4 +26,6 @@ private:
 
 	void _ToggleCharacterWindow();
 	void _ToggleInventoryWindow();
+
+	void _CreateHellBovine(TYPE::Point const& _position);
 };

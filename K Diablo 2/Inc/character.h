@@ -5,6 +5,20 @@
 class Character : public Object
 {
 	friend class ObjectManager;
+public:
+	float hp() const;
+	float max_hp() const;
+	float mp() const;
+	float max_mp() const;
+
+	void set_hp(float _hp);
+	void set_max_hp(float _hp);
+	void set_mp(float _mp);
+	void set_max_mp(float _mp);
+
+	void AddHp(float _amount);
+	void AddMp(float _amount);
+
 protected:
 	Character() = default;
 	Character(Character const& _other);
@@ -22,4 +36,9 @@ protected:
 	virtual void _Render(HDC _device_context, float _time) override;
 
 	virtual std::unique_ptr<Object, std::function<void(Object*)>> _Clone() const override;
+
+	float hp_{};
+	float max_hp_{};
+	float mp_{};
+	float max_mp_{};
 };

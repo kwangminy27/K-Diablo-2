@@ -49,12 +49,8 @@ float Monster::astar_interval() const
 
 void Monster::set_state(MONSTER_STATE _state)
 {
+	prev_state_ = state_;
 	state_ = _state;
-}
-
-void Monster::set_prev_state(MONSTER_STATE _state)
-{
-	prev_state_ = _state;
 }
 
 void Monster::set_territory_radius(float _radius)
@@ -128,8 +124,10 @@ void Monster::MoveByAStar(float _time)
 
 	if (astar_complete_flag_)
 	{
-		prev_state_ = state_;
-		state_ = MONSTER_STATE::ATTACK1;
+		if (state_ != MONSTER_STATE::DEATH && state_ != MONSTER_STATE::DEAD)
+			set_state(MONSTER_STATE::ATTACK1);
+
+		return;
 	}
 
 	if (travel_path_stack_.empty())
@@ -186,7 +184,7 @@ void Monster::_Release()
 
 bool Monster::_Initialize()
 {
-	Object::type_ = OBJECT::CHARACTER;
+	Object::type_ = OBJECT::MONSTER;
 	state_ = MONSTER_STATE::NEUTRAL;
 
 	astar_interval_ = 0.5f;
@@ -202,6 +200,77 @@ void Monster::_Input(float _time)
 void Monster::_Update(float _time)
 {
 	Character::_Update(_time);
+
+	float angle{};
+
+	if (target_.expired())
+	{
+		neutral_time_ += _time;
+
+		if (neutral_time_ >= 5.f)
+		{
+			neutral_time_ -= 5.f;
+
+			random_device r;
+			default_random_engine gen(r());
+			uniform_real_distribution uniform_dist(0.f, 360.f);
+			angle = uniform_dist(gen);
+			dir_idx_ = static_cast<int>((static_cast<int>(angle + 270.f) % 360) / 45.f);
+		}
+	}
+	else
+		MoveByAStar(_time);
+
+	switch (state_)
+	{
+	case MONSTER_STATE::NEUTRAL:
+		if (state_ == prev_state_)
+			ChangeAnimationClipWithDirection(tag() + "_neutral_"s + to_string(dir_idx_));
+		else
+			ChangeAnimationClip(tag() + "_neutral_"s + to_string(dir_idx_));
+
+		break;
+	case MONSTER_STATE::WALK:
+		if (state_ == prev_state_)
+			ChangeAnimationClipWithDirection(tag() + "_walk_"s + to_string(dir_idx_));
+		else
+			ChangeAnimationClip(tag() + "_walk_"s + to_string(dir_idx_));
+
+		break;
+	case MONSTER_STATE::ATTACK1:
+		if (state_ == prev_state_)
+			ChangeAnimationClipWithDirection(tag() + "_attack1_"s + to_string(dir_idx_));
+		else
+			ChangeAnimationClip(tag() + "_attack1_"s + to_string(dir_idx_));
+
+		break;
+	case MONSTER_STATE::ATTACK2:
+		if (state_ == prev_state_)
+			ChangeAnimationClipWithDirection(tag() + "_attack2_"s + to_string(dir_idx_));
+		else
+			ChangeAnimationClip(tag() + "_attack2_"s + to_string(dir_idx_));
+
+		break;
+	case MONSTER_STATE::GET_HIT:
+		if (state_ == prev_state_)
+			ChangeAnimationClipWithDirection(tag() + "_get_hit_"s + to_string(dir_idx_));
+		else
+			ChangeAnimationClip(tag() + "_get_hit_"s + to_string(dir_idx_));
+
+		break;
+	case MONSTER_STATE::DEATH:
+		if(!death_flag_)
+		{
+			death_flag_ = true;
+
+			ChangeAnimationClip(tag() + "_death_"s + to_string(dir_idx_));
+			SetDefaultClip(tag() + "_dead_"s + to_string(dir_idx_));
+		}
+
+		break;
+	case MONSTER_STATE::DEAD:
+		break;
+	}
 }
 
 void Monster::_LateUpdate(float _time)

@@ -6,6 +6,8 @@
 #include "effect.h"
 #include "spin_ice_bolt.h"
 #include "point_collider.h"
+#include "monster.h"
+#include "audio_manager.h"
 
 using namespace std;
 using namespace TYPE;
@@ -67,6 +69,38 @@ void FrozenOrb::_Update(float _time)
 		ice_bolt_1->set_dir({ cos(Math::ConvertToRadians(angle)), sin(Math::ConvertToRadians(angle)) });
 
 		auto ice_bolt_1_collider = dynamic_pointer_cast<PointCollider>(ice_bolt_1->AddCollider<PointCollider>("ice_bolt_1_collider"));
+		ice_bolt_1_collider->SetCallBack([](shared_ptr<Collider> const& _src, shared_ptr<Collider> const& _dest, float _time) {
+			random_device r;
+			default_random_engine gen(r());
+			uniform_int_distribution uniform_dist(1, 3);
+			int number = uniform_dist(gen);
+
+			if (_src->tag() == "MonsterBody")
+			{
+				auto const& src_object = dynamic_pointer_cast<Monster>(_src->object());
+				auto const& dest_object = _dest->object();
+
+				AudioManager::GetSingleton()->FindSoundEffect("blizzboom"s + to_string(number))->Play();
+				src_object->AddHp(-30.f);
+				if (src_object->hp() > 0.f)
+					src_object->set_state(MONSTER_STATE::GET_HIT);
+				else
+					src_object->set_state(MONSTER_STATE::DEATH);
+			}
+			else if (_dest->tag() == "MonsterBody")
+			{
+				auto const& src_object = _src->object();
+				auto const& dest_object = dynamic_pointer_cast<Monster>(_dest->object());
+
+				AudioManager::GetSingleton()->FindSoundEffect("blizzboom"s + to_string(number))->Play();
+				dest_object->AddHp(-30.f);
+				if (dest_object->hp() > 0.f)
+					dest_object->set_state(MONSTER_STATE::GET_HIT);
+				else
+					dest_object->set_state(MONSTER_STATE::DEATH);
+			}
+
+		}, COLLISION_CALLBACK::ENTER);
 
 		switch (dir_idx)
 		{
@@ -130,6 +164,38 @@ void FrozenOrb::_Update(float _time)
 		ice_bolt_2->set_dir({ cos(Math::ConvertToRadians(angle)), sin(Math::ConvertToRadians(angle)) });
 
 		auto ice_bolt_2_collider = dynamic_pointer_cast<PointCollider>(ice_bolt_2->AddCollider<PointCollider>("ice_bolt_2_collider"));
+		ice_bolt_2_collider->SetCallBack([](shared_ptr<Collider> const& _src, shared_ptr<Collider> const& _dest, float _time) {
+			random_device r;
+			default_random_engine gen(r());
+			uniform_int_distribution uniform_dist(1, 3);
+			int number = uniform_dist(gen);
+
+			if (_src->tag() == "MonsterBody")
+			{
+				auto const& src_object = dynamic_pointer_cast<Monster>(_src->object());
+				auto const& dest_object = _dest->object();
+
+				AudioManager::GetSingleton()->FindSoundEffect("blizzboom"s + to_string(number))->Play();
+				src_object->AddHp(-30.f);
+				if (src_object->hp() > 0.f)
+					src_object->set_state(MONSTER_STATE::GET_HIT);
+				else
+					src_object->set_state(MONSTER_STATE::DEATH);
+			}
+			else if (_dest->tag() == "MonsterBody")
+			{
+				auto const& src_object = _src->object();
+				auto const& dest_object = dynamic_pointer_cast<Monster>(_dest->object());
+
+				AudioManager::GetSingleton()->FindSoundEffect("blizzboom"s + to_string(number))->Play();
+				dest_object->AddHp(-30.f);
+				if (dest_object->hp() > 0.f)
+					dest_object->set_state(MONSTER_STATE::GET_HIT);
+				else
+					dest_object->set_state(MONSTER_STATE::DEATH);
+			}
+
+		}, COLLISION_CALLBACK::ENTER);
 
 		switch (dir_idx)
 		{
@@ -193,6 +259,38 @@ void FrozenOrb::_Update(float _time)
 		ice_bolt_3->set_dir({ cos(Math::ConvertToRadians(angle)), sin(Math::ConvertToRadians(angle)) });
 
 		auto ice_bolt_3_collider = dynamic_pointer_cast<PointCollider>(ice_bolt_3->AddCollider<PointCollider>("ice_bolt_3_collider"));
+		ice_bolt_3_collider->SetCallBack([](shared_ptr<Collider> const& _src, shared_ptr<Collider> const& _dest, float _time) {
+			random_device r;
+			default_random_engine gen(r());
+			uniform_int_distribution uniform_dist(1, 3);
+			int number = uniform_dist(gen);
+
+			if (_src->tag() == "MonsterBody")
+			{
+				auto const& src_object = dynamic_pointer_cast<Monster>(_src->object());
+				auto const& dest_object = _dest->object();
+
+				AudioManager::GetSingleton()->FindSoundEffect("blizzboom"s + to_string(number))->Play();
+				src_object->AddHp(-30.f);
+				if (src_object->hp() > 0.f)
+					src_object->set_state(MONSTER_STATE::GET_HIT);
+				else
+					src_object->set_state(MONSTER_STATE::DEATH);
+			}
+			else if (_dest->tag() == "MonsterBody")
+			{
+				auto const& src_object = _src->object();
+				auto const& dest_object = dynamic_pointer_cast<Monster>(_dest->object());
+
+				AudioManager::GetSingleton()->FindSoundEffect("blizzboom"s + to_string(number))->Play();
+				dest_object->AddHp(-30.f);
+				if (dest_object->hp() > 0.f)
+					dest_object->set_state(MONSTER_STATE::GET_HIT);
+				else
+					dest_object->set_state(MONSTER_STATE::DEATH);
+			}
+
+		}, COLLISION_CALLBACK::ENTER);
 
 		switch (dir_idx)
 		{
@@ -256,6 +354,38 @@ void FrozenOrb::_Update(float _time)
 		ice_bolt_4->set_dir({ cos(Math::ConvertToRadians(angle)), sin(Math::ConvertToRadians(angle)) });
 
 		auto ice_bolt_4_collider = dynamic_pointer_cast<PointCollider>(ice_bolt_4->AddCollider<PointCollider>("ice_bolt_4_collider"));
+		ice_bolt_4_collider->SetCallBack([](shared_ptr<Collider> const& _src, shared_ptr<Collider> const& _dest, float _time) {
+			random_device r;
+			default_random_engine gen(r());
+			uniform_int_distribution uniform_dist(1, 3);
+			int number = uniform_dist(gen);
+
+			if (_src->tag() == "MonsterBody")
+			{
+				auto const& src_object = dynamic_pointer_cast<Monster>(_src->object());
+				auto const& dest_object = _dest->object();
+
+				AudioManager::GetSingleton()->FindSoundEffect("blizzboom"s + to_string(number))->Play();
+				src_object->AddHp(-30.f);
+				if (src_object->hp() > 0.f)
+					src_object->set_state(MONSTER_STATE::GET_HIT);
+				else
+					src_object->set_state(MONSTER_STATE::DEATH);
+			}
+			else if (_dest->tag() == "MonsterBody")
+			{
+				auto const& src_object = _src->object();
+				auto const& dest_object = dynamic_pointer_cast<Monster>(_dest->object());
+
+				AudioManager::GetSingleton()->FindSoundEffect("blizzboom"s + to_string(number))->Play();
+				dest_object->AddHp(-30.f);
+				if (dest_object->hp() > 0.f)
+					dest_object->set_state(MONSTER_STATE::GET_HIT);
+				else
+					dest_object->set_state(MONSTER_STATE::DEATH);
+			}
+
+		}, COLLISION_CALLBACK::ENTER);
 
 		switch (dir_idx)
 		{
@@ -322,6 +452,38 @@ void FrozenOrb::_Update(float _time)
 			spin_ice_bolt->set_dir({ cos(Math::ConvertToRadians(angle)), sin(Math::ConvertToRadians(angle)) });
 
 			auto spin_ice_bolt_collider = dynamic_pointer_cast<PointCollider>(spin_ice_bolt->AddCollider<PointCollider>("spin_ice_bolt_collider"));
+			spin_ice_bolt_collider->SetCallBack([](shared_ptr<Collider> const& _src, shared_ptr<Collider> const& _dest, float _time) {
+				random_device r;
+				default_random_engine gen(r());
+				uniform_int_distribution uniform_dist(1, 3);
+				int number = uniform_dist(gen);
+
+				if (_src->tag() == "MonsterBody")
+				{
+					auto const& src_object = dynamic_pointer_cast<Monster>(_src->object());
+					auto const& dest_object = _dest->object();
+
+					AudioManager::GetSingleton()->FindSoundEffect("blizzboom"s + to_string(number))->Play();
+					src_object->AddHp(-100.f);
+					if (src_object->hp() > 0.f)
+						src_object->set_state(MONSTER_STATE::GET_HIT);
+					else
+						src_object->set_state(MONSTER_STATE::DEATH);
+				}
+				else if (_dest->tag() == "MonsterBody")
+				{
+					auto const& src_object = _src->object();
+					auto const& dest_object = dynamic_pointer_cast<Monster>(_dest->object());
+
+					AudioManager::GetSingleton()->FindSoundEffect("blizzboom"s + to_string(number))->Play();
+					dest_object->AddHp(-100.f);
+					if (dest_object->hp() > 0.f)
+						dest_object->set_state(MONSTER_STATE::GET_HIT);
+					else
+						dest_object->set_state(MONSTER_STATE::DEATH);
+				}
+
+			}, COLLISION_CALLBACK::ENTER);
 
 			switch (i)
 			{

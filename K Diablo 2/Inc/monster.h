@@ -16,7 +16,6 @@ public:
 	float astar_interval() const;
 
 	void set_state(MONSTER_STATE _state);
-	void set_prev_state(MONSTER_STATE _state);
 	void set_territory_radius(float _radius);
 	void set_target(std::shared_ptr<Object> const& _target);
 	void set_dir_idx(int _idx);
@@ -60,6 +59,7 @@ protected:
 	int dir_idx_{};
 	float walk_speed_{};
 	float run_speed_{};
+	bool death_flag_{};
 
 	// astar
 	std::weak_ptr<Object> stage_{};

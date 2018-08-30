@@ -9,6 +9,7 @@ public:
 	void set_dir(TYPE::Point _dir);
 	void set_move_speed(float _speed);
 	void set_move_range(float _range);
+	void set_isometric_move_flag(bool _flag);
 
 protected:
 	Missile() = default;
@@ -31,4 +32,5 @@ protected:
 	TYPE::Point dir_{};
 	float move_speed_{};
 	float move_range_{};
+	bool isometric_move_flag_{};
 };

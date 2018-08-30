@@ -21,11 +21,17 @@ void Missile::set_move_range(float _range)
 	move_range_ = _range;
 }
 
+void Missile::set_isometric_move_flag(bool _flag)
+{
+	isometric_move_flag_ = _flag;
+}
+
 Missile::Missile(Missile const& _other) : Object(_other)
 {
 	dir_ = _other.dir_;
 	move_speed_ = _other.move_speed_;
 	move_range_ = _other.move_range_;
+	isometric_move_flag_ = _other.isometric_move_flag_;
 }
 
 Missile::Missile(Missile&& _other) noexcept : Object(move(_other))
@@ -33,6 +39,7 @@ Missile::Missile(Missile&& _other) noexcept : Object(move(_other))
 	dir_ = move(_other.dir_);
 	move_speed_ = move(_other.move_speed_);
 	move_range_ = move(_other.move_range_);
+	isometric_move_flag_ = move(_other.isometric_move_flag_);
 }
 
 void Missile::_Release()
@@ -61,10 +68,14 @@ void Missile::_Update(float _time)
 	Object::_Update(_time);
 
 	float angle = Math::GetAngle({ 0.f, 0.f }, dir_);
-	float stride = move_speed_ * _time;
 	float isometric_correction_factor = sqrtf(1.f - cos(Math::ConvertToRadians(angle)) * cos(Math::ConvertToRadians(angle)) * 0.25f) * 0.5f;
+	float stride = move_speed_ * _time;
 
-	position_ += {dir_.x * stride, dir_.y * stride * isometric_correction_factor};
+	if (isometric_move_flag_)
+		position_ += {dir_.x * stride, dir_.y * stride * isometric_correction_factor};
+	else
+		position_ += dir_ * stride;
+
 	move_range_ -= stride;
 
 	if (move_range_ <= 0.f)
