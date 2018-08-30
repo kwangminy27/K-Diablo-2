@@ -55,7 +55,8 @@ enum class OBJECT
 	MONSTER,
 	MISSILE,
 	EFFECT,
-	TEXT
+	TEXT,
+	BAR
 };
 
 enum class COLLIDER
@@ -123,7 +124,8 @@ enum class SKILL
 	ICE_BLAST,
 	FROST_NOVA,
 	FROZEN_ORB,
-	FROZEN_ARMOR
+	FROZEN_ARMOR,
+	TELEPORT
 };
 
 enum class MONSTER_STATE
@@ -142,4 +144,12 @@ enum class MONSTER_STATE
 	SPECIAL_CAST,
 	DEATH,
 	DEAD
+};
+
+enum class BAR_CUTTING_DIRECTION
+{
+	LEFT,
+	RIGHT,
+	UP,
+	DOWN
 };

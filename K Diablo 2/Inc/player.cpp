@@ -19,6 +19,7 @@
 #include "audio_manager.h"
 #include "ai_manager.h"
 #include "monster.h"
+#include "bar.h"
 
 using namespace std;
 using namespace TYPE;
@@ -644,6 +645,27 @@ void Player::_Input(float _time)
 			});
 		}
 			break;
+		case SKILL::TELEPORT:
+		{
+			AddMp(-1.f);
+
+			AudioManager::GetSingleton()->FindSoundEffect("coldcast")->Play();
+
+			auto ice_cast_new_3 = scene()->FindLayer("UI")->FindObject("ice_cast_new_3");
+			ice_cast_new_3->set_position(position_ - Point{ 65.f, 112.f });
+			ice_cast_new_3->set_enablement(true);
+
+			ChangeAnimationClip(skill_casting_special_tag.c_str());
+			SetDefaultClip(town_neutral_tag.c_str());
+
+			SetAnimationCallback(skill_casting_special_tag.c_str(), [this]() {
+				AudioManager::GetSingleton()->FindSoundEffect("frozenarmor")->Play();
+
+				auto frozen_armor = layer()->FindObject("frozen_armor");
+				frozen_armor->set_enablement(true);
+			});
+		}
+			break;
 		};
 	}
 
@@ -669,11 +691,35 @@ void Player::_Update(float _time)
 
 	MoveByAStar(_time);
 
+	// Update Character Info
 	auto const& ui_layer = scene()->FindLayer("UI");
+
+	auto const& health = dynamic_pointer_cast<Bar>(ui_layer->FindObject("health"));
+	health->set_range({ 0.f, max_hp_ });
+	health->set_value(hp_);
+
+	auto const& mana = dynamic_pointer_cast<Bar>(ui_layer->FindObject("mana"));
+	mana->set_range({ 0.f, max_mp_ });
+	mana->set_value(mp_);
+
+	auto const& life_number = dynamic_pointer_cast<Text>(ui_layer->FindObject("life_number"));
+	life_number->set_string(to_string(static_cast<int>(hp_)));
+	auto const& mana_number = dynamic_pointer_cast<Text>(ui_layer->FindObject("mana_number"));
+	mana_number->set_string(to_string(static_cast<int>(mp_)));
+
+	auto const& max_life_number = dynamic_pointer_cast<Text>(ui_layer->FindObject("max_life_number"));
+	max_life_number->set_string(to_string(static_cast<int>(max_hp_)));
+	auto const& max_mana_number = dynamic_pointer_cast<Text>(ui_layer->FindObject("max_mana_number"));
+	max_mana_number->set_string(to_string(static_cast<int>(max_mp_)));
+
 	auto const& health_text = dynamic_pointer_cast<Text>(ui_layer->FindObject("health_text"));
 	health_text->set_string("LIFE: "s + to_string(static_cast<int>(hp_)) + " / "s + to_string(static_cast<int>(max_hp_)));
 	auto const& mana_text = dynamic_pointer_cast<Text>(ui_layer->FindObject("mana_text"));
 	mana_text->set_string("MANA: "s + to_string(static_cast<int>(mp_)) + " / "s + to_string(static_cast<int>(max_mp_)));
+
+	// recovery
+	hp_ = clamp(hp_ + 1 * _time, 0.f, max_hp_);
+	mp_ = clamp(mp_ + 1 * _time, 0.f, max_mp_);
 }
 
 void Player::_LateUpdate(float _time)

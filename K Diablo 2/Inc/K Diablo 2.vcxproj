@@ -160,6 +160,7 @@
     <ClCompile Include="animation_clip.cpp" />
     <ClCompile Include="animation_manager.cpp" />
     <ClCompile Include="audio_manager.cpp" />
+    <ClCompile Include="bar.cpp" />
     <ClCompile Include="button.cpp" />
     <ClCompile Include="camera_manager.cpp" />
     <ClCompile Include="character.cpp" />
@@ -214,6 +215,7 @@
     <ClInclude Include="animation_clip.h" />
     <ClInclude Include="animation_manager.h" />
     <ClInclude Include="audio_manager.h" />
+    <ClInclude Include="bar.h" />
     <ClInclude Include="button.h" />
     <ClInclude Include="camera_manager.h" />
     <ClInclude Include="character.h" />

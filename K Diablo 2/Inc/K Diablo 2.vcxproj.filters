@@ -91,6 +91,9 @@
     <Filter Include="05. Object\02. Character\02. Monster">
       <UniqueIdentifier>{afbda82c-111c-4f93-a44e-17e75a71d8a9}</UniqueIdentifier>
     </Filter>
+    <Filter Include="05. Object\08. Bar">
+      <UniqueIdentifier>{c7526308-d836-494d-81c8-fe56746e48a3}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -239,6 +242,9 @@
     </ClCompile>
     <ClCompile Include="player.cpp">
       <Filter>05. Object\02. Character\01. Player</Filter>
+    </ClCompile>
+    <ClCompile Include="bar.cpp">
+      <Filter>05. Object\08. Bar</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -394,6 +400,9 @@
     </ClInclude>
     <ClInclude Include="player.h">
       <Filter>05. Object\02. Character\01. Player</Filter>
+    </ClInclude>
+    <ClInclude Include="bar.h">
+      <Filter>05. Object\08. Bar</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

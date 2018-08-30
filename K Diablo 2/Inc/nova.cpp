@@ -64,7 +64,6 @@ void Nova::_Update(float _time)
 					src_object->set_state(MONSTER_STATE::GET_HIT);
 				else
 					src_object->set_state(MONSTER_STATE::DEATH);
-				dest_object->set_activation(false);
 			}
 			else if (_dest->tag() == "MonsterBody")
 			{
@@ -76,7 +75,6 @@ void Nova::_Update(float _time)
 					dest_object->set_state(MONSTER_STATE::GET_HIT);
 				else
 					dest_object->set_state(MONSTER_STATE::DEATH);
-				src_object->set_activation(false);
 			}
 
 		}, COLLISION_CALLBACK::ENTER);

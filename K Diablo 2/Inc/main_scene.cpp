@@ -27,6 +27,7 @@
 #include "rect_collider.h"
 #include "circle_collider.h"
 #include "ai_manager.h"
+#include "bar.h"
 
 using namespace std;
 using namespace TYPE;
@@ -160,6 +161,11 @@ bool MainScene::_Initialize()
 	frozen_armor->set_color_key(RGB(1, 1, 1));
 	frozen_armor->set_enablement(false);
 
+	auto teleport = dynamic_pointer_cast<Effect>(ObjectManager::GetSingleton()->CreateObject<Effect>("teleport", default_layer));
+	teleport->AddAnimationClip("teleport");
+	teleport->set_color_key(RGB(1, 1, 1));
+	teleport->set_enablement(false);
+
 	// character
 	_CreateCharacterWindow();
 
@@ -195,21 +201,25 @@ bool MainScene::_Initialize()
 	control_panel->set_texture("control_panel");
 	control_panel->set_color_key(RGB(1, 1, 1));
 
-	auto health = object_manager->CreateObject<UI>("health", ui_layer);
-	health->set_position({ 15.f, 387.f });
+	auto const& health = dynamic_pointer_cast<Bar>(object_manager->CreateObject<Bar>("health", ui_layer));
+	health->set_position({ 30.f, 387.f });
 	health->set_size({ 80.f, 80.f });
 	health->set_texture("health");
 	health->set_color_key(RGB(0, 0, 0));
+	health->set_cutting_direction(BAR_CUTTING_DIRECTION::DOWN);
+	health->set_ui_flag(true);
 
 	auto health_text = dynamic_pointer_cast<Text>(object_manager->CreateObject<Text>("health_text", ui_layer));
 	health_text->set_position({ 10.f, 367.f });
 	health_text->set_font_size(FONT_SIZE::_16);
 
-	auto mana = object_manager->CreateObject<UI>("mana", ui_layer);
-	mana->set_position({ 515.f, 387.f });
+	auto const& mana = dynamic_pointer_cast<Bar>(object_manager->CreateObject<Bar>("mana", ui_layer));
+	mana->set_position({ 530.f, 387.f });
 	mana->set_size({ 80.f, 80.f });
 	mana->set_texture("mana");
 	mana->set_color_key(RGB(0, 0, 0));
+	mana->set_cutting_direction(BAR_CUTTING_DIRECTION::DOWN);
+	mana->set_ui_flag(true);
 
 	auto mana_text = dynamic_pointer_cast<Text>(object_manager->CreateObject<Text>("mana_text", ui_layer));
 	mana_text->set_position({ 499.f, 367.f });
@@ -459,16 +469,28 @@ void MainScene::_CreateCharacterWindow()
 	stamina_number->set_enablement(false);
 
 	auto life_number = dynamic_pointer_cast<Text>(object_manager->CreateObject<Text>("life_number", ui_layer));
-	life_number->set_position({ 265.f, 255.f });
+	life_number->set_position({ 225.f, 255.f });
 	life_number->set_font_size(FONT_SIZE::_16);
 	life_number->set_string("40");
 	life_number->set_enablement(false);
 
 	auto mana_number = dynamic_pointer_cast<Text>(object_manager->CreateObject<Text>("mana_number", ui_layer));
-	mana_number->set_position({ 265.f, 293.f });
+	mana_number->set_position({ 225.f, 293.f });
 	mana_number->set_font_size(FONT_SIZE::_16);
 	mana_number->set_string("60");
 	mana_number->set_enablement(false);
+
+	auto max_life_number = dynamic_pointer_cast<Text>(object_manager->CreateObject<Text>("max_life_number", ui_layer));
+	max_life_number->set_position({ 265.f, 255.f });
+	max_life_number->set_font_size(FONT_SIZE::_16);
+	max_life_number->set_string("40");
+	max_life_number->set_enablement(false);
+
+	auto max_mana_number = dynamic_pointer_cast<Text>(object_manager->CreateObject<Text>("max_mana_number", ui_layer));
+	max_mana_number->set_position({ 265.f, 293.f });
+	max_mana_number->set_font_size(FONT_SIZE::_16);
+	max_mana_number->set_string("60");
+	max_mana_number->set_enablement(false);
 
 	auto fire_resistance_number = dynamic_pointer_cast<Text>(object_manager->CreateObject<Text>("fire_resistance_number", ui_layer));
 	fire_resistance_number->set_position({ 270.f, 331.f });
@@ -675,6 +697,8 @@ void MainScene::_ToggleCharacterWindow()
 	ui_layer->FindObject("stamina_number")->set_enablement(enablement ^ true);
 	ui_layer->FindObject("life_number")->set_enablement(enablement ^ true);
 	ui_layer->FindObject("mana_number")->set_enablement(enablement ^ true);
+	ui_layer->FindObject("max_life_number")->set_enablement(enablement ^ true);
+	ui_layer->FindObject("max_mana_number")->set_enablement(enablement ^ true);
 
 	ui_layer->FindObject("fire_resistance_number")->set_enablement(enablement ^ true);
 	ui_layer->FindObject("cold_resistance_number")->set_enablement(enablement ^ true);
