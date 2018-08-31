@@ -6,6 +6,7 @@ class Character : public Object
 {
 	friend class ObjectManager;
 public:
+	CHARACTER_STATE state() const;
 	float hp() const;
 	float max_hp() const;
 	float mp() const;
@@ -15,6 +16,8 @@ public:
 	void set_max_hp(float _hp);
 	void set_mp(float _mp);
 	void set_max_mp(float _mp);
+	void set_state(CHARACTER_STATE _state);
+	void set_dir_idx(int _idx);
 
 	void AddHp(float _amount);
 	void AddMp(float _amount);
@@ -37,8 +40,12 @@ protected:
 
 	virtual std::unique_ptr<Object, std::function<void(Object*)>> _Clone() const override;
 
+	CHARACTER_STATE state_;
+	CHARACTER_STATE prev_state_;
 	float hp_{};
 	float max_hp_{};
 	float mp_{};
 	float max_mp_{};
+	int dir_idx_;
+	bool death_flag_{};
 };

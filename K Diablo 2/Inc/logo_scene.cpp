@@ -75,7 +75,7 @@ bool LogoScene::_Initialize()
 	single_player_button->set_offset_flag(true);
 	single_player_button->set_enablement(false);
 	single_player_button->set_callback([this](float _time) {
-		AudioManager::GetSingleton()->FindSoundEffect("button")->Play();
+		AudioManager::GetSingleton()->FindSoundEffect("button")->Play(5.f, 0.f, 0.f);
 		_ChangeToCharacterSelect();
 	});
 	auto single_player_button_collider = dynamic_pointer_cast<RectCollider>(single_player_button->GetCollider("Button"));
@@ -89,7 +89,7 @@ bool LogoScene::_Initialize()
 	credit_button->set_offset_flag(true);
 	credit_button->set_enablement(false);
 	credit_button->set_callback([this](float _time) {
-		AudioManager::GetSingleton()->FindSoundEffect("button")->Play();
+		AudioManager::GetSingleton()->FindSoundEffect("button")->Play(5.f, 0.f, 0.f);
 		_ChangeToCredit();
 	});
 	auto credit_button_collider = dynamic_pointer_cast<RectCollider>(credit_button->GetCollider("Button"));
@@ -157,7 +157,7 @@ bool LogoScene::_Initialize()
 	exit_button->set_offset_flag(true);
 	exit_button->set_enablement(false);
 	exit_button->set_callback([this](float _time) {
-		AudioManager::GetSingleton()->FindSoundEffect("button")->Play();
+		AudioManager::GetSingleton()->FindSoundEffect("button")->Play(5.f, 0.f, 0.f);
 
 		switch (state_)
 		{
@@ -181,7 +181,7 @@ bool LogoScene::_Initialize()
 	delete_button->set_offset_flag(true);
 	delete_button->set_enablement(false);
 	delete_button->set_callback([this](float _time) {
-		AudioManager::GetSingleton()->FindSoundEffect("button")->Play();
+		AudioManager::GetSingleton()->FindSoundEffect("button")->Play(5.f, 0.f, 0.f);
 	});
 	auto delete_button_collider = dynamic_pointer_cast<RectCollider>(delete_button->GetCollider("Button"));
 	delete_button_collider->set_model_info({ 0.f, 0.f, 126.f, 35.f });
@@ -194,7 +194,7 @@ bool LogoScene::_Initialize()
 	ok_button->set_offset_flag(true);
 	ok_button->set_enablement(false);
 	ok_button->set_callback([this](float _time) {
-		AudioManager::GetSingleton()->FindSoundEffect("button")->Play();
+		AudioManager::GetSingleton()->FindSoundEffect("button")->Play(5.f, 0.f, 0.f);
 	});
 	auto ok_button_collider = dynamic_pointer_cast<RectCollider>(ok_button->GetCollider("Button"));
 	ok_button_collider->set_model_info({ 0.f, 0.f, 126.f, 35.f });
@@ -316,6 +316,7 @@ void LogoScene::_CreateCharacter()
 
 			audio_manager->RemoveSoundEffectInstance("sorceress select");
 			auto sorceress_select = audio_manager->FindSoundEffect("sorceress select")->CreateInstance();
+			sorceress_select->SetVolume(3.f);
 			sorceress_select->Play();
 			audio_manager->AddSoundEffectInstance("sorceress select", move(sorceress_select));
 		}
@@ -330,6 +331,7 @@ void LogoScene::_CreateCharacter()
 
 			audio_manager->RemoveSoundEffectInstance("sorceress deselect");
 			auto sorceress_deselect = audio_manager->FindSoundEffect("sorceress deselect")->CreateInstance();
+			sorceress_deselect->SetVolume(3.f);
 			sorceress_deselect->Play();
 			audio_manager->AddSoundEffectInstance("sorceress deselect", move(sorceress_deselect));
 		}

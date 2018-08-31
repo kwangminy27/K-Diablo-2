@@ -102,7 +102,7 @@ void Animation::_Update(float _time)
 		return;
 
 	auto const& animation_clip_info = current_clip_->animation_clip_info_;
-	float interval_time = current_clip_->completion_time_ / animation_clip_info.total_count;
+	float interval_time = current_clip_->completion_time_ / (animation_clip_info.total_count + 1);
 
 	elapsed_time_ += _time;
 

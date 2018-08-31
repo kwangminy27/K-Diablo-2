@@ -151,6 +151,11 @@ void Core::set_state(MESSAGE_LOOP _state)
 	state_ = _state;
 }
 
+int Core::GetFPS() const
+{
+	return timer_->frame_per_second_;
+}
+
 void Core::_Release()
 {
 	ReleaseDC(window_, device_context_);
@@ -202,10 +207,6 @@ void Core::_Render(float _time)
 	InputManager::GetSingleton()->RenderMouseCursor(backbuffer_->memory_device_context(), _time);
 
 	BitBlt(device_context_, 0, 0, static_cast<int>(RESOLUTION::WIDTH), static_cast<int>(RESOLUTION::HEIGHT), backbuffer_->memory_device_context(), 0, 0, SRCCOPY);
-
-	wstring fps = to_wstring(timer_->frame_per_second());
-	fps += L" FPS";
-	TextOut(device_context_, 0, 0, fps.c_str(), static_cast<int>(fps.size()));
 }
 
 LRESULT Core::_WindowProc(HWND _window, UINT _message, WPARAM _w_param, LPARAM _l_param)

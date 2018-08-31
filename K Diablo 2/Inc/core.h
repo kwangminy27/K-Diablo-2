@@ -23,6 +23,8 @@ public:
 
 	void set_state(MESSAGE_LOOP _state);
 
+	int GetFPS() const;
+
 private:
 	Core() = default;
 	Core(Core const&) = delete;
@@ -53,7 +55,8 @@ private:
 	std::array<HBRUSH, static_cast<size_t>(COLOR::END)> brush_{};
 	std::array<HPEN, static_cast<size_t>(COLOR::END)> pen_{};
 	MESSAGE_LOOP state_{ MESSAGE_LOOP::RUN };
-	std::unique_ptr<Timer, std::function<void(Timer*)>> timer_{};
+	
 	float time_scale_{};
 	std::shared_ptr<Texture> backbuffer_{};
+	std::unique_ptr<Timer, std::function<void(Timer*)>> timer_{};
 };

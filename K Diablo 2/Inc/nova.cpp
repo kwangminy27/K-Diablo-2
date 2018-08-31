@@ -59,22 +59,22 @@ void Nova::_Update(float _time)
 				auto const& src_object = dynamic_pointer_cast<Monster>(_src->object());
 				auto const& dest_object = _dest->object();
 
-				src_object->AddHp(-50.f);
+				src_object->AddHp(-25.f);
 				if (src_object->hp() > 0.f)
-					src_object->set_state(MONSTER_STATE::GET_HIT);
+					src_object->set_state(CHARACTER_STATE::GET_HIT);
 				else
-					src_object->set_state(MONSTER_STATE::DEATH);
+					src_object->set_state(CHARACTER_STATE::DEATH);
 			}
 			else if (_dest->tag() == "MonsterBody")
 			{
 				auto const& src_object = _src->object();
 				auto const& dest_object = dynamic_pointer_cast<Monster>(_dest->object());
 
-				dest_object->AddHp(-50.f);
+				dest_object->AddHp(-25.f);
 				if (dest_object->hp() > 0.f)
-					dest_object->set_state(MONSTER_STATE::GET_HIT);
+					dest_object->set_state(CHARACTER_STATE::GET_HIT);
 				else
-					dest_object->set_state(MONSTER_STATE::DEATH);
+					dest_object->set_state(CHARACTER_STATE::DEATH);
 			}
 
 		}, COLLISION_CALLBACK::ENTER);

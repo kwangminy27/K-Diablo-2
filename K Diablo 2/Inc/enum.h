@@ -105,12 +105,6 @@ enum class TILE_OPTION
 	IDX_ERROR
 };
 
-enum class PLAYER
-{
-	IDLE,
-	CASTING
-};
-
 enum class FONT_SIZE
 {
 	_6,
@@ -128,7 +122,7 @@ enum class SKILL
 	TELEPORT
 };
 
-enum class MONSTER_STATE
+enum class CHARACTER_STATE
 {
 	NEUTRAL,
 	WALK,

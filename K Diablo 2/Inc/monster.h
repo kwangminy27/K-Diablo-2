@@ -6,7 +6,6 @@ class Monster : public Character
 {
 	friend class ObjectManager;
 public:
-	MONSTER_STATE state() const;
 	float territory_radius() const;
 	std::shared_ptr<Object> target() const;
 	int dir_idx() const;
@@ -15,7 +14,6 @@ public:
 	float astar_elapsed_time() const;
 	float astar_interval() const;
 
-	void set_state(MONSTER_STATE _state);
 	void set_territory_radius(float _radius);
 	void set_target(std::shared_ptr<Object> const& _target);
 	void set_dir_idx(int _idx);
@@ -51,15 +49,12 @@ protected:
 
 	virtual std::unique_ptr<Object, std::function<void(Object*)>> _Clone() const override;
 
-	MONSTER_STATE state_{};
-	MONSTER_STATE prev_state_{};
 	float territory_radius_{};
 	std::weak_ptr<Object> target_{};
 	float neutral_time_{};
 	int dir_idx_{};
 	float walk_speed_{};
 	float run_speed_{};
-	bool death_flag_{};
 
 	// astar
 	std::weak_ptr<Object> stage_{};

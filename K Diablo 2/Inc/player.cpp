@@ -24,19 +24,9 @@
 using namespace std;
 using namespace TYPE;
 
-PLAYER Player::state() const
-{
-	return state_;
-}
-
 shared_ptr<Object> Player::stage() const
 {
 	return stage_.lock();
-}
-
-void Player::set_state(PLAYER _state)
-{
-	state_ = _state;
 }
 
 void Player::set_stage(shared_ptr<Object> const& _stage)
@@ -90,7 +80,7 @@ void Player::MoveByAStar(float _time)
 
 	if (astar_complete_flag_)
 	{
-		if (state_ != PLAYER::CASTING)
+		if (state_ != CHARACTER_STATE::SPECIAL_CAST && state_ != CHARACTER_STATE::GET_HIT)
 			ChangeToDefaultClip();
 
 		auto const& audio_manager = AudioManager::GetSingleton();
@@ -171,9 +161,11 @@ void Player::_Input(float _time)
 	auto const& caching_stage = stage();
 
 	auto mouse_position = InputManager::GetSingleton()->mouse_world_position();
-	float angle = Math::GetAngle(position_ - Point{ 0.f, size_.y }, mouse_position);
+	float angle = Math::GetAngle(position_, mouse_position); // for character direction, because pivot concept
 
 	int dir_idx = static_cast<int>((static_cast<int>(angle + 281.25f) % 360) / 22.5f); // 0 ~ 15
+
+	angle = Math::GetAngle(position_ - Point{ 0.f, size_.y }, mouse_position); // for missile direction
 
 	string town_neutral_tag = "town_neutral_" + to_string(dir_idx);
 	string town_walk_tag = "town_walk_" + to_string(dir_idx);
@@ -185,9 +177,11 @@ void Player::_Input(float _time)
 
 	if (input_manager->KeyPush("MouseLeft"))
 	{
+		set_dir_idx(dir_idx);
+
 		switch (state_)
 		{
-		case PLAYER::IDLE:
+		case CHARACTER_STATE::NEUTRAL:
 			if (run_flag_)
 			{
 				auto LightDirtRun1 = audio_manager->FindSoundEffect("LightDirtRun1")->CreateInstance();
@@ -220,12 +214,14 @@ void Player::_Input(float _time)
 				final_target_point_ = mouse_position;
 			}
 			break;
-		case PLAYER::CASTING:
+		case CHARACTER_STATE::SPECIAL_CAST:
 			break;
 		}
 	}
 	else if (input_manager->KeyPressed("MouseLeft"))
 	{
+		set_dir_idx(dir_idx);
+
 		bool is_neutral = false;
 		string animation_tag = animation_->current_clip_->tag();
 
@@ -237,7 +233,7 @@ void Player::_Input(float _time)
 
 		switch (state_)
 		{
-		case PLAYER::IDLE:
+		case CHARACTER_STATE::NEUTRAL:
 			if (run_flag_)
 			{
 				if(is_neutral)
@@ -269,16 +265,18 @@ void Player::_Input(float _time)
 				}
 			}
 			break;
-		case PLAYER::CASTING:
+		case CHARACTER_STATE::SPECIAL_CAST:
 			break;
 		}
 	}
 
 	if (input_manager->KeyPush("RunToggle"))
 	{
+		set_dir_idx(dir_idx);
+
 		switch (state_)
 		{
-		case PLAYER::IDLE:
+		case CHARACTER_STATE::NEUTRAL:
 			if (run_flag_)
 			{
 				run_flag_ = false;
@@ -308,14 +306,16 @@ void Player::_Input(float _time)
 				ChangeAnimationClip(run_tag.c_str());
 			}
 			SetDefaultClip(town_neutral_tag.c_str());
-		case PLAYER::CASTING:
+		case CHARACTER_STATE::SPECIAL_CAST:
 			break;
 		}
 	}
 
 	if (input_manager->KeyPush("MouseRight"))
 	{
-		state_ = PLAYER::CASTING;
+		set_dir_idx(dir_idx);
+
+		state_ = CHARACTER_STATE::SPECIAL_CAST;
 
 		astar_complete_flag_ = true;
 
@@ -323,331 +323,371 @@ void Player::_Input(float _time)
 		{
 		case SKILL::ICE_BOLT:
 		{
-			AddMp(-2.f);
+			if (mp_ - 5.f < 0.f)
+			{
+				AudioManager::GetSingleton()->FindSoundEffect("Sor_Ineedmana")->Play();
+				set_state(CHARACTER_STATE::NEUTRAL);
+			}
+			else
+			{
+				AudioManager::GetSingleton()->FindSoundEffect("coldcast")->Play();
 
-			AudioManager::GetSingleton()->FindSoundEffect("coldcast")->Play();
+				auto ice_cast_new_1 = scene()->FindLayer("UI")->FindObject("ice_cast_new_1");
+				ice_cast_new_1->set_position(position_ - Point{ 50.f, 112.f });
+				ice_cast_new_1->set_enablement(true);
 
-			auto ice_cast_new_1 = scene()->FindLayer("UI")->FindObject("ice_cast_new_1");
-			ice_cast_new_1->set_position(position_ - Point{ 50.f, 112.f });
-			ice_cast_new_1->set_enablement(true);
+				ChangeAnimationClip(skill_casting_special_tag.c_str());
+				SetDefaultClip(town_neutral_tag.c_str());
 
-			ChangeAnimationClip(skill_casting_special_tag.c_str());
-			SetDefaultClip(town_neutral_tag.c_str());
+				SetAnimationCallback(skill_casting_special_tag.c_str(), [this, _ice_bolt_tag = ice_bolt_tag, _angle = angle, _dir_idx = dir_idx]() {
+					AddMp(-5.f);
 
-			SetAnimationCallback(skill_casting_special_tag.c_str(), [this, _ice_bolt_tag = ice_bolt_tag, _angle = angle, _dir_idx = dir_idx]() {
-				random_device r;
-				default_random_engine gen(r());
-				uniform_int_distribution uniform_dist(1, 3);
-				auto i = uniform_dist(gen);
-
-				AudioManager::GetSingleton()->FindSoundEffect("icebolt"s + to_string(i))->Play();
-
-				auto ice_bolt = dynamic_pointer_cast<Missile>(ObjectManager::GetSingleton()->CreateCloneObject("ice_bolt", layer()));
-				ice_bolt->set_position(position_ - Point{ 50.f, 42.f });
-				ice_bolt->AddAnimationClip(_ice_bolt_tag);
-				ice_bolt->set_dir({ cos(Math::ConvertToRadians(_angle)), sin(Math::ConvertToRadians(_angle)) });
-
-				auto ice_bolt_collider = dynamic_pointer_cast<PointCollider>(ice_bolt->AddCollider<PointCollider>("ice_bolt_collider"));
-				ice_bolt_collider->SetCallBack([](shared_ptr<Collider> const& _src, shared_ptr<Collider> const& _dest, float _time) {
-					// 함수화 하자
 					random_device r;
 					default_random_engine gen(r());
 					uniform_int_distribution uniform_dist(1, 3);
-					int number = uniform_dist(gen);
+					auto i = uniform_dist(gen);
 
-					if (_src->tag() == "MonsterBody")
+					AudioManager::GetSingleton()->FindSoundEffect("icebolt"s + to_string(i))->Play();
+
+					auto ice_bolt = dynamic_pointer_cast<Missile>(ObjectManager::GetSingleton()->CreateCloneObject("ice_bolt", layer()));
+					ice_bolt->set_position(position_ - Point{ 50.f, 42.f });
+					ice_bolt->AddAnimationClip(_ice_bolt_tag);
+					ice_bolt->set_dir({ cos(Math::ConvertToRadians(_angle)), sin(Math::ConvertToRadians(_angle)) });
+
+					auto ice_bolt_collider = dynamic_pointer_cast<PointCollider>(ice_bolt->AddCollider<PointCollider>("ice_bolt_collider"));
+					ice_bolt_collider->SetCallBack([](shared_ptr<Collider> const& _src, shared_ptr<Collider> const& _dest, float _time) {
+						// 함수화 하자
+						random_device r;
+						default_random_engine gen(r());
+						uniform_int_distribution uniform_dist(1, 3);
+						int number = uniform_dist(gen);
+
+						if (_src->tag() == "MonsterBody")
+						{
+							auto const& src_object = dynamic_pointer_cast<Monster>(_src->object());
+							auto const& dest_object = _dest->object();
+
+							AudioManager::GetSingleton()->FindSoundEffect("blizzboom"s + to_string(number))->Play();
+							src_object->AddHp(-10.f);
+							if (src_object->hp() > 0.f)
+								src_object->set_state(CHARACTER_STATE::GET_HIT);
+							else
+								src_object->set_state(CHARACTER_STATE::DEATH);
+							dest_object->set_activation(false);
+
+							auto ice_hit_big = dynamic_pointer_cast<Effect>(ObjectManager::GetSingleton()->CreateObject<Effect>("ice_hit_big", dest_object->layer()));
+							ice_hit_big->set_position(src_object->position() - src_object->size() * src_object->pivot());
+							ice_hit_big->AddAnimationClip("ice_hit_big");
+							ice_hit_big->set_color_key(RGB(0, 0, 0));
+						}
+						else if (_dest->tag() == "MonsterBody")
+						{
+							auto const& src_object = _src->object();
+							auto const& dest_object = dynamic_pointer_cast<Monster>(_dest->object());
+
+							AudioManager::GetSingleton()->FindSoundEffect("blizzboom"s + to_string(number))->Play();
+							dest_object->AddHp(-10.f);
+							if (dest_object->hp() > 0.f)
+								dest_object->set_state(CHARACTER_STATE::GET_HIT);
+							else
+								dest_object->set_state(CHARACTER_STATE::DEATH);
+							src_object->set_activation(false);
+
+							auto ice_hit_big = dynamic_pointer_cast<Effect>(ObjectManager::GetSingleton()->CreateObject<Effect>("ice_hit_big", src_object->layer()));
+							ice_hit_big->set_position(dest_object->position() - dest_object->size() * dest_object->pivot());
+							ice_hit_big->AddAnimationClip("ice_hit_big");
+							ice_hit_big->set_color_key(RGB(0, 0, 0));
+						}
+
+					}, COLLISION_CALLBACK::ENTER);
+
+					switch (_dir_idx)
 					{
-						auto const& src_object = dynamic_pointer_cast<Monster>(_src->object());
-						auto const& dest_object = _dest->object();
-
-						AudioManager::GetSingleton()->FindSoundEffect("blizzboom"s + to_string(number))->Play();
-						src_object->AddHp(-10.f);
-						if(src_object->hp() > 0.f)
-							src_object->set_state(MONSTER_STATE::GET_HIT);
-						else
-							src_object->set_state(MONSTER_STATE::DEATH);
-						dest_object->set_activation(false);
-
-						auto ice_hit_big = dynamic_pointer_cast<Effect>(ObjectManager::GetSingleton()->CreateObject<Effect>("ice_hit_big", dest_object->layer()));
-						ice_hit_big->set_position(src_object->position() - src_object->size() * src_object->pivot());
-						ice_hit_big->AddAnimationClip("ice_hit_big");
-						ice_hit_big->set_color_key(RGB(0, 0, 0));
+					case 0:
+						ice_bolt_collider->set_model_info({ 52.f, 10.f });
+						break;
+					case 1:
+						ice_bolt_collider->set_model_info({ 31.f, 9.f });
+						break;
+					case 2:
+						ice_bolt_collider->set_model_info({ 15.f, -4.f });
+						break;
+					case 3:
+						ice_bolt_collider->set_model_info({ 7.f, -17.f });
+						break;
+					case 4:
+						ice_bolt_collider->set_model_info({ 1.f, -21.f });
+						break;
+					case 5:
+						ice_bolt_collider->set_model_info({ -5.f, -28.f });
+						break;
+					case 6:
+						ice_bolt_collider->set_model_info({ 7.f, -35.f });
+						break;
+					case 7:
+						ice_bolt_collider->set_model_info({ 20.f, -40.f });
+						break;
+					case 8:
+						ice_bolt_collider->set_model_info({ 50.f, -54.f });
+						break;
+					case 9:
+						ice_bolt_collider->set_model_info({ 82.f, -44.f });
+						break;
+					case 10:
+						ice_bolt_collider->set_model_info({ 96.f, -37.f });
+						break;
+					case 11:
+						ice_bolt_collider->set_model_info({ 103.f, -28.f });
+						break;
+					case 12:
+						ice_bolt_collider->set_model_info({ 102.f, -20.f });
+						break;
+					case 13:
+						ice_bolt_collider->set_model_info({ 93.f, -17.f });
+						break;
+					case 14:
+						ice_bolt_collider->set_model_info({ 85.f, -4.f });
+						break;
+					case 15:
+						ice_bolt_collider->set_model_info({ 71.f, 7.f });
+						break;
 					}
-					else if (_dest->tag() == "MonsterBody")
-					{
-						auto const& src_object = _src->object();
-						auto const& dest_object = dynamic_pointer_cast<Monster>(_dest->object());
-
-						AudioManager::GetSingleton()->FindSoundEffect("blizzboom"s + to_string(number))->Play();
-						dest_object->AddHp(-10.f);
-						if (dest_object->hp() > 0.f)
-							dest_object->set_state(MONSTER_STATE::GET_HIT);
-						else
-							dest_object->set_state(MONSTER_STATE::DEATH);
-						src_object->set_activation(false);
-
-						auto ice_hit_big = dynamic_pointer_cast<Effect>(ObjectManager::GetSingleton()->CreateObject<Effect>("ice_hit_big", src_object->layer()));
-						ice_hit_big->set_position(dest_object->position() - dest_object->size() * dest_object->pivot());
-						ice_hit_big->AddAnimationClip("ice_hit_big");
-						ice_hit_big->set_color_key(RGB(0, 0, 0));
-					}
-
-				}, COLLISION_CALLBACK::ENTER);
-
-				switch (_dir_idx)
-				{
-				case 0:
-					ice_bolt_collider->set_model_info({ 52.f, 10.f });
-					break;
-				case 1:
-					ice_bolt_collider->set_model_info({ 31.f, 9.f });
-					break;
-				case 2:
-					ice_bolt_collider->set_model_info({ 15.f, -4.f });
-					break;
-				case 3:
-					ice_bolt_collider->set_model_info({ 7.f, -17.f });
-					break;
-				case 4:
-					ice_bolt_collider->set_model_info({ 1.f, -21.f });
-					break;
-				case 5:
-					ice_bolt_collider->set_model_info({ -5.f, -28.f });
-					break;
-				case 6:
-					ice_bolt_collider->set_model_info({ 7.f, -35.f });
-					break;
-				case 7:
-					ice_bolt_collider->set_model_info({ 20.f, -40.f });
-					break;
-				case 8:
-					ice_bolt_collider->set_model_info({ 50.f, -54.f });
-					break;
-				case 9:
-					ice_bolt_collider->set_model_info({ 82.f, -44.f });
-					break;
-				case 10:
-					ice_bolt_collider->set_model_info({ 96.f, -37.f });
-					break;
-				case 11:
-					ice_bolt_collider->set_model_info({ 103.f, -28.f });
-					break;
-				case 12:
-					ice_bolt_collider->set_model_info({ 102.f, -20.f });
-					break;
-				case 13:
-					ice_bolt_collider->set_model_info({ 93.f, -17.f });
-					break;
-				case 14:
-					ice_bolt_collider->set_model_info({ 85.f, -4.f });
-					break;
-				case 15:
-					ice_bolt_collider->set_model_info({ 71.f, 7.f });
-					break;
-				}
-			});
+				});
+			}
 		}
 			break;
 		case SKILL::FROZEN_ORB:
 		{
-			AddMp(-10.f);
+			if (mp_ - 20.f < 0.f)
+			{
+				AudioManager::GetSingleton()->FindSoundEffect("Sor_Ineedmana")->Play();
+				set_state(CHARACTER_STATE::NEUTRAL);
+			}
+			else
+			{
+				AudioManager::GetSingleton()->FindSoundEffect("coldcast")->Play();
 
-			AudioManager::GetSingleton()->FindSoundEffect("coldcast")->Play();
+				auto ice_cast_new_3 = scene()->FindLayer("UI")->FindObject("ice_cast_new_3");
+				ice_cast_new_3->set_position(position_ - Point{ 65.f, 112.f });
+				ice_cast_new_3->set_enablement(true);
 
-			auto ice_cast_new_3 = scene()->FindLayer("UI")->FindObject("ice_cast_new_3");
-			ice_cast_new_3->set_position(position_ - Point{ 65.f, 112.f });
-			ice_cast_new_3->set_enablement(true);
+				ChangeAnimationClip(skill_casting_special_tag.c_str());
+				SetDefaultClip(town_neutral_tag.c_str());
 
-			ChangeAnimationClip(skill_casting_special_tag.c_str());
-			SetDefaultClip(town_neutral_tag.c_str());
+				SetAnimationCallback(skill_casting_special_tag.c_str(), [this, _angle = angle]() {
+					AddMp(-20.f);
 
-			SetAnimationCallback(skill_casting_special_tag.c_str(), [this, _angle = angle]() {
-				AudioManager::GetSingleton()->FindSoundEffect("blizzloop")->Play();
+					AudioManager::GetSingleton()->FindSoundEffect("blizzloop")->Play();
 
-				auto ice_orb = dynamic_pointer_cast<FrozenOrb>(ObjectManager::GetSingleton()->CreateCloneObject("ice_orb", layer()));
+					auto ice_orb = dynamic_pointer_cast<FrozenOrb>(ObjectManager::GetSingleton()->CreateCloneObject("ice_orb", layer()));
 
-				auto offset = Point{ cos(Math::ConvertToRadians(_angle)), sin(Math::ConvertToRadians(_angle)) };
+					auto offset = Point{ cos(Math::ConvertToRadians(_angle)), sin(Math::ConvertToRadians(_angle)) };
 
-				ice_orb->set_position(position_ - Point{ 25.f, 67.f } + offset * 40.f);
-				ice_orb->AddAnimationClip("ice_orb");
-				ice_orb->set_dir({ cos(Math::ConvertToRadians(_angle)), sin(Math::ConvertToRadians(_angle)) });
-				ice_orb->set_move_range(300.f);
-				ice_orb->set_move_speed(200.f);
-			});
+					ice_orb->set_position(position_ - Point{ 25.f, 67.f } +offset * 40.f);
+					ice_orb->AddAnimationClip("ice_orb");
+					ice_orb->set_dir({ cos(Math::ConvertToRadians(_angle)), sin(Math::ConvertToRadians(_angle)) });
+					ice_orb->set_move_range(300.f);
+					ice_orb->set_move_speed(200.f);
+				});
+			}
 		}
 			break;
 		case SKILL::FROZEN_ARMOR:
 		{
-			AddMp(-1.f);
+			if (mp_ - 10.f < 0.f)
+			{
+				AudioManager::GetSingleton()->FindSoundEffect("Sor_Ineedmana")->Play();
+				set_state(CHARACTER_STATE::NEUTRAL);
+			}
+			else
+			{
+				AudioManager::GetSingleton()->FindSoundEffect("coldcast")->Play();
 
-			AudioManager::GetSingleton()->FindSoundEffect("coldcast")->Play();
+				auto ice_cast_new_3 = scene()->FindLayer("UI")->FindObject("ice_cast_new_3");
+				ice_cast_new_3->set_position(position_ - Point{ 65.f, 112.f });
+				ice_cast_new_3->set_enablement(true);
 
-			auto ice_cast_new_3 = scene()->FindLayer("UI")->FindObject("ice_cast_new_3");
-			ice_cast_new_3->set_position(position_ - Point{ 65.f, 112.f });
-			ice_cast_new_3->set_enablement(true);
+				ChangeAnimationClip(skill_casting_special_tag.c_str());
+				SetDefaultClip(town_neutral_tag.c_str());
 
-			ChangeAnimationClip(skill_casting_special_tag.c_str());
-			SetDefaultClip(town_neutral_tag.c_str());
+				SetAnimationCallback(skill_casting_special_tag.c_str(), [this]() {
+					AddMp(-10.f);
 
-			SetAnimationCallback(skill_casting_special_tag.c_str(), [this]() {
-				AudioManager::GetSingleton()->FindSoundEffect("frozenarmor")->Play();
+					AudioManager::GetSingleton()->FindSoundEffect("frozenarmor")->Play();
 
-				auto frozen_armor = layer()->FindObject("frozen_armor");
-				frozen_armor->set_enablement(true);
-			});
+					auto frozen_armor = layer()->FindObject("frozen_armor");
+					frozen_armor->set_enablement(true);
+				});
+			}
 		}
 			break;
 		case SKILL::FROST_NOVA:
 		{
-			AddMp(-5.f);
+			if (mp_ - 10.f < 0.f)
+			{
+				AudioManager::GetSingleton()->FindSoundEffect("Sor_Ineedmana")->Play();
+				set_state(CHARACTER_STATE::NEUTRAL);
+			}
+			else
+			{
+				AudioManager::GetSingleton()->FindSoundEffect("coldcast")->Play();
 
-			AudioManager::GetSingleton()->FindSoundEffect("coldcast")->Play();
+				auto ice_cast_new_2 = scene()->FindLayer("UI")->FindObject("ice_cast_new_2");
+				ice_cast_new_2->set_position(position_ - Point{ 60.f, 112.f });
+				ice_cast_new_2->set_enablement(true);
 
-			auto ice_cast_new_2 = scene()->FindLayer("UI")->FindObject("ice_cast_new_2");
-			ice_cast_new_2->set_position(position_ - Point{ 65.f, 112.f });
-			ice_cast_new_2->set_enablement(true);
+				ChangeAnimationClip(skill_casting_tag.c_str());
+				SetDefaultClip(town_neutral_tag.c_str());
 
-			ChangeAnimationClip(skill_casting_tag.c_str());
-			SetDefaultClip(town_neutral_tag.c_str());
+				SetAnimationCallback(skill_casting_tag.c_str(), [this]() {
+					AddMp(-10.f);
 
-			SetAnimationCallback(skill_casting_tag.c_str(), [this]() {
-				AudioManager::GetSingleton()->FindSoundEffect("novaice")->Play();
+					AudioManager::GetSingleton()->FindSoundEffect("novaice")->Play();
 
-				auto frost_nova = dynamic_pointer_cast<Nova>(ObjectManager::GetSingleton()->CreateCloneObject("frost_nova", layer()));
-				frost_nova->set_position(position_ - Point{ 60.f, 52.f });
-			});
+					auto frost_nova = dynamic_pointer_cast<Nova>(ObjectManager::GetSingleton()->CreateCloneObject("frost_nova", layer()));
+					frost_nova->set_position(position_ - Point{ 60.f, 52.f });
+				});
+			}
 		}
 			break;
 		case SKILL::ICE_BLAST:
 		{
-			AddMp(-3.f);
+			if (mp_ - 8.f < 0.f)
+			{
+				AudioManager::GetSingleton()->FindSoundEffect("Sor_Ineedmana")->Play();
+				set_state(CHARACTER_STATE::NEUTRAL);
+			}
+			else
+			{
+				AudioManager::GetSingleton()->FindSoundEffect("coldcast")->Play();
 
-			AudioManager::GetSingleton()->FindSoundEffect("coldcast")->Play();
+				auto ice_cast_new_1 = scene()->FindLayer("UI")->FindObject("ice_cast_new_1");
+				ice_cast_new_1->set_position(position_ - Point{ 50.f, 112.f });
+				ice_cast_new_1->set_enablement(true);
 
-			auto ice_cast_new_1 = scene()->FindLayer("UI")->FindObject("ice_cast_new_1");
-			ice_cast_new_1->set_position(position_ - Point{ 50.f, 112.f });
-			ice_cast_new_1->set_enablement(true);
+				ChangeAnimationClip(skill_casting_special_tag.c_str());
+				SetDefaultClip(town_neutral_tag.c_str());
 
-			ChangeAnimationClip(skill_casting_special_tag.c_str());
-			SetDefaultClip(town_neutral_tag.c_str());
+				SetAnimationCallback(skill_casting_special_tag.c_str(), [this, _ice_blast_tag = ice_blast_tag, _angle = angle, _dir_idx = dir_idx]() {
+					AddMp(-8.f);
 
-			SetAnimationCallback(skill_casting_special_tag.c_str(), [this, _ice_blast_tag = ice_blast_tag, _angle = angle, _dir_idx = dir_idx]() {
-				random_device r;
-				default_random_engine gen(r());
-				uniform_int_distribution uniform_dist(1, 3);
-				auto i = uniform_dist(gen);
-
-				AudioManager::GetSingleton()->FindSoundEffect("icebolt"s + to_string(i))->Play();
-
-				auto ice_blast = dynamic_pointer_cast<Missile>(ObjectManager::GetSingleton()->CreateCloneObject("ice_blast", layer()));
-				ice_blast->set_position(position_ - Point{ 50.f, 42.f });
-				ice_blast->AddAnimationClip(_ice_blast_tag);
-				ice_blast->set_color_key(RGB(1, 1, 1));
-				ice_blast->set_dir({ cos(Math::ConvertToRadians(_angle)), sin(Math::ConvertToRadians(_angle)) });
-
-				auto ice_blast_collider = dynamic_pointer_cast<PointCollider>(ice_blast->AddCollider<PointCollider>("ice_blast_collider"));
-				ice_blast_collider->SetCallBack([](shared_ptr<Collider> const& _src, shared_ptr<Collider> const& _dest, float _time) {
 					random_device r;
 					default_random_engine gen(r());
 					uniform_int_distribution uniform_dist(1, 3);
-					int number = uniform_dist(gen);
+					auto i = uniform_dist(gen);
 
-					if (_src->tag() == "MonsterBody")
+					AudioManager::GetSingleton()->FindSoundEffect("icebolt"s + to_string(i))->Play();
+
+					auto ice_blast = dynamic_pointer_cast<Missile>(ObjectManager::GetSingleton()->CreateCloneObject("ice_blast", layer()));
+					ice_blast->set_position(position_ - Point{ 50.f, 42.f });
+					ice_blast->AddAnimationClip(_ice_blast_tag);
+					ice_blast->set_color_key(RGB(1, 1, 1));
+					ice_blast->set_dir({ cos(Math::ConvertToRadians(_angle)), sin(Math::ConvertToRadians(_angle)) });
+
+					auto ice_blast_collider = dynamic_pointer_cast<PointCollider>(ice_blast->AddCollider<PointCollider>("ice_blast_collider"));
+					ice_blast_collider->SetCallBack([](shared_ptr<Collider> const& _src, shared_ptr<Collider> const& _dest, float _time) {
+						random_device r;
+						default_random_engine gen(r());
+						uniform_int_distribution uniform_dist(1, 3);
+						int number = uniform_dist(gen);
+
+						if (_src->tag() == "MonsterBody")
+						{
+							auto const& src_object = dynamic_pointer_cast<Monster>(_src->object());
+							auto const& dest_object = _dest->object();
+
+							AudioManager::GetSingleton()->FindSoundEffect("blizzboom"s + to_string(number))->Play();
+							src_object->AddHp(-30.f);
+							if (src_object->hp() > 0.f)
+								src_object->set_state(CHARACTER_STATE::GET_HIT);
+							else
+								src_object->set_state(CHARACTER_STATE::DEATH);
+							dest_object->set_activation(false);
+
+							auto ice_hit_big = dynamic_pointer_cast<Effect>(ObjectManager::GetSingleton()->CreateObject<Effect>("ice_hit_big", dest_object->layer()));
+							ice_hit_big->set_position(src_object->position() - src_object->size() * src_object->pivot());
+							ice_hit_big->AddAnimationClip("ice_hit_big");
+							ice_hit_big->set_color_key(RGB(0, 0, 0));
+						}
+						else if (_dest->tag() == "MonsterBody")
+						{
+							auto const& src_object = _src->object();
+							auto const& dest_object = dynamic_pointer_cast<Monster>(_dest->object());
+
+							AudioManager::GetSingleton()->FindSoundEffect("blizzboom"s + to_string(number))->Play();
+							dest_object->AddHp(-30.f);
+							if (dest_object->hp() > 0.f)
+								dest_object->set_state(CHARACTER_STATE::GET_HIT);
+							else
+								dest_object->set_state(CHARACTER_STATE::DEATH);
+							src_object->set_activation(false);
+
+							auto ice_hit_big = dynamic_pointer_cast<Effect>(ObjectManager::GetSingleton()->CreateObject<Effect>("ice_hit_big", src_object->layer()));
+							ice_hit_big->set_position(dest_object->position() - dest_object->size() * dest_object->pivot());
+							ice_hit_big->AddAnimationClip("ice_hit_big");
+							ice_hit_big->set_color_key(RGB(0, 0, 0));
+						}
+
+					}, COLLISION_CALLBACK::ENTER);
+
+					switch (_dir_idx)
 					{
-						auto const& src_object = dynamic_pointer_cast<Monster>(_src->object());
-						auto const& dest_object = _dest->object();
-
-						AudioManager::GetSingleton()->FindSoundEffect("blizzboom"s + to_string(number))->Play();
-						src_object->AddHp(-20.f);
-						if (src_object->hp() > 0.f)
-							src_object->set_state(MONSTER_STATE::GET_HIT);
-						else
-							src_object->set_state(MONSTER_STATE::DEATH);
-						dest_object->set_activation(false);
-
-						auto ice_hit_big = dynamic_pointer_cast<Effect>(ObjectManager::GetSingleton()->CreateObject<Effect>("ice_hit_big", dest_object->layer()));
-						ice_hit_big->set_position(src_object->position() - src_object->size() * src_object->pivot());
-						ice_hit_big->AddAnimationClip("ice_hit_big");
-						ice_hit_big->set_color_key(RGB(0, 0, 0));
+					case 0:
+						ice_blast_collider->set_model_info({ 52.f, 38.f });
+						break;
+					case 1:
+						ice_blast_collider->set_model_info({ 35.f, 18.f });
+						break;
+					case 2:
+						ice_blast_collider->set_model_info({ 10.f, 0.f });
+						break;
+					case 3:
+						ice_blast_collider->set_model_info({ 3.f, -5.f });
+						break;
+					case 4:
+						ice_blast_collider->set_model_info({ -17.f, -15.f });
+						break;
+					case 5:
+						ice_blast_collider->set_model_info({ -5.f, -28.f });
+						break;
+					case 6:
+						ice_blast_collider->set_model_info({ 5.f, -40.f });
+						break;
+					case 7:
+						ice_blast_collider->set_model_info({ 30.f, -45.f });
+						break;
+					case 8:
+						ice_blast_collider->set_model_info({ 55.f, -55.f });
+						break;
+					case 9:
+						ice_blast_collider->set_model_info({ 85.f, -35.f });
+						break;
+					case 10:
+						ice_blast_collider->set_model_info({ 105.f, -30.f });
+						break;
+					case 11:
+						ice_blast_collider->set_model_info({ 115.f, -30.f });
+						break;
+					case 12:
+						ice_blast_collider->set_model_info({ 145.f, -20.f });
+						break;
+					case 13:
+						ice_blast_collider->set_model_info({ 125.f, -5.f });
+						break;
+					case 14:
+						ice_blast_collider->set_model_info({ 95.f, 0.f });
+						break;
+					case 15:
+						ice_blast_collider->set_model_info({ 85.f, 0.f });
+						break;
 					}
-					else if (_dest->tag() == "MonsterBody")
-					{
-						auto const& src_object = _src->object();
-						auto const& dest_object = dynamic_pointer_cast<Monster>(_dest->object());
-
-						AudioManager::GetSingleton()->FindSoundEffect("blizzboom"s + to_string(number))->Play();
-						dest_object->AddHp(-20.f);
-						if (dest_object->hp() > 0.f)
-							dest_object->set_state(MONSTER_STATE::GET_HIT);
-						else
-							dest_object->set_state(MONSTER_STATE::DEATH);
-						src_object->set_activation(false);
-
-						auto ice_hit_big = dynamic_pointer_cast<Effect>(ObjectManager::GetSingleton()->CreateObject<Effect>("ice_hit_big", src_object->layer()));
-						ice_hit_big->set_position(dest_object->position() - dest_object->size() * dest_object->pivot());
-						ice_hit_big->AddAnimationClip("ice_hit_big");
-						ice_hit_big->set_color_key(RGB(0, 0, 0));
-					}
-
-				}, COLLISION_CALLBACK::ENTER);
-
-				switch (_dir_idx)
-				{
-				case 0:
-					ice_blast_collider->set_model_info({ 52.f, 38.f });
-					break;
-				case 1:
-					ice_blast_collider->set_model_info({ 35.f, 18.f });
-					break;
-				case 2:
-					ice_blast_collider->set_model_info({ 10.f, 0.f });
-					break;
-				case 3:
-					ice_blast_collider->set_model_info({ 3.f, -5.f });
-					break;
-				case 4:
-					ice_blast_collider->set_model_info({ -17.f, -15.f });
-					break;
-				case 5:
-					ice_blast_collider->set_model_info({ -5.f, -28.f });
-					break;
-				case 6:
-					ice_blast_collider->set_model_info({ 5.f, -40.f });
-					break;
-				case 7:
-					ice_blast_collider->set_model_info({ 30.f, -45.f });
-					break;
-				case 8:
-					ice_blast_collider->set_model_info({ 55.f, -55.f });
-					break;
-				case 9:
-					ice_blast_collider->set_model_info({ 85.f, -35.f });
-					break;
-				case 10:
-					ice_blast_collider->set_model_info({ 105.f, -30.f });
-					break;
-				case 11:
-					ice_blast_collider->set_model_info({ 115.f, -30.f });
-					break;
-				case 12:
-					ice_blast_collider->set_model_info({ 145.f, -20.f });
-					break;
-				case 13:
-					ice_blast_collider->set_model_info({ 125.f, -5.f });
-					break;
-				case 14:
-					ice_blast_collider->set_model_info({ 95.f, 0.f });
-					break;
-				case 15:
-					ice_blast_collider->set_model_info({ 85.f, 0.f });
-					break;
-				}
-			});
+				});
+			}
 		}
 			break;
 		case SKILL::TELEPORT:
 		{
-			AddMp(-1.f);
+		/*	AddMp(-1.f);
 
 			AudioManager::GetSingleton()->FindSoundEffect("coldcast")->Play();
 
@@ -663,7 +703,7 @@ void Player::_Input(float _time)
 
 				auto frozen_armor = layer()->FindObject("frozen_armor");
 				frozen_armor->set_enablement(true);
-			});
+			});*/
 		}
 			break;
 		};
@@ -687,6 +727,43 @@ void Player::_Input(float _time)
 
 void Player::_Update(float _time)
 {
+	switch (state_)
+	{
+	case CHARACTER_STATE::DEATH:
+		if (!death_flag_)
+		{
+			death_flag_ = true;
+
+			random_device r;
+			default_random_engine gen(r());
+			uniform_int_distribution uniform_dist(1, 3);
+			int number = uniform_dist(gen);
+
+			AudioManager::GetSingleton()->FindSoundEffect("death"s + to_string(number))->Play();
+		}
+
+		break;
+	case CHARACTER_STATE::GET_HIT:
+		if (state_ == prev_state_)
+		{
+			ChangeAnimationClipWithDirection("get_hit_"s + to_string(dir_idx_));
+			SetAnimationCallback("get_hit_"s + to_string(dir_idx_), [this]() {
+				set_state(CHARACTER_STATE::NEUTRAL);
+			});
+			SetDefaultClip("town_neutral_"s + to_string(dir_idx_));
+		}
+		else
+		{
+			ChangeAnimationClip("get_hit_"s + to_string(dir_idx_));
+			SetAnimationCallback("get_hit_"s + to_string(dir_idx_), [this]() {
+				set_state(CHARACTER_STATE::NEUTRAL);
+			});
+			SetDefaultClip("town_neutral_"s + to_string(dir_idx_));
+		}
+
+		break;
+	}
+
 	Character::_Update(_time);
 
 	MoveByAStar(_time);

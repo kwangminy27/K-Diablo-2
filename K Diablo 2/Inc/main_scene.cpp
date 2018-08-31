@@ -113,12 +113,14 @@ bool MainScene::_Initialize()
 		string run_tag = "run_" + to_string(i);
 		string skill_casting_tag = "skill_casting_" + to_string(i);
 		string skill_casting_special_tag = "skill_casting_special_" + to_string(i);
+		string get_hit_tag = "get_hit_" + to_string(i);
 
 		player->AddAnimationClip(town_neutral_tag.c_str());
 		player->AddAnimationClip(town_walk_tag.c_str());
 		player->AddAnimationClip(run_tag.c_str());
 		player->AddAnimationClip(skill_casting_tag.c_str());
 		player->AddAnimationClip(skill_casting_special_tag.c_str());
+		player->AddAnimationClip(get_hit_tag.c_str());
 	}
 	player->set_color_key(RGB(170, 170, 170));
 	player->set_stage(rogue_encampment);
@@ -135,7 +137,7 @@ bool MainScene::_Initialize()
 	auto ice_cast_new_1 = object_manager->CreateObject<Effect>("ice_cast_new_1", ui_layer);
 	ice_cast_new_1->AddAnimationClip("ice_cast_new_1");
 	ice_cast_new_1->SetAnimationCallback("ice_cast_new_1", [_player = player.get()]() {
-		_player->set_state(PLAYER::IDLE);
+		_player->set_state(CHARACTER_STATE::NEUTRAL);
 	});
 	ice_cast_new_1->set_color_key(RGB(1, 1, 1));
 	ice_cast_new_1->set_enablement(false);
@@ -143,7 +145,7 @@ bool MainScene::_Initialize()
 	auto ice_cast_new_2 = object_manager->CreateObject<Effect>("ice_cast_new_2", ui_layer);
 	ice_cast_new_2->AddAnimationClip("ice_cast_new_2");
 	ice_cast_new_2->SetAnimationCallback("ice_cast_new_2", [_player = player.get()]() {
-		_player->set_state(PLAYER::IDLE);
+		_player->set_state(CHARACTER_STATE::NEUTRAL);
 	});
 	ice_cast_new_2->set_color_key(RGB(1, 1, 1));
 	ice_cast_new_2->set_enablement(false);
@@ -151,7 +153,7 @@ bool MainScene::_Initialize()
 	auto ice_cast_new_3 = object_manager->CreateObject<Effect>("ice_cast_new_3", ui_layer);
 	ice_cast_new_3->AddAnimationClip("ice_cast_new_3");
 	ice_cast_new_3->SetAnimationCallback("ice_cast_new_3", [_player = player.get()]() {
-		_player->set_state(PLAYER::IDLE);
+		_player->set_state(CHARACTER_STATE::NEUTRAL);
 	});
 	ice_cast_new_3->set_color_key(RGB(1, 1, 1));
 	ice_cast_new_3->set_enablement(false);
@@ -195,6 +197,20 @@ bool MainScene::_Initialize()
 	fire_skill->set_enablement(false);
 
 	// ui
+	auto FPS_text = dynamic_pointer_cast<Text>(object_manager->CreateObject<Text>("FPS_text", ui_layer));
+	FPS_text->set_position({ 250.f, 0.f });
+	FPS_text->set_font_size(FONT_SIZE::_16);
+
+	auto map_text = dynamic_pointer_cast<Text>(object_manager->CreateObject<Text>("map_text", ui_layer));
+	map_text->set_position({ 500.f, 0.f });
+	map_text->set_font_size(FONT_SIZE::_8);
+	map_text->set_string("Rogue Encampment");
+
+	auto version_text = dynamic_pointer_cast<Text>(object_manager->CreateObject<Text>("version_text", ui_layer));
+	version_text->set_position({ 500.f, 15.f });
+	version_text->set_font_size(FONT_SIZE::_8);
+	version_text->set_string("K Diablo Ver 1.0");
+
 	auto control_panel = object_manager->CreateObject<UI>("control_panel", ui_layer);
 	control_panel->set_position({ 0.f, 376.f });
 	control_panel->set_size({ 640.f, 104.f });
@@ -222,7 +238,7 @@ bool MainScene::_Initialize()
 	mana->set_ui_flag(true);
 
 	auto mana_text = dynamic_pointer_cast<Text>(object_manager->CreateObject<Text>("mana_text", ui_layer));
-	mana_text->set_position({ 499.f, 367.f });
+	mana_text->set_position({ 479.f, 367.f });
 	mana_text->set_font_size(FONT_SIZE::_16);
 
 	auto left_skill_tap = dynamic_pointer_cast<Button>(object_manager->CreateObject<Button>("left_skill_tap", ui_layer));
@@ -326,7 +342,7 @@ bool MainScene::_Initialize()
 	return_to_game->set_color_key(RGB(0, 0, 0));
 	return_to_game->set_enablement(false);
 	return_to_game->set_callback([this](float _time) {
-		AudioManager::GetSingleton()->FindSoundEffect("select")->Play();
+		AudioManager::GetSingleton()->FindSoundEffect("select")->Play(5.f, 0.f, 0.f);
 
 		auto const& ui_layer = scene()->FindLayer("UI");
 
@@ -388,6 +404,8 @@ void MainScene::_Input(float _time)
 
 void MainScene::_Update(float _time)
 {
+	auto const& FPS_text = dynamic_pointer_cast<Text>(scene()->FindLayer("UI")->FindObject("FPS_text"));
+	FPS_text->set_string("FPS: "s + to_string(Core::GetSingleton()->GetFPS()));
 }
 
 void MainScene::_LateUpdate(float _time)
@@ -619,7 +637,7 @@ void MainScene::_CreateCharacterWindow()
 	character_window_cancel_button->set_offset_flag(true);
 	character_window_cancel_button->set_enablement(false);
 	character_window_cancel_button->set_callback([this, _character_window_CLOSE_text = character_window_CLOSE_text.get()](float _time) {
-		AudioManager::GetSingleton()->FindSoundEffect("button")->Play();
+		AudioManager::GetSingleton()->FindSoundEffect("button")->Play(5.f, 0.f, 0.f);
 		_character_window_CLOSE_text->set_enablement(false);
 		_ToggleCharacterWindow();
 	});
@@ -660,7 +678,7 @@ void MainScene::_CreateInventoryWindow()
 	inventory_window_cancel_button->set_offset_flag(true);
 	inventory_window_cancel_button->set_enablement(false);
 	inventory_window_cancel_button->set_callback([this, _inventory_window_CLOSE_text = inventory_window_CLOSE_text.get()](float _time) {
-		AudioManager::GetSingleton()->FindSoundEffect("button")->Play();
+		AudioManager::GetSingleton()->FindSoundEffect("button")->Play(5.f, 0.f, 0.f);
 		_inventory_window_CLOSE_text->set_enablement(false);
 		_ToggleInventoryWindow();
 	});
@@ -763,9 +781,43 @@ void MainScene::_CreateHellBovine(Point const& _position)
 		hell_bovine->AddAnimationClip(hell_bovine_neutral.c_str());
 		hell_bovine->AddAnimationClip(hell_bovine_walk.c_str());
 		hell_bovine->AddAnimationClip(hell_bovine_attack1.c_str());
+
+		hell_bovine->SetAnimationCallback(hell_bovine_attack1.c_str(), [_hell_bovine = hell_bovine.get(), _default_layer = default_layer.get()]() {
+			random_device r;
+			default_random_engine gen(r());
+			uniform_int_distribution uniform_dist(1, 6);
+			int number = uniform_dist(gen);
+
+			AudioManager::GetSingleton()->FindSoundEffect("hell_bovine_attack"s + to_string(number))->Play();
+
+			auto const& player = dynamic_pointer_cast<Player>(_default_layer->FindObject("player"));
+
+			player->AddHp(-10.f);
+
+			if(player->state() != CHARACTER_STATE::DEATH)
+				player->set_state(CHARACTER_STATE::GET_HIT);
+
+			uniform_int_distribution uniform_dist_2(1, 4);
+			number = uniform_dist_2(gen);
+
+			AudioManager::GetSingleton()->FindSoundEffect("soft"s + to_string(number))->Play();
+
+			_hell_bovine->set_state(CHARACTER_STATE::NEUTRAL);
+		});
+
 		hell_bovine->AddAnimationClip(hell_bovine_attack2.c_str());
 		hell_bovine->AddAnimationClip(hell_bovine_get_hit.c_str());
 		hell_bovine->AddAnimationClip(hell_bovine_death.c_str());
+
+		hell_bovine->SetAnimationCallback(hell_bovine_death.c_str(), []() {
+			random_device r;
+			default_random_engine gen(r());
+			uniform_int_distribution uniform_dist(1, 5);
+			int number = uniform_dist(gen);
+
+			AudioManager::GetSingleton()->FindSoundEffect("hell_bovine_death"s + to_string(number))->Play();
+		});
+
 		hell_bovine->AddAnimationClip(hell_bovine_dead.c_str());
 	}
 	hell_bovine->set_color_key(RGB(170, 170, 170));
@@ -780,13 +832,20 @@ void MainScene::_CreateHellBovine(Point const& _position)
 	hell_bovine_territory_collider->SetCallBack([_hell_bovine = hell_bovine.get()](shared_ptr<Collider> const _src, shared_ptr<Collider> const _dest, float _time) {
 		if (_src->tag() == "PlayerCollider")
 		{
+			random_device r;
+			default_random_engine gen(r());
+			uniform_int_distribution uniform_dist(1, 3);
+			int number = uniform_dist(gen);
+
+			AudioManager::GetSingleton()->FindSoundEffect("hell_bovine_neutral"s + to_string(number))->Play();
+
 			auto const& player = dynamic_pointer_cast<Player>(_src->object());
 			auto const& stage = dynamic_pointer_cast<Stage>(player->stage());
 
 			_hell_bovine->set_target(player);
 			_hell_bovine->set_stage(stage);
-			if ((_hell_bovine->state() != MONSTER_STATE::DEATH) && (_hell_bovine->state() != MONSTER_STATE::DEAD))
-				_hell_bovine->set_state(MONSTER_STATE::WALK);
+			if ((_hell_bovine->state() != CHARACTER_STATE::DEATH) && (_hell_bovine->state() != CHARACTER_STATE::DEAD) && (_hell_bovine->state() != CHARACTER_STATE::ATTACK1))
+				_hell_bovine->set_state(CHARACTER_STATE::WALK);
 
 			auto& travel_path_stack = _hell_bovine->travel_path_stack();
 
@@ -801,13 +860,20 @@ void MainScene::_CreateHellBovine(Point const& _position)
 		}
 		else if (_dest->tag() == "PlayerCollider")
 		{
+			random_device r;
+			default_random_engine gen(r());
+			uniform_int_distribution uniform_dist(1, 3);
+			int number = uniform_dist(gen);
+
+			AudioManager::GetSingleton()->FindSoundEffect("hell_bovine_neutral"s + to_string(number))->Play();
+
 			auto const& player = dynamic_pointer_cast<Player>(_dest->object());
 			auto const& stage = dynamic_pointer_cast<Stage>(player->stage());
 
 			_hell_bovine->set_target(player);
 			_hell_bovine->set_stage(stage);
-			if ((_hell_bovine->state() != MONSTER_STATE::DEATH) && (_hell_bovine->state() != MONSTER_STATE::DEAD))
-				_hell_bovine->set_state(MONSTER_STATE::WALK);
+			if ((_hell_bovine->state() != CHARACTER_STATE::DEATH) && (_hell_bovine->state() != CHARACTER_STATE::DEAD) && (_hell_bovine->state() != CHARACTER_STATE::ATTACK1))
+				_hell_bovine->set_state(CHARACTER_STATE::WALK);
 
 			auto& travel_path_stack = _hell_bovine->travel_path_stack();
 
@@ -840,8 +906,10 @@ void MainScene::_CreateHellBovine(Point const& _position)
 				travel_path_stack = AIManager::GetSingleton()->ProcessAStar(_hell_bovine->position(), player->position(), stage);
 				if (!travel_path_stack.empty())
 				{
-					if ((_hell_bovine->state() != MONSTER_STATE::DEATH) && (_hell_bovine->state() != MONSTER_STATE::DEAD))
-						_hell_bovine->set_state(MONSTER_STATE::WALK);
+					if ((_hell_bovine->state() != CHARACTER_STATE::DEATH) && (_hell_bovine->state() != CHARACTER_STATE::DEAD) && (_hell_bovine->state() != CHARACTER_STATE::ATTACK1))
+						_hell_bovine->set_state(CHARACTER_STATE::WALK);
+					else if((_hell_bovine->state() == CHARACTER_STATE::ATTACK1) && (Math::GetDistance(_hell_bovine->position(), _hell_bovine->target()->position()) > 50.f))
+						_hell_bovine->set_state(CHARACTER_STATE::WALK);
 
 					_hell_bovine->set_astar_complete_flag(false);
 					_hell_bovine->set_arrival_flag(false);
@@ -868,8 +936,10 @@ void MainScene::_CreateHellBovine(Point const& _position)
 				travel_path_stack = AIManager::GetSingleton()->ProcessAStar(_hell_bovine->position(), player->position(), stage);
 				if (!travel_path_stack.empty())
 				{
-					if ((_hell_bovine->state() != MONSTER_STATE::DEATH) && (_hell_bovine->state() != MONSTER_STATE::DEAD))
-						_hell_bovine->set_state(MONSTER_STATE::WALK);
+					if ((_hell_bovine->state() != CHARACTER_STATE::DEATH) && (_hell_bovine->state() != CHARACTER_STATE::DEAD) && (_hell_bovine->state() != CHARACTER_STATE::ATTACK1))
+						_hell_bovine->set_state(CHARACTER_STATE::WALK);
+					else if ((_hell_bovine->state() == CHARACTER_STATE::ATTACK1) && (Math::GetDistance(_hell_bovine->position(), _hell_bovine->target()->position()) > 50.f))
+						_hell_bovine->set_state(CHARACTER_STATE::WALK);
 
 					_hell_bovine->set_astar_complete_flag(false);
 					_hell_bovine->set_arrival_flag(false);
@@ -884,15 +954,15 @@ void MainScene::_CreateHellBovine(Point const& _position)
 		{
 			_hell_bovine->clear_target();
 
-			if ((_hell_bovine->state() != MONSTER_STATE::DEATH) && (_hell_bovine->state() != MONSTER_STATE::DEAD))
-				_hell_bovine->set_state(MONSTER_STATE::NEUTRAL);
+			if ((_hell_bovine->state() != CHARACTER_STATE::DEATH) && (_hell_bovine->state() != CHARACTER_STATE::DEAD))
+				_hell_bovine->set_state(CHARACTER_STATE::NEUTRAL);
 		}
 		else if (_dest->tag() == "PlayerCollider")
 		{
 			_hell_bovine->clear_target();
 
-			if ((_hell_bovine->state() != MONSTER_STATE::DEATH) && (_hell_bovine->state() != MONSTER_STATE::DEAD))
-				_hell_bovine->set_state(MONSTER_STATE::NEUTRAL);
+			if ((_hell_bovine->state() != CHARACTER_STATE::DEATH) && (_hell_bovine->state() != CHARACTER_STATE::DEAD))
+				_hell_bovine->set_state(CHARACTER_STATE::NEUTRAL);
 		}
 	}, COLLISION_CALLBACK::LEAVE);
 }

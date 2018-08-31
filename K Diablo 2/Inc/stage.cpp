@@ -216,7 +216,7 @@ void Stage::_Collision(float _time)
 
 void Stage::_Render(HDC _device_context, float _time)
 {
-	//Object::_Render(_device_context, _time);
+	// Object::_Render(_device_context, _time);
 
 	for (auto i = view_range_idx_y_.first; i <= view_range_idx_y_.second; ++i)
 		for (auto j = view_range_idx_x_.first; j <= view_range_idx_x_.second; ++j)

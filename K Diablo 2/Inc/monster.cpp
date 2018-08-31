@@ -3,14 +3,10 @@
 
 #include "math.h"
 #include "stage.h"
+#include "audio_manager.h"
 
 using namespace std;
 using namespace TYPE;
-
-MONSTER_STATE Monster::state() const
-{
-	return state_;
-}
 
 float Monster::territory_radius() const
 {
@@ -45,12 +41,6 @@ float Monster::astar_elapsed_time() const
 float Monster::astar_interval() const
 {
 	return astar_interval_;
-}
-
-void Monster::set_state(MONSTER_STATE _state)
-{
-	prev_state_ = state_;
-	state_ = _state;
 }
 
 void Monster::set_territory_radius(float _radius)
@@ -124,8 +114,8 @@ void Monster::MoveByAStar(float _time)
 
 	if (astar_complete_flag_)
 	{
-		if (state_ != MONSTER_STATE::DEATH && state_ != MONSTER_STATE::DEAD)
-			set_state(MONSTER_STATE::ATTACK1);
+		if (state_ != CHARACTER_STATE::DEATH && state_ != CHARACTER_STATE::DEAD && state_ != CHARACTER_STATE::ATTACK1)
+			set_state(CHARACTER_STATE::ATTACK1);
 
 		return;
 	}
@@ -154,17 +144,17 @@ void Monster::MoveByAStar(float _time)
 	float isometric_correction_factor = sqrtf(1.f - cos(Math::ConvertToRadians(angle)) * cos(Math::ConvertToRadians(angle)) * 0.25f) * 0.5f;
 	float stride{};
 
-	if (state_ == MONSTER_STATE::RUN)
+	if (state_ == CHARACTER_STATE::RUN)
 		stride = run_speed_ * _time;
-	else if(state_ == MONSTER_STATE::WALK)
+	else if(state_ == CHARACTER_STATE::WALK)
 		stride = walk_speed_ * _time;
 
 	position_ += {dir.x * stride, dir.y * stride * isometric_correction_factor};
 
-	if (Math::GetDistance(position_, final_target_point_) <= 10.f)
+	if (Math::GetDistance(position_, final_target_point_) <= 15.f)
 		astar_complete_flag_ = true;
 
-	if (Math::GetDistance(position_, next_target_point_) <= 10.f)
+	if (Math::GetDistance(position_, next_target_point_) <= 15.f)
 		arrival_flag_ = true;
 }
 
@@ -185,9 +175,9 @@ void Monster::_Release()
 bool Monster::_Initialize()
 {
 	Object::type_ = OBJECT::MONSTER;
-	state_ = MONSTER_STATE::NEUTRAL;
+	state_ = CHARACTER_STATE::NEUTRAL;
 
-	astar_interval_ = 0.5f;
+	astar_interval_ = 0.3f;
 
 	return true;
 }
@@ -223,42 +213,68 @@ void Monster::_Update(float _time)
 
 	switch (state_)
 	{
-	case MONSTER_STATE::NEUTRAL:
+	case CHARACTER_STATE::NEUTRAL:
 		if (state_ == prev_state_)
 			ChangeAnimationClipWithDirection(tag() + "_neutral_"s + to_string(dir_idx_));
 		else
 			ChangeAnimationClip(tag() + "_neutral_"s + to_string(dir_idx_));
 
 		break;
-	case MONSTER_STATE::WALK:
+	case CHARACTER_STATE::WALK:
 		if (state_ == prev_state_)
 			ChangeAnimationClipWithDirection(tag() + "_walk_"s + to_string(dir_idx_));
 		else
 			ChangeAnimationClip(tag() + "_walk_"s + to_string(dir_idx_));
 
 		break;
-	case MONSTER_STATE::ATTACK1:
+	case CHARACTER_STATE::ATTACK1:
 		if (state_ == prev_state_)
 			ChangeAnimationClipWithDirection(tag() + "_attack1_"s + to_string(dir_idx_));
 		else
 			ChangeAnimationClip(tag() + "_attack1_"s + to_string(dir_idx_));
 
 		break;
-	case MONSTER_STATE::ATTACK2:
+	case CHARACTER_STATE::ATTACK2:
 		if (state_ == prev_state_)
 			ChangeAnimationClipWithDirection(tag() + "_attack2_"s + to_string(dir_idx_));
 		else
 			ChangeAnimationClip(tag() + "_attack2_"s + to_string(dir_idx_));
 
 		break;
-	case MONSTER_STATE::GET_HIT:
+	case CHARACTER_STATE::GET_HIT:
 		if (state_ == prev_state_)
+		{
 			ChangeAnimationClipWithDirection(tag() + "_get_hit_"s + to_string(dir_idx_));
+			SetAnimationCallback(tag() + "_get_hit_"s + to_string(dir_idx_), [this]() {
+				random_device r;
+				default_random_engine gen(r());
+				uniform_int_distribution uniform_dist(1, 4);
+				int number = uniform_dist(gen);
+
+				AudioManager::GetSingleton()->FindSoundEffect("hell_bovine_gethit"s + to_string(number))->Play();
+
+				set_state(CHARACTER_STATE::NEUTRAL);
+			});
+			SetDefaultClip(tag() + "_neutral_"s + to_string(dir_idx_));
+		}
 		else
+		{
 			ChangeAnimationClip(tag() + "_get_hit_"s + to_string(dir_idx_));
+			SetAnimationCallback(tag() + "_get_hit_"s + to_string(dir_idx_), [this]() {
+				random_device r;
+				default_random_engine gen(r());
+				uniform_int_distribution uniform_dist(1, 4);
+				int number = uniform_dist(gen);
+
+				AudioManager::GetSingleton()->FindSoundEffect("hell_bovine_gethit"s + to_string(number))->Play();
+
+				set_state(CHARACTER_STATE::NEUTRAL);
+			});
+			SetDefaultClip(tag() + "_neutral_"s + to_string(dir_idx_));
+		}
 
 		break;
-	case MONSTER_STATE::DEATH:
+	case CHARACTER_STATE::DEATH:
 		if(!death_flag_)
 		{
 			death_flag_ = true;
@@ -268,7 +284,7 @@ void Monster::_Update(float _time)
 		}
 
 		break;
-	case MONSTER_STATE::DEAD:
+	case CHARACTER_STATE::DEAD:
 		break;
 	}
 }

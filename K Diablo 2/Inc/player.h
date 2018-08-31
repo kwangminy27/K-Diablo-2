@@ -6,10 +6,8 @@ class Player final : public Character
 {
 	friend class ObjectManager;
 public:
-	PLAYER state() const;
 	std::shared_ptr<Object> stage() const;
 
-	void set_state(PLAYER _state);
 	void set_stage(std::shared_ptr<Object> const& _stage);
 	void set_astar_interval(float _interval);
 	void set_skill(SKILL _skill);
@@ -34,7 +32,6 @@ protected:
 
 	virtual std::unique_ptr<Object, std::function<void(Object*)>> _Clone() const override;
 
-	PLAYER state_{};
 	bool run_flag_{};
 	std::weak_ptr<Object> stage_{};
 	std::stack<std::pair<int, int>> travel_path_stack_{};

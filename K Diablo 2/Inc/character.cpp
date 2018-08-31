@@ -55,6 +55,11 @@ unique_ptr<Object, function<void(Object*)>> Character::_Clone() const
 	}};
 }
 
+CHARACTER_STATE Character::state() const
+{
+	return state_;
+}
+
 float Character::hp() const
 {
 	return hp_;
@@ -95,12 +100,30 @@ void Character::set_max_mp(float _mp)
 	max_mp_ = _mp;
 }
 
+void Character::set_state(CHARACTER_STATE _state)
+{
+	prev_state_ = state_;
+	state_ = _state;
+}
+
+void Character::set_dir_idx(int _idx)
+{
+	dir_idx_ = _idx;
+}
+
 void Character::AddHp(float _amount)
 {
 	hp_ += _amount;
+
+	if (hp_ <= 0.f)
+	{
+		if(state_ != CHARACTER_STATE::DEATH)
+			set_state(CHARACTER_STATE::DEATH);
+		hp_ = 0.f;
+	}
 }
 
 void Character::AddMp(float _amount)
 {
-	mp_ += _amount;
+	mp_ = clamp(mp_ + _amount, 0.f, max_mp_);
 }
