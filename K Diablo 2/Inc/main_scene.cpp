@@ -98,12 +98,12 @@ bool MainScene::_Initialize()
 	auto rogue_encampment = dynamic_pointer_cast<Stage>(object_manager->CreateObject<Stage>("rogue_encampment", background_layer));
 	rogue_encampment->set_texture("rogue_encampment");
 	rogue_encampment->set_size({ static_cast<float>(rogue_encampment->texture()->width()), static_cast<float>(rogue_encampment->texture()->height()) });
-	rogue_encampment->CreateTile(STAGE::ISOMETRIC, 50, 50, { 8000.f, 4000.f }, { 160.f, 80.f }, "base");
+	rogue_encampment->CreateTile(STAGE::ISOMETRIC, 200, 200, { 32000.f, 16000.f }, { 160.f, 80.f }, "base");
 	camera_manager->set_world_size({ rogue_encampment->stage_size().x, rogue_encampment->stage_size().y });
 
 	// player
 	auto player = dynamic_pointer_cast<Player>(object_manager->CreateObject<Player>("player", default_layer));
-	player->set_position({ 4000, 2000.f });
+	player->set_position({ 4000.f, 8000.f });
 	player->set_size({ 42.f, 73.f });
 	player->set_pivot({ 0.5f, 1.f });
 	for (int i = 0; i < 16; ++i)
@@ -167,6 +167,9 @@ bool MainScene::_Initialize()
 
 	auto teleport = dynamic_pointer_cast<Effect>(ObjectManager::GetSingleton()->CreateObject<Effect>("teleport", default_layer));
 	teleport->AddAnimationClip("teleport");
+	teleport->SetAnimationCallback("teleport", [_player = player.get()]() {
+		_player->set_state(CHARACTER_STATE::NEUTRAL);
+	});
 	teleport->set_color_key(RGB(1, 1, 1));
 	teleport->set_enablement(false);
 
@@ -300,16 +303,18 @@ bool MainScene::_Initialize()
 	move_button_collider->set_model_info({ 0.f, 0.f, 16, 20.f });
 	move_button_collider->set_collision_group_tag("UI");
 	move_button_collider->SetCallBack([_move_button_text = move_button_text.get()](shared_ptr<Collider> const& _src, shared_ptr<Collider> const& _dest, float _time) {
-		_move_button_text->set_enablement(true);
+		if (_src->tag() == "MouseCursor" || _dest->tag() == "MouseCursor")
+			_move_button_text->set_enablement(true);
 	}, COLLISION_CALLBACK::ENTER);
 	move_button_collider->SetCallBack([_move_button_text = move_button_text.get()](shared_ptr<Collider> const& _src, shared_ptr<Collider> const& _dest, float _time) {
-		_move_button_text->set_enablement(false);
+		if (_src->tag() == "MouseCursor" || _dest->tag() == "MouseCursor")
+			_move_button_text->set_enablement(false);
 	}, COLLISION_CALLBACK::LEAVE);
 
 	// stemina bar
 	auto const& stemina_bar = dynamic_pointer_cast<Bar>(object_manager->CreateObject<Bar>("stemina_bar", ui_layer));
 	stemina_bar->set_position({ 193.f, 452.f });
-	stemina_bar->set_size({102.f, 18.f});
+	stemina_bar->set_size({ 102.f, 18.f });
 	stemina_bar->set_texture("stemina_bar");
 	stemina_bar->set_cutting_direction(BAR_CUTTING_DIRECTION::LEFT);
 	stemina_bar->set_color_key(RGB(0, 0, 0));
@@ -343,10 +348,12 @@ bool MainScene::_Initialize()
 	left_skill_tap_collider->set_model_info({ 0.f, 0.f, 48.f, 48.f });
 	left_skill_tap_collider->set_collision_group_tag("UI");
 	left_skill_tap_collider->SetCallBack([_left_skill_tap_text = left_skill_tap_text.get()](shared_ptr<Collider> const& _src, shared_ptr<Collider> const& _dest, float _time) {
-		_left_skill_tap_text->set_enablement(true);
+		if (_src->tag() == "MouseCursor" || _dest->tag() == "MouseCursor")
+			_left_skill_tap_text->set_enablement(true);
 	}, COLLISION_CALLBACK::ENTER);
 	left_skill_tap_collider->SetCallBack([_left_skill_tap_text = left_skill_tap_text.get()](shared_ptr<Collider> const& _src, shared_ptr<Collider> const& _dest, float _time) {
-		_left_skill_tap_text->set_enablement(false);
+		if (_src->tag() == "MouseCursor" || _dest->tag() == "MouseCursor")
+			_left_skill_tap_text->set_enablement(false);
 	}, COLLISION_CALLBACK::LEAVE);
 
 	auto right_skill_tap = dynamic_pointer_cast<Button>(object_manager->CreateObject<Button>("right_skill_tap", ui_layer));
@@ -368,10 +375,12 @@ bool MainScene::_Initialize()
 	right_skill_tap_collider->set_model_info({ 0.f, 0.f, 48.f, 48.f });
 	right_skill_tap_collider->set_collision_group_tag("UI");
 	right_skill_tap_collider->SetCallBack([_right_skill_tap_text = right_skill_tap_text.get()](shared_ptr<Collider> const& _src, shared_ptr<Collider> const& _dest, float _time) {
-		_right_skill_tap_text->set_enablement(true);
+		if (_src->tag() == "MouseCursor" || _dest->tag() == "MouseCursor")
+			_right_skill_tap_text->set_enablement(true);
 	}, COLLISION_CALLBACK::ENTER);
 	right_skill_tap_collider->SetCallBack([_right_skill_tap_text = right_skill_tap_text.get()](shared_ptr<Collider> const& _src, shared_ptr<Collider> const& _dest, float _time) {
-		_right_skill_tap_text->set_enablement(false);
+		if (_src->tag() == "MouseCursor" || _dest->tag() == "MouseCursor")
+			_right_skill_tap_text->set_enablement(false);
 	}, COLLISION_CALLBACK::LEAVE);
 
 	auto loading_screen = object_manager->CreateObject<UI>("loading_screen", ui_layer);
@@ -444,55 +453,117 @@ bool MainScene::_Initialize()
 		ui_layer->FindObject("pentspin_right")->set_position({ 568.f, 217.f });
 	}, COLLISION_CALLBACK::ENTER);
 
-	// portal
-	auto const& red_portal = object_manager->CreateObject<Effect>("red_portal", default_layer);
-	red_portal->set_position({ 4000.f, 2000.f });
-	red_portal->set_size({ 100.f, 145.f });
-	red_portal->set_pivot({ 0.f, 1.f });
-	red_portal->AddAnimationClip("red_portal");
-	red_portal->set_color_key(RGB(1, 1, 1));
+	auto const& secret_cow_level_portal = object_manager->CreateObject<Effect>("secret_cow_level_portal", default_layer);
+	secret_cow_level_portal->set_position({ 4500.f, 8200.f });
+	secret_cow_level_portal->set_size({ 100.f, 145.f });
+	secret_cow_level_portal->set_pivot({ 0.f, 1.f });
+	secret_cow_level_portal->AddAnimationClip("red_portal");
+	secret_cow_level_portal->set_color_key(RGB(1, 1, 1));
 
-	auto const& red_portal_text = dynamic_pointer_cast<Text>(object_manager->CreateObject<Text>("red_portal_text", default_layer));
-	red_portal_text->set_position({ 3995.f, 1865.f });
-	red_portal_text->set_font_size(FONT_SIZE::_8);
-	red_portal_text->set_string("Screte Cow Level");
-	red_portal_text->set_ui_flag(false);
-	red_portal_text->set_enablement(false);
+	auto const& secret_cow_level_portal_text = dynamic_pointer_cast<Text>(object_manager->CreateObject<Text>("secret_cow_level_portal_text", default_layer));
+	secret_cow_level_portal_text->set_position({ 4495.f, 8065.f });
+	secret_cow_level_portal_text->set_font_size(FONT_SIZE::_8);
+	secret_cow_level_portal_text->set_string("Secret Cow Level");
+	secret_cow_level_portal_text->set_ui_flag(false);
+	secret_cow_level_portal_text->set_enablement(false);
 
-	auto const& red_portal_ui_collider = dynamic_pointer_cast<RectCollider>(red_portal->AddCollider<RectCollider>("red_portal_ui_collider"));
-	red_portal_ui_collider->set_model_info({ 30.f, 15.f, 100.f, 145.f });
-	red_portal_ui_collider->set_pivot({ 0.f, 1.f });
-	red_portal_ui_collider->set_collision_group_tag("UI");
-	red_portal_ui_collider->SetCallBack([_red_portal_text = red_portal_text.get()](shared_ptr<Collider> const& _src, shared_ptr<Collider> const& _dest, float _time) {
-		if(_src->tag() == "MouseCursor" || _dest->tag() == "MouseCursor")
-			_red_portal_text->set_enablement(true);
+	auto const& secret_cow_level_portal_ui_collider = dynamic_pointer_cast<RectCollider>(secret_cow_level_portal->AddCollider<RectCollider>("secret_cow_level_portal_ui_collider"));
+	secret_cow_level_portal_ui_collider->set_model_info({ 30.f, 15.f, 100.f, 145.f });
+	secret_cow_level_portal_ui_collider->set_pivot({ 0.f, 1.f });
+	secret_cow_level_portal_ui_collider->set_collision_group_tag("UI");
+	secret_cow_level_portal_ui_collider->SetCallBack([_secret_cow_level_portal_text = secret_cow_level_portal_text.get()](shared_ptr<Collider> const& _src, shared_ptr<Collider> const& _dest, float _time) {
+		if (_src->tag() == "MouseCursor" || _dest->tag() == "MouseCursor")
+			_secret_cow_level_portal_text->set_enablement(true);
 	}, COLLISION_CALLBACK::ENTER);
-	red_portal_ui_collider->SetCallBack([_red_portal_text = red_portal_text.get()](shared_ptr<Collider> const& _src, shared_ptr<Collider> const& _dest, float _time) {
-		if(_src->tag() == "MouseCursor" || _dest->tag() == "MouseCursor")
-			_red_portal_text->set_enablement(false);
+	secret_cow_level_portal_ui_collider->SetCallBack([_secret_cow_level_portal_text = secret_cow_level_portal_text.get()](shared_ptr<Collider> const& _src, shared_ptr<Collider> const& _dest, float _time) {
+		if (_src->tag() == "MouseCursor" || _dest->tag() == "MouseCursor")
+			_secret_cow_level_portal_text->set_enablement(false);
 	}, COLLISION_CALLBACK::LEAVE);
 
-	auto const& red_portal_default_collider = dynamic_pointer_cast<RectCollider>(red_portal->AddCollider<RectCollider>("red_portal_default_collider"));
-	red_portal_default_collider->set_model_info({ 30.f, 15.f, 100.f, 145.f });
-	red_portal_default_collider->set_pivot({ 0.f, 1.f });
-	red_portal_default_collider->SetCallBack([_red_portal_text = red_portal_text.get()](shared_ptr<Collider> const& _src, shared_ptr<Collider> const& _dest, float _time) {		
-		if (_src->tag() == "PlayerCollider" || _dest->tag() == "PlayerCollider")
+	auto const& secret_cow_level_portal_default_collider = dynamic_pointer_cast<RectCollider>(secret_cow_level_portal->AddCollider<RectCollider>("secret_cow_level_portal_default_collider"));
+	secret_cow_level_portal_default_collider->set_model_info({ 30.f, 15.f, 100.f, 145.f });
+	secret_cow_level_portal_default_collider->set_pivot({ 0.f, 1.f });
+	secret_cow_level_portal_default_collider->SetCallBack([this](shared_ptr<Collider> const& _src, shared_ptr<Collider> const& _dest, float _time) {
+		auto const& ui_layer = scene()->FindLayer("UI");
+		auto const& map_text = dynamic_pointer_cast<Text>(ui_layer->FindObject("map_text"));
+
+		if (_src->tag() == "PlayerCollider")
 		{
+			_src->object()->set_position({ 14000.f, 8000.f });
+			map_text->set_string("Secret Cow Level");
 			AudioManager::GetSingleton()->FindSoundEffect("portalenter")->Play();
-			AudioManager::GetSingleton()->FindSoundEffect("Sor_act1_entry_wilderness")->Play();
+			dynamic_pointer_cast<Player>(_src->object())->set_astar_complete_flag(true);
+		}
+		if (_dest->tag() == "PlayerCollider")
+		{
+			_dest->object()->set_position({ 14000.f, 8000.f });
+			map_text->set_string("Secret Cow Level");
+			AudioManager::GetSingleton()->FindSoundEffect("portalenter")->Play();
+			dynamic_pointer_cast<Player>(_dest->object())->set_astar_complete_flag(true);
 		}
 	}, COLLISION_CALLBACK::ENTER);
 
-	// monster
-	_CreateHellBovine({ 4000.f, 2000.f });
-	/*_CreateHellBovine({ 4000.f, 2000.f });
-	_CreateHellBovine({ 4000.f, 2000.f });
-	_CreateHellBovine({ 4000.f, 2000.f });
-	_CreateHellBovine({ 4000.f, 2000.f });
-	_CreateHellBovine({ 4000.f, 2000.f });
-	_CreateHellBovine({ 4000.f, 2000.f });
-	_CreateHellBovine({ 4000.f, 2000.f });
-	_CreateHellBovine({ 4000.f, 2000.f });*/
+	// rogue encampment portal
+	/*auto const& rogue_encampment_portal = object_manager->CreateObject<Effect>("rogue_encampment_portal", default_layer);
+	rogue_encampment_portal->set_position({ 14000.f, 8000.f });
+	rogue_encampment_portal->set_size({ 100.f, 145.f });
+	rogue_encampment_portal->set_pivot({ 0.f, 1.f });
+	rogue_encampment_portal->AddAnimationClip("red_portal");
+	rogue_encampment_portal->set_color_key(RGB(1, 1, 1));
+
+	auto const& rogue_encampment_portal_text = dynamic_pointer_cast<Text>(object_manager->CreateObject<Text>("rogue_encampment_portal_text", default_layer));
+	rogue_encampment_portal_text->set_position({ 13995.f, 7865.f });
+	rogue_encampment_portal_text->set_font_size(FONT_SIZE::_8);
+	rogue_encampment_portal_text->set_string("Rogue Encampment");
+	rogue_encampment_portal_text->set_ui_flag(false);
+	rogue_encampment_portal_text->set_enablement(false);
+
+	auto const& rogue_encampment_portal_ui_collider = dynamic_pointer_cast<RectCollider>(rogue_encampment_portal->AddCollider<RectCollider>("rogue_encampment_portal_ui_collider"));
+	rogue_encampment_portal_ui_collider->set_model_info({ 30.f, 15.f, 100.f, 145.f });
+	rogue_encampment_portal_ui_collider->set_pivot({ 0.f, 1.f });
+	rogue_encampment_portal_ui_collider->set_collision_group_tag("UI");
+	rogue_encampment_portal_ui_collider->SetCallBack([_rogue_encampment_portal_text = rogue_encampment_portal_text.get()](shared_ptr<Collider> const& _src, shared_ptr<Collider> const& _dest, float _time) {
+		if (_src->tag() == "MouseCursor" || _dest->tag() == "MouseCursor")
+			_rogue_encampment_portal_text->set_enablement(true);
+
+	}, COLLISION_CALLBACK::ENTER);
+	rogue_encampment_portal_ui_collider->SetCallBack([_rogue_encampment_portal_text = rogue_encampment_portal_text.get()](shared_ptr<Collider> const& _src, shared_ptr<Collider> const& _dest, float _time) {
+		if (_src->tag() == "MouseCursor" || _dest->tag() == "MouseCursor")
+			_rogue_encampment_portal_text->set_enablement(false);
+	}, COLLISION_CALLBACK::LEAVE);
+
+	auto const& rogue_encampment_portal_default_collider = dynamic_pointer_cast<RectCollider>(rogue_encampment_portal->AddCollider<RectCollider>("red_portal_default_collider"));
+	rogue_encampment_portal_default_collider->set_model_info({ 30.f, 15.f, 100.f, 145.f });
+	rogue_encampment_portal_default_collider->set_pivot({ 0.f, 1.f });
+	rogue_encampment_portal_default_collider->SetCallBack([this, _rogue_encampment_portal_text = rogue_encampment_portal_text.get()](shared_ptr<Collider> const& _src, shared_ptr<Collider> const& _dest, float _time) {
+		auto const& ui_layer = scene()->FindLayer("UI");
+		auto const& map_text = dynamic_pointer_cast<Text>(ui_layer->FindObject("map_text"));
+
+		if (_src->tag() == "PlayerCollider")
+		{
+			_src->object()->set_position({ 4000.f, 8000.f });
+			map_text->set_string("Rogue Encampment");
+		}
+		if (_dest->tag() == "PlayerCollider")
+		{
+			_dest->object()->set_position({ 4000.f, 8000.f });
+			map_text->set_string("Rogue Encampment");
+		}
+
+	}, COLLISION_CALLBACK::ENTER);
+	rogue_encampment_portal_default_collider->SetCallBack([_rogue_encampment_portal_text = rogue_encampment_portal_text.get()](shared_ptr<Collider> const& _src, shared_ptr<Collider> const& _dest, float _time) {
+		if (_src->tag() == "PlayerCollider" || _dest->tag() == "PlayerCollider")
+			AudioManager::GetSingleton()->FindSoundEffect("portalenter")->Play();
+	}, COLLISION_CALLBACK::LEAVE);*/
+
+	// monster , { 14000.f, 8000.f }
+	random_device r;
+	default_random_engine gen(r());
+	uniform_real_distribution uniform_dist_x(12000.f, 16000.f);
+	uniform_real_distribution uniform_dist_y(6000.f, 10000.f);
+
+	for (int i = 0; i < 300; ++i)
+		_CreateHellBovine({ uniform_dist_x(gen), uniform_dist_y(gen) });
 
 	return true;
 }
@@ -961,13 +1032,17 @@ void MainScene::_CreateHellBovine(Point const& _position)
 		hell_bovine->AddAnimationClip(hell_bovine_get_hit.c_str());
 		hell_bovine->AddAnimationClip(hell_bovine_death.c_str());
 
-		hell_bovine->SetAnimationCallback(hell_bovine_death.c_str(), []() {
+		hell_bovine->SetAnimationCallback(hell_bovine_death.c_str(), [this]() {
 			random_device r;
 			default_random_engine gen(r());
 			uniform_int_distribution uniform_dist(1, 5);
 			int number = uniform_dist(gen);
 
 			AudioManager::GetSingleton()->FindSoundEffect("hell_bovine_death"s + to_string(number))->Play();
+
+			auto const& player = dynamic_pointer_cast<Player>(scene()->FindLayer("Default")->FindObject("player"));
+			player->AddHp(1.f);
+			player->AddMp(2.f);
 		});
 
 		hell_bovine->AddAnimationClip(hell_bovine_dead.c_str());

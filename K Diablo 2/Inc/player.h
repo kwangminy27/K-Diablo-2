@@ -12,6 +12,7 @@ public:
 
 	void set_run_flag(bool _flag);
 	void set_stage(std::shared_ptr<Object> const& _stage);
+	void set_astar_complete_flag(bool _flag);
 	void set_astar_interval(float _interval);
 	void set_skill(SKILL _skill);
 

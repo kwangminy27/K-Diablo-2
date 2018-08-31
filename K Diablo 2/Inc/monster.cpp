@@ -9,6 +9,7 @@
 #include "ui.h"
 #include "text.h"
 #include "audio_manager.h"
+#include "camera_manager.h"
 
 using namespace std;
 using namespace TYPE;
@@ -310,6 +311,14 @@ void Monster::_Collision(float _time)
 
 void Monster::_Render(HDC _device_context, float _time)
 {
+	//auto const& camera_position = CameraManager::GetSingleton()->position();
+
+	//if (position_.x < camera_position.x - 500.f || position_.y < camera_position.y - 500.f)
+	//	return;
+
+	//if (position_.x > camera_position.x + 1000.f || position_.y > camera_position.y + 1000.f)
+	//	return;
+
 	Character::_Render(_device_context, _time);
 }
 

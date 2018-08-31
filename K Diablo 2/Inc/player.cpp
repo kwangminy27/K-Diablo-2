@@ -49,6 +49,11 @@ void Player::set_stage(shared_ptr<Object> const& _stage)
 	stage_ = _stage;
 }
 
+void Player::set_astar_complete_flag(bool _flag)
+{
+	astar_complete_flag_ = _flag;
+}
+
 void Player::set_astar_interval(float _interval)
 {
 	astar_interval_ = _interval;
@@ -84,6 +89,10 @@ void Player::set_skill(SKILL _skill)
 	case SKILL::FROZEN_ARMOR:
 		right_skill_tap->set_texture("frozen_armor_icon");
 		right_skill_tap_text->set_string("FROZEN_ARMOR");
+		break;
+	case SKILL::TELEPORT:
+		right_skill_tap->set_texture("teleport_icon");
+		right_skill_tap_text->set_string("TELEPORT");
 		break;
 	}
 }
@@ -725,23 +734,29 @@ void Player::_Input(float _time)
 			break;
 		case SKILL::TELEPORT:
 		{
-		/*	AddMp(-1.f);
+			if (mp_ - 5.f < 0.f)
+			{
+				AudioManager::GetSingleton()->FindSoundEffect("Sor_Ineedmana")->Play();
+				set_state(CHARACTER_STATE::NEUTRAL);
+			}
+			else
+			{
+				AudioManager::GetSingleton()->FindSoundEffect("teleport")->Play();
 
-			AudioManager::GetSingleton()->FindSoundEffect("coldcast")->Play();
+				auto const& teleport = layer()->FindObject("teleport");
+				teleport->set_position(position_ - Point{ 60.f, 120.f });
+				teleport->set_enablement(true);
 
-			auto ice_cast_new_3 = scene()->FindLayer("UI")->FindObject("ice_cast_new_3");
-			ice_cast_new_3->set_position(position_ - Point{ 65.f, 112.f });
-			ice_cast_new_3->set_enablement(true);
+				ChangeAnimationClip(skill_casting_special_tag.c_str());
+				SetDefaultClip(town_neutral_tag.c_str());
 
-			ChangeAnimationClip(skill_casting_special_tag.c_str());
-			SetDefaultClip(town_neutral_tag.c_str());
+				SetAnimationCallback(skill_casting_special_tag.c_str(), [this, _mouse_position = mouse_position, _teleport = teleport.get()]() {
+					AddMp(-5.f);
 
-			SetAnimationCallback(skill_casting_special_tag.c_str(), [this]() {
-				AudioManager::GetSingleton()->FindSoundEffect("frozenarmor")->Play();
-
-				auto frozen_armor = layer()->FindObject("frozen_armor");
-				frozen_armor->set_enablement(true);
-			});*/
+					set_position(_mouse_position);
+					_teleport->set_position(_mouse_position - Point{ 60.f, 120.f });
+				});
+			}
 		}
 			break;
 		};
@@ -761,6 +776,9 @@ void Player::_Input(float _time)
 
 	if (input_manager->KeyPush("Skill5"))
 		set_skill(SKILL::FROZEN_ARMOR);
+
+	if (input_manager->KeyPush("Skill6"))
+		set_skill(SKILL::TELEPORT);
 }
 
 void Player::_Update(float _time)

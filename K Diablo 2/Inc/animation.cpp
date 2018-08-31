@@ -127,6 +127,7 @@ void Animation::_Update(float _time)
 					_ChangeClip(default_clip_->tag_);
 					return;
 				case ANIMATION_OPTION::DESTROY:
+
 					object_.lock()->set_activation(false);
 					return;
 				case ANIMATION_OPTION::ONCE:

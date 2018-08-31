@@ -53,7 +53,7 @@ void SpinIceBolt::_Update(float _time)
 	{
 		spin_point_1_ = false;
 
-		angle += 45.f;
+		angle += 60.f;
 		set_dir({ cos(Math::ConvertToRadians(angle)), sin(Math::ConvertToRadians(angle)) });
 
 		int dir_idx = static_cast<int>((static_cast<int>(angle + 281.25) % 360) / 22.5f);
@@ -148,7 +148,7 @@ void SpinIceBolt::_Update(float _time)
 	{
 		spin_point_2_ = false;
 
-		angle += 22.5f;
+		angle += 30.f;
 		set_dir({ cos(Math::ConvertToRadians(angle)), sin(Math::ConvertToRadians(angle)) });
 
 		int dir_idx = static_cast<int>((static_cast<int>(angle + 281.25) % 360) / 22.5f);

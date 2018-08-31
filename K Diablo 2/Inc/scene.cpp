@@ -34,7 +34,10 @@ bool Scene::_Initialize()
 	if (!_CreateLayer("Default"))
 		return false;
 
-	if (!_CreateLayer("UI", numeric_limits<int>::max()))
+	if (!_CreateLayer("UI", numeric_limits<int>::max() - 1))
+		return false;
+
+	if (!_CreateLayer("Font", numeric_limits<int>::max()))
 		return false;
 
 	return true;

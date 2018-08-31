@@ -65,6 +65,12 @@ void Layer::_Input(float _time)
 	if (tag() == "Default")
 	{
 		object_list_.sort([](shared_ptr<Object> const _first, shared_ptr<Object> const _second) -> bool {
+			if (_first->tag() == "teleport")
+				return false;
+
+			if (_second->tag() == "teleport")
+				return true;
+
 			return _first->position().y < _second->position().y;
 		});
 	}
