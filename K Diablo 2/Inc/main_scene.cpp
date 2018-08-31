@@ -129,6 +129,8 @@ bool MainScene::_Initialize()
 	player->set_hp(100.f);
 	player->set_max_mp(200.f);
 	player->set_mp(200.f);
+	player->set_stemina(100.f);
+	player->set_max_stemina(100.f);
 	camera_manager->set_target(player);
 	auto player_collider = dynamic_pointer_cast<RectCollider>(player->AddCollider<RectCollider>("PlayerCollider"));
 	player_collider->set_model_info({ 0.f, 0.f, 42.f, 73.f });
@@ -168,6 +170,13 @@ bool MainScene::_Initialize()
 	teleport->set_color_key(RGB(1, 1, 1));
 	teleport->set_enablement(false);
 
+	auto const& you_died_hardcore = object_manager->CreateObject<UI>("you_died_hardcore", ui_layer);
+	you_died_hardcore->set_position({ 182.f, 120.f });
+	you_died_hardcore->set_size({ 276.f, 36.f });
+	you_died_hardcore->set_texture("youdiedhardcore");
+	you_died_hardcore->set_color_key(RGB(1, 1, 1));
+	you_died_hardcore->set_enablement(false);
+
 	// character
 	_CreateCharacterWindow();
 
@@ -198,7 +207,7 @@ bool MainScene::_Initialize()
 
 	// ui
 	auto FPS_text = dynamic_pointer_cast<Text>(object_manager->CreateObject<Text>("FPS_text", ui_layer));
-	FPS_text->set_position({ 250.f, 0.f });
+	FPS_text->set_position({ 50.f, 0.f });
 	FPS_text->set_font_size(FONT_SIZE::_16);
 
 	auto map_text = dynamic_pointer_cast<Text>(object_manager->CreateObject<Text>("map_text", ui_layer));
@@ -240,6 +249,80 @@ bool MainScene::_Initialize()
 	auto mana_text = dynamic_pointer_cast<Text>(object_manager->CreateObject<Text>("mana_text", ui_layer));
 	mana_text->set_position({ 479.f, 367.f });
 	mana_text->set_font_size(FONT_SIZE::_16);
+
+	// move icon
+	auto const& move_button = dynamic_pointer_cast<Button>(object_manager->CreateObject<Button>("move_button", ui_layer));
+	move_button->set_position({ 175.f, 450.f });
+	move_button->set_size({ 16.f, 20.f });
+	move_button->set_texture("walk_icon");
+	move_button->set_color_key(RGB(0, 0, 0));
+	move_button->set_offset_flag(true);
+	move_button->set_callback([_move_button = move_button.get(), _player = player.get()](float _time) {
+		if (_move_button->texture()->tag() == "walk_icon")
+		{
+			_move_button->set_texture("run_icon");
+			_player->set_run_flag(false);
+
+			auto const& audio_manager = AudioManager::GetSingleton();
+
+			audio_manager->RemoveSoundEffectInstance("LightDirtRun1");
+			audio_manager->RemoveSoundEffectInstance("LightDirt1");
+
+			auto LightDirt1 = audio_manager->FindSoundEffect("LightDirt1")->CreateInstance();
+			LightDirt1->SetVolume(5.f);
+			LightDirt1->SetPitch(0.f);
+			LightDirt1->Play(true);
+			audio_manager->AddSoundEffectInstance("LightDirt1", move(LightDirt1));
+		}
+		else
+		{
+			_move_button->set_texture("walk_icon");
+			_player->set_run_flag(true);
+
+			auto const& audio_manager = AudioManager::GetSingleton();
+
+			audio_manager->RemoveSoundEffectInstance("LightDirtRun1");
+			audio_manager->RemoveSoundEffectInstance("LightDirt1");
+
+			auto LightDirtRun1 = audio_manager->FindSoundEffect("LightDirtRun1")->CreateInstance();
+			LightDirtRun1->SetVolume(5.f);
+			LightDirtRun1->SetPitch(-0.75f);
+			LightDirtRun1->Play(true);
+			audio_manager->AddSoundEffectInstance("LightDirtRun1", move(LightDirtRun1));
+		}
+	});
+	auto const& move_button_text = dynamic_pointer_cast<Text>(object_manager->CreateObject<Text>("move_button_text", ui_layer));
+	move_button_text->set_position({ 152.f, 412.f });
+	move_button_text->set_font_size(FONT_SIZE::_16);
+	move_button_text->set_string("RUN");
+	move_button_text->set_enablement(false);
+	auto const& move_button_collider = dynamic_pointer_cast<RectCollider>(move_button->GetCollider("Button"));
+	move_button_collider->set_model_info({ 0.f, 0.f, 16, 20.f });
+	move_button_collider->set_collision_group_tag("UI");
+	move_button_collider->SetCallBack([_move_button_text = move_button_text.get()](shared_ptr<Collider> const& _src, shared_ptr<Collider> const& _dest, float _time) {
+		_move_button_text->set_enablement(true);
+	}, COLLISION_CALLBACK::ENTER);
+	move_button_collider->SetCallBack([_move_button_text = move_button_text.get()](shared_ptr<Collider> const& _src, shared_ptr<Collider> const& _dest, float _time) {
+		_move_button_text->set_enablement(false);
+	}, COLLISION_CALLBACK::LEAVE);
+
+	// stemina bar
+	auto const& stemina_bar = dynamic_pointer_cast<Bar>(object_manager->CreateObject<Bar>("stemina_bar", ui_layer));
+	stemina_bar->set_position({ 193.f, 452.f });
+	stemina_bar->set_size({102.f, 18.f});
+	stemina_bar->set_texture("stemina_bar");
+	stemina_bar->set_cutting_direction(BAR_CUTTING_DIRECTION::LEFT);
+	stemina_bar->set_color_key(RGB(0, 0, 0));
+	stemina_bar->set_ui_flag(true);
+
+	// exp bar
+	auto const& exp_bar = dynamic_pointer_cast<Bar>(object_manager->CreateObject<Bar>("exp_bar", ui_layer));
+	exp_bar->set_position({ 176.f, 441.f });
+	exp_bar->set_size({ 119.f, 2.f });
+	exp_bar->set_texture("exp_bar");
+	exp_bar->set_cutting_direction(BAR_CUTTING_DIRECTION::LEFT);
+	exp_bar->set_color_key(RGB(0, 0, 0));
+	exp_bar->set_ui_flag(true);
 
 	auto left_skill_tap = dynamic_pointer_cast<Button>(object_manager->CreateObject<Button>("left_skill_tap", ui_layer));
 	left_skill_tap->set_position({ 118.f, 432.f });
@@ -361,15 +444,55 @@ bool MainScene::_Initialize()
 		ui_layer->FindObject("pentspin_right")->set_position({ 568.f, 217.f });
 	}, COLLISION_CALLBACK::ENTER);
 
+	// portal
+	auto const& red_portal = object_manager->CreateObject<Effect>("red_portal", default_layer);
+	red_portal->set_position({ 4000.f, 2000.f });
+	red_portal->set_size({ 100.f, 145.f });
+	red_portal->set_pivot({ 0.f, 1.f });
+	red_portal->AddAnimationClip("red_portal");
+	red_portal->set_color_key(RGB(1, 1, 1));
+
+	auto const& red_portal_text = dynamic_pointer_cast<Text>(object_manager->CreateObject<Text>("red_portal_text", default_layer));
+	red_portal_text->set_position({ 3995.f, 1865.f });
+	red_portal_text->set_font_size(FONT_SIZE::_8);
+	red_portal_text->set_string("Screte Cow Level");
+	red_portal_text->set_ui_flag(false);
+	red_portal_text->set_enablement(false);
+
+	auto const& red_portal_ui_collider = dynamic_pointer_cast<RectCollider>(red_portal->AddCollider<RectCollider>("red_portal_ui_collider"));
+	red_portal_ui_collider->set_model_info({ 30.f, 15.f, 100.f, 145.f });
+	red_portal_ui_collider->set_pivot({ 0.f, 1.f });
+	red_portal_ui_collider->set_collision_group_tag("UI");
+	red_portal_ui_collider->SetCallBack([_red_portal_text = red_portal_text.get()](shared_ptr<Collider> const& _src, shared_ptr<Collider> const& _dest, float _time) {
+		if(_src->tag() == "MouseCursor" || _dest->tag() == "MouseCursor")
+			_red_portal_text->set_enablement(true);
+	}, COLLISION_CALLBACK::ENTER);
+	red_portal_ui_collider->SetCallBack([_red_portal_text = red_portal_text.get()](shared_ptr<Collider> const& _src, shared_ptr<Collider> const& _dest, float _time) {
+		if(_src->tag() == "MouseCursor" || _dest->tag() == "MouseCursor")
+			_red_portal_text->set_enablement(false);
+	}, COLLISION_CALLBACK::LEAVE);
+
+	auto const& red_portal_default_collider = dynamic_pointer_cast<RectCollider>(red_portal->AddCollider<RectCollider>("red_portal_default_collider"));
+	red_portal_default_collider->set_model_info({ 30.f, 15.f, 100.f, 145.f });
+	red_portal_default_collider->set_pivot({ 0.f, 1.f });
+	red_portal_default_collider->SetCallBack([_red_portal_text = red_portal_text.get()](shared_ptr<Collider> const& _src, shared_ptr<Collider> const& _dest, float _time) {		
+		if (_src->tag() == "PlayerCollider" || _dest->tag() == "PlayerCollider")
+		{
+			AudioManager::GetSingleton()->FindSoundEffect("portalenter")->Play();
+			AudioManager::GetSingleton()->FindSoundEffect("Sor_act1_entry_wilderness")->Play();
+		}
+	}, COLLISION_CALLBACK::ENTER);
+
 	// monster
-	_CreateHellBovine({4100.f, 2000.f });
-	_CreateHellBovine({4200.f, 2000.f });
-	_CreateHellBovine({4300.f, 2000.f });
-	_CreateHellBovine({4400.f, 2000.f });
-	_CreateHellBovine({4000.f, 2100.f });
-	_CreateHellBovine({4000.f, 2200.f });
-	_CreateHellBovine({4000.f, 2300.f });
-	_CreateHellBovine({4000.f, 2400.f });
+	_CreateHellBovine({ 4000.f, 2000.f });
+	/*_CreateHellBovine({ 4000.f, 2000.f });
+	_CreateHellBovine({ 4000.f, 2000.f });
+	_CreateHellBovine({ 4000.f, 2000.f });
+	_CreateHellBovine({ 4000.f, 2000.f });
+	_CreateHellBovine({ 4000.f, 2000.f });
+	_CreateHellBovine({ 4000.f, 2000.f });
+	_CreateHellBovine({ 4000.f, 2000.f });
+	_CreateHellBovine({ 4000.f, 2000.f });*/
 
 	return true;
 }
@@ -696,6 +819,8 @@ void MainScene::_CreateInventoryWindow()
 
 void MainScene::_ToggleCharacterWindow()
 {
+	AudioManager::GetSingleton()->FindSoundEffect("windowopen")->Play(5.f, 0.f, 0.f);
+
 	auto const& ui_layer = scene()->FindLayer("UI");
 
 	auto enablement = ui_layer->FindObject("character")->enablement();
@@ -747,6 +872,8 @@ void MainScene::_ToggleCharacterWindow()
 
 void MainScene::_ToggleInventoryWindow()
 {
+	AudioManager::GetSingleton()->FindSoundEffect("windowopen")->Play(5.f, 0.f, 0.f);
+
 	auto const& ui_layer = scene()->FindLayer("UI");
 
 	auto enablement = ui_layer->FindObject("inventory")->enablement();
@@ -760,8 +887,33 @@ void MainScene::_CreateHellBovine(Point const& _position)
 {
 	auto const& object_manager = ObjectManager::GetSingleton();
 	auto const& default_layer = scene()->FindLayer("Default");
+	auto const& ui_layer = scene()->FindLayer("UI");
 
-	auto hell_bovine = dynamic_pointer_cast<MeleeMonster>(object_manager->CreateObject<MeleeMonster>("hell_bovine", default_layer));
+	// monster bar
+	auto const& hell_bovine_hp_bar_background = dynamic_pointer_cast<UI>(object_manager->CreateObject<UI>("hell_bovine_hp_bar_background", ui_layer));
+	hell_bovine_hp_bar_background->set_position({ 253.f, 27.f });
+	hell_bovine_hp_bar_background->set_size({ 128.f, 16.f });
+	hell_bovine_hp_bar_background->set_texture("monster_hp_bar_background");
+	hell_bovine_hp_bar_background->set_color_key(RGB(1, 1, 1));
+	hell_bovine_hp_bar_background->set_enablement(false);
+
+	auto const& hell_bovine_hp_bar = dynamic_pointer_cast<Bar>(object_manager->CreateObject<Bar>("hell_bovine_hp_bar", ui_layer));
+	hell_bovine_hp_bar->set_position({ 253.f, 27.f });
+	hell_bovine_hp_bar->set_size({ 128.f, 16.f });
+	hell_bovine_hp_bar->set_texture("monster_hp_bar");
+	hell_bovine_hp_bar->set_color_key(RGB(1, 1, 1));
+	hell_bovine_hp_bar->set_ui_flag(true);
+	hell_bovine_hp_bar->set_cutting_direction(BAR_CUTTING_DIRECTION::LEFT);
+	hell_bovine_hp_bar->set_enablement(false);
+	hell_bovine_hp_bar->set_range({ 0.f, 100.f });
+
+	auto const& hell_bovine_text = dynamic_pointer_cast<Text>(object_manager->CreateObject<Text>("hell_bovine_text", ui_layer));
+	hell_bovine_text->set_position({ 260.f, 25.f });
+	hell_bovine_text->set_font_size(FONT_SIZE::_16);
+	hell_bovine_text->set_string("HELL BOVINE");
+	hell_bovine_text->set_enablement(false);
+
+	auto const& hell_bovine = dynamic_pointer_cast<MeleeMonster>(object_manager->CreateObject<MeleeMonster>("hell_bovine", default_layer));
 	hell_bovine->set_position(_position);
 	hell_bovine->set_size({ 141.f, 144.f });
 	hell_bovine->set_pivot({ 0.5f, 1.f });
@@ -819,6 +971,12 @@ void MainScene::_CreateHellBovine(Point const& _position)
 		});
 
 		hell_bovine->AddAnimationClip(hell_bovine_dead.c_str());
+
+		hell_bovine->SetAnimationCallback(hell_bovine_dead.c_str(), [_hell_bovine_hp_bar = hell_bovine_hp_bar.get(), _hell_bovine_hp_bar_background = hell_bovine_hp_bar_background.get(), _hell_bovine_text = hell_bovine_text.get()]() {
+			_hell_bovine_hp_bar->set_activation(false);
+			_hell_bovine_hp_bar_background->set_activation(false);
+			_hell_bovine_text->set_activation(false);
+		});
 	}
 	hell_bovine->set_color_key(RGB(170, 170, 170));
 	hell_bovine->set_territory_radius(150.f);
@@ -826,6 +984,27 @@ void MainScene::_CreateHellBovine(Point const& _position)
 	auto hell_bovine_body_collider = dynamic_pointer_cast<RectCollider>(hell_bovine->AddCollider<RectCollider>("MonsterBody"));
 	hell_bovine_body_collider->set_model_info({ 0.f, 0.f, 70.f, 144.f });
 	hell_bovine_body_collider->set_pivot({ 0.5f, 1.f });
+	hell_bovine_body_collider->set_collision_group_tag("UI");
+	hell_bovine_body_collider->SetCallBack([_hell_bovine_hp_bar = hell_bovine_hp_bar.get(), _hell_bovine_hp_bar_background = hell_bovine_hp_bar_background.get(), _hell_bovine_text = hell_bovine_text.get()](shared_ptr<Collider> const& _src, shared_ptr<Collider> const& _dest, float _time) {
+		if (_src->tag() == "MouseCursor" || _dest->tag() == "MouseCursor")
+		{
+			_hell_bovine_hp_bar->set_enablement(true);
+			_hell_bovine_hp_bar_background->set_enablement(true);
+			_hell_bovine_text->set_enablement(true);
+		}
+	}, COLLISION_CALLBACK::ENTER);
+	hell_bovine_body_collider->SetCallBack([_hell_bovine_hp_bar = hell_bovine_hp_bar.get(), _hell_bovine_hp_bar_background = hell_bovine_hp_bar_background.get(), _hell_bovine_text = hell_bovine_text.get()](shared_ptr<Collider> const& _src, shared_ptr<Collider> const& _dest, float _time) {
+		if (_src->tag() == "MouseCursor" || _dest->tag() == "MouseCursor")
+		{
+			_hell_bovine_hp_bar->set_enablement(false);
+			_hell_bovine_hp_bar_background->set_enablement(false);
+			_hell_bovine_text->set_enablement(false);
+		}
+	}, COLLISION_CALLBACK::LEAVE);
+
+	auto hell_bovine_body_collider_2 = dynamic_pointer_cast<RectCollider>(hell_bovine->AddCollider<RectCollider>("MonsterBody"));
+	hell_bovine_body_collider_2->set_model_info({ 0.f, 0.f, 70.f, 144.f });
+	hell_bovine_body_collider_2->set_pivot({ 0.5f, 1.f });
 
 	auto hell_bovine_territory_collider = dynamic_pointer_cast<CircleCollider>(hell_bovine->AddCollider<CircleCollider>("hell_bovine_territory_collider"));
 	hell_bovine_territory_collider->set_model_info({ 0.f, 0.f, hell_bovine->territory_radius() });

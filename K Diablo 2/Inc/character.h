@@ -18,6 +18,7 @@ public:
 	void set_max_mp(float _mp);
 	void set_state(CHARACTER_STATE _state);
 	void set_dir_idx(int _idx);
+	void set_death_flag(bool _flag);
 
 	void AddHp(float _amount);
 	void AddMp(float _amount);

@@ -2,6 +2,7 @@
 #include "text.h"
 
 #include "texture.h"
+#include "camera_manager.h"
 
 using namespace std;
 using namespace TYPE;
@@ -30,6 +31,11 @@ void Text::set_font_size(FONT_SIZE _font_size)
 		set_texture("font16");
 		break;
 	}
+}
+
+void Text::set_ui_flag(bool _flag)
+{
+	ui_flag_ = _flag;
 }
 
 Text::Text(Text const& _other) : Object(_other)
@@ -78,6 +84,10 @@ void Text::_Collision(float _time)
 void Text::_Render(HDC _device_context, float _time)
 {
 	Point rendering_position = position_;
+
+	if (!ui_flag_)
+		rendering_position -= CameraManager::GetSingleton()->position();
+
 	int offset_x{};
 	int offset_y{};
 

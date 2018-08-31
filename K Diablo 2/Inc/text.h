@@ -8,6 +8,7 @@ class Text : public Object
 public:
 	void set_string(std::string const& _string);
 	void set_font_size(FONT_SIZE _font_size);
+	void set_ui_flag(bool _flag);
 
 private:
 	Text() = default;
@@ -29,4 +30,5 @@ private:
 
 	std::string string_{};
 	FONT_SIZE font_size_{};
+	bool ui_flag_{ true };
 };

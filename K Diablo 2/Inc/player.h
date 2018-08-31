@@ -7,10 +7,16 @@ class Player final : public Character
 	friend class ObjectManager;
 public:
 	std::shared_ptr<Object> stage() const;
+	float stemina() const;
+	float max_stemina() const;
 
+	void set_run_flag(bool _flag);
 	void set_stage(std::shared_ptr<Object> const& _stage);
 	void set_astar_interval(float _interval);
 	void set_skill(SKILL _skill);
+
+	void set_stemina(float _amount);
+	void set_max_stemina(float _amount);
 
 	void MoveByAStar(float _time);
 
@@ -32,7 +38,7 @@ protected:
 
 	virtual std::unique_ptr<Object, std::function<void(Object*)>> _Clone() const override;
 
-	bool run_flag_{};
+	bool run_flag_{ true };
 	std::weak_ptr<Object> stage_{};
 	std::stack<std::pair<int, int>> travel_path_stack_{};
 	bool astar_complete_flag_{ true };
@@ -41,4 +47,6 @@ protected:
 	TYPE::Point final_target_point_{};
 	float astar_interval_{};
 	SKILL skill_{};
+	float stemina_{};
+	float max_stemina_{};
 };

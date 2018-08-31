@@ -2,6 +2,10 @@
 
 #include "character.h"
 
+class Bar;
+class UI;
+class Text;
+
 class Monster : public Character
 {
 	friend class ObjectManager;

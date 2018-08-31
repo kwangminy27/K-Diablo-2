@@ -29,6 +29,21 @@ shared_ptr<Object> Player::stage() const
 	return stage_.lock();
 }
 
+float Player::stemina() const
+{
+	return stemina_;
+}
+
+float Player::max_stemina() const
+{
+	return max_stemina_;
+}
+
+void Player::set_run_flag(bool _flag)
+{
+	run_flag_ = _flag;
+}
+
 void Player::set_stage(shared_ptr<Object> const& _stage)
 {
 	stage_ = _stage;
@@ -73,6 +88,16 @@ void Player::set_skill(SKILL _skill)
 	}
 }
 
+void Player::set_stemina(float _amount)
+{
+	stemina_ = _amount;
+}
+
+void Player::set_max_stemina(float _amount)
+{
+	max_stemina_ = _amount;
+}
+
 void Player::MoveByAStar(float _time)
 {
 	static const float kPlayerWalkSpeed = 200.f;
@@ -114,7 +139,10 @@ void Player::MoveByAStar(float _time)
 	float stride{};
 
 	if (run_flag_)
+	{
 		stride = kPlayerRunSpeed * _time;
+		stemina_ -= stride * 0.03f;
+	}
 	else
 		stride = kPlayerWalkSpeed * _time;
 
@@ -177,6 +205,10 @@ void Player::_Input(float _time)
 
 	if (input_manager->KeyPush("MouseLeft"))
 	{
+#ifdef _DEBUG
+		cout << input_manager->mouse_client_position().x << ", " << input_manager->mouse_client_position().y << endl;
+#endif
+
 		set_dir_idx(dir_idx);
 
 		switch (state_)
@@ -281,6 +313,9 @@ void Player::_Input(float _time)
 			{
 				run_flag_ = false;
 
+				auto const& move_button = scene()->FindLayer("UI")->FindObject("move_button");
+				move_button->set_texture("walk_icon");
+
 				audio_manager->RemoveSoundEffectInstance("LightDirtRun1");
 
 				auto LightDirt1 = audio_manager->FindSoundEffect("LightDirt1")->CreateInstance();
@@ -294,6 +329,9 @@ void Player::_Input(float _time)
 			else
 			{
 				run_flag_ = true;
+
+				auto const& move_button = scene()->FindLayer("UI")->FindObject("move_button");
+				move_button->set_texture("run_icon");
 
 				audio_manager->RemoveSoundEffectInstance("LightDirt1");
 
@@ -740,6 +778,9 @@ void Player::_Update(float _time)
 			int number = uniform_dist(gen);
 
 			AudioManager::GetSingleton()->FindSoundEffect("death"s + to_string(number))->Play();
+
+			auto const& you_died_hardcore = scene()->FindLayer("UI")->FindObject("you_died_hardcore");
+			you_died_hardcore->set_enablement(true);
 		}
 
 		break;
@@ -779,6 +820,10 @@ void Player::_Update(float _time)
 	mana->set_range({ 0.f, max_mp_ });
 	mana->set_value(mp_);
 
+	auto const& stemina_bar = dynamic_pointer_cast<Bar>(ui_layer->FindObject("stemina_bar"));
+	stemina_bar->set_range({ 0.f, max_stemina_ });
+	stemina_bar->set_value(stemina_);
+
 	auto const& life_number = dynamic_pointer_cast<Text>(ui_layer->FindObject("life_number"));
 	life_number->set_string(to_string(static_cast<int>(hp_)));
 	auto const& mana_number = dynamic_pointer_cast<Text>(ui_layer->FindObject("mana_number"));
@@ -797,6 +842,9 @@ void Player::_Update(float _time)
 	// recovery
 	hp_ = clamp(hp_ + 1 * _time, 0.f, max_hp_);
 	mp_ = clamp(mp_ + 1 * _time, 0.f, max_mp_);
+
+	if(!run_flag_ || astar_complete_flag_)
+		stemina_ = clamp(stemina_ + 25 * _time, 0.f, max_stemina_);
 }
 
 void Player::_LateUpdate(float _time)
@@ -811,7 +859,8 @@ void Player::_Collision(float _time)
 
 void Player::_Render(HDC _device_context, float _time)
 {
-	Character::_Render(_device_context, _time);
+	if(!(state_ == CHARACTER_STATE::DEATH))
+		Character::_Render(_device_context, _time);
 }
 
 unique_ptr<Object, function<void(Object*)>> Player::_Clone() const

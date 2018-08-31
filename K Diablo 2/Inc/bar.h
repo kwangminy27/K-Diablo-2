@@ -31,8 +31,8 @@ protected:
 
 	std::unique_ptr<Object, std::function<void(Object*)>> _Clone() const override;
 
-	std::pair<float, float> range_{};
-	float value_{};
+	std::pair<float, float> range_{ std::pair{0.f, 1.f} };
+	float value_{ 1.f };
 	BAR_CUTTING_DIRECTION cutting_direction_{ BAR_CUTTING_DIRECTION::LEFT };
 	bool ui_flag_{};
 };

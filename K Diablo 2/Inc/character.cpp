@@ -111,6 +111,11 @@ void Character::set_dir_idx(int _idx)
 	dir_idx_ = _idx;
 }
 
+void Character::set_death_flag(bool _flag)
+{
+	death_flag_ = _flag;
+}
+
 void Character::AddHp(float _amount)
 {
 	hp_ += _amount;
