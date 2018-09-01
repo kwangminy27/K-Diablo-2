@@ -36,6 +36,8 @@ bool InputManager::Initialize()
 	_AddKey("Skill5"s, '5');
 	_AddKey("Skill6"s, '6');
 
+	_AddKey("CheatKey"s, VK_F5);
+
 	ShowCursor(false);
 
 	return true;

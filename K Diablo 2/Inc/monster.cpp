@@ -195,9 +195,8 @@ void Monster::_Input(float _time)
 
 void Monster::_Update(float _time)
 {
-	auto const& ui_layer = scene()->FindLayer("UI");
-	auto const& hell_bovine_hp_bar = dynamic_pointer_cast<Bar>(ui_layer->FindObject("hell_bovine_hp_bar"));
-	hell_bovine_hp_bar->set_value(hp_);
+	if (test_)
+		test_->set_value(hp_);
 
 	Character::_Update(_time);
 

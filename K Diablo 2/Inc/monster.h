@@ -35,6 +35,8 @@ public:
 
 	void MoveByAStar(float _time);
 
+	Bar* test_{};
+
 protected:
 	Monster() = default;
 	Monster(Monster const& _other);

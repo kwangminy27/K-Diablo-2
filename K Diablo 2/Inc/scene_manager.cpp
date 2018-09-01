@@ -10,18 +10,18 @@ using namespace std;
 
 bool SceneManager::Initialize()
 {
-	//if (!(scene_ = _CreateScene("Logo")))
-	//	return false;
+	if (!(scene_ = _CreateScene("Logo")))
+		return false;
 
-	//if (!(scene_->scene_component_ = scene_->_CreateSceneComponent<LogoScene>("Logo")))
-	//	return false;
+	if (!(scene_->scene_component_ = scene_->_CreateSceneComponent<LogoScene>("Logo")))
+		return false;
 
 	// test
-	if (!(scene_ = _CreateScene("Main")))
-		return false;
+	//if (!(scene_ = _CreateScene("Main")))
+	//	return false;
 
-	if (!(scene_->scene_component_ = scene_->_CreateSceneComponent<MainScene>("Main")))
-		return false;
+	//if (!(scene_->scene_component_ = scene_->_CreateSceneComponent<MainScene>("Main")))
+	//	return false;
 
 	return true;
 }

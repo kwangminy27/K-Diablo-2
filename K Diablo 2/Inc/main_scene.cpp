@@ -559,8 +559,8 @@ bool MainScene::_Initialize()
 	// monster , { 14000.f, 8000.f }
 	random_device r;
 	default_random_engine gen(r());
-	uniform_real_distribution uniform_dist_x(12000.f, 16000.f);
-	uniform_real_distribution uniform_dist_y(6000.f, 10000.f);
+	uniform_real_distribution uniform_dist_x(13000.f, 15000.f);
+	uniform_real_distribution uniform_dist_y(7000.f, 11000.f);
 
 	for (int i = 0; i < 300; ++i)
 		_CreateHellBovine({ uniform_dist_x(gen), uniform_dist_y(gen) });
@@ -594,12 +594,19 @@ void MainScene::_Input(float _time)
 		ui_layer->FindObject("exit")->set_enablement(true);
 		ui_layer->FindObject("return_to_game")->set_enablement(true);
 	}
+
+	if (input_manager->KeyPush("CheatKey"))
+	{
+		auto const& player = dynamic_pointer_cast<Player>(scene()->FindLayer("Default")->FindObject("player"));
+		player->set_hp(player->max_hp());
+		player->set_mp(player->max_mp());
+	}
 }
 
 void MainScene::_Update(float _time)
 {
-	auto const& FPS_text = dynamic_pointer_cast<Text>(scene()->FindLayer("UI")->FindObject("FPS_text"));
-	FPS_text->set_string("FPS: "s + to_string(Core::GetSingleton()->GetFPS()));
+	//auto const& FPS_text = dynamic_pointer_cast<Text>(scene()->FindLayer("UI")->FindObject("FPS_text"));
+	//FPS_text->set_string("FPS: "s + to_string(Core::GetSingleton()->GetFPS()));
 }
 
 void MainScene::_LateUpdate(float _time)
@@ -977,6 +984,7 @@ void MainScene::_CreateHellBovine(Point const& _position)
 	hell_bovine_hp_bar->set_cutting_direction(BAR_CUTTING_DIRECTION::LEFT);
 	hell_bovine_hp_bar->set_enablement(false);
 	hell_bovine_hp_bar->set_range({ 0.f, 100.f });
+	hell_bovine_hp_bar->set_value(100.f);
 
 	auto const& hell_bovine_text = dynamic_pointer_cast<Text>(object_manager->CreateObject<Text>("hell_bovine_text", ui_layer));
 	hell_bovine_text->set_position({ 260.f, 25.f });
@@ -985,6 +993,7 @@ void MainScene::_CreateHellBovine(Point const& _position)
 	hell_bovine_text->set_enablement(false);
 
 	auto const& hell_bovine = dynamic_pointer_cast<MeleeMonster>(object_manager->CreateObject<MeleeMonster>("hell_bovine", default_layer));
+	hell_bovine->test_ = hell_bovine_hp_bar.get();
 	hell_bovine->set_position(_position);
 	hell_bovine->set_size({ 141.f, 144.f });
 	hell_bovine->set_pivot({ 0.5f, 1.f });

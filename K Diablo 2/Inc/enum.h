@@ -2,7 +2,7 @@
 
 enum class DISPLAY
 {
-	MODE = 0 // 0: window, 1: full_screen
+	MODE = 1 // 0: window, 1: full_screen
 };
 
 enum class FONT_FRAME
