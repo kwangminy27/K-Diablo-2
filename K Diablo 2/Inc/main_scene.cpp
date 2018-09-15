@@ -503,66 +503,12 @@ bool MainScene::_Initialize()
 		}
 	}, COLLISION_CALLBACK::ENTER);
 
-	// rogue encampment portal
-	/*auto const& rogue_encampment_portal = object_manager->CreateObject<Effect>("rogue_encampment_portal", default_layer);
-	rogue_encampment_portal->set_position({ 14000.f, 8000.f });
-	rogue_encampment_portal->set_size({ 100.f, 145.f });
-	rogue_encampment_portal->set_pivot({ 0.f, 1.f });
-	rogue_encampment_portal->AddAnimationClip("red_portal");
-	rogue_encampment_portal->set_color_key(RGB(1, 1, 1));
-
-	auto const& rogue_encampment_portal_text = dynamic_pointer_cast<Text>(object_manager->CreateObject<Text>("rogue_encampment_portal_text", default_layer));
-	rogue_encampment_portal_text->set_position({ 13995.f, 7865.f });
-	rogue_encampment_portal_text->set_font_size(FONT_SIZE::_8);
-	rogue_encampment_portal_text->set_string("Rogue Encampment");
-	rogue_encampment_portal_text->set_ui_flag(false);
-	rogue_encampment_portal_text->set_enablement(false);
-
-	auto const& rogue_encampment_portal_ui_collider = dynamic_pointer_cast<RectCollider>(rogue_encampment_portal->AddCollider<RectCollider>("rogue_encampment_portal_ui_collider"));
-	rogue_encampment_portal_ui_collider->set_model_info({ 30.f, 15.f, 100.f, 145.f });
-	rogue_encampment_portal_ui_collider->set_pivot({ 0.f, 1.f });
-	rogue_encampment_portal_ui_collider->set_collision_group_tag("UI");
-	rogue_encampment_portal_ui_collider->SetCallBack([_rogue_encampment_portal_text = rogue_encampment_portal_text.get()](shared_ptr<Collider> const& _src, shared_ptr<Collider> const& _dest, float _time) {
-		if (_src->tag() == "MouseCursor" || _dest->tag() == "MouseCursor")
-			_rogue_encampment_portal_text->set_enablement(true);
-
-	}, COLLISION_CALLBACK::ENTER);
-	rogue_encampment_portal_ui_collider->SetCallBack([_rogue_encampment_portal_text = rogue_encampment_portal_text.get()](shared_ptr<Collider> const& _src, shared_ptr<Collider> const& _dest, float _time) {
-		if (_src->tag() == "MouseCursor" || _dest->tag() == "MouseCursor")
-			_rogue_encampment_portal_text->set_enablement(false);
-	}, COLLISION_CALLBACK::LEAVE);
-
-	auto const& rogue_encampment_portal_default_collider = dynamic_pointer_cast<RectCollider>(rogue_encampment_portal->AddCollider<RectCollider>("red_portal_default_collider"));
-	rogue_encampment_portal_default_collider->set_model_info({ 30.f, 15.f, 100.f, 145.f });
-	rogue_encampment_portal_default_collider->set_pivot({ 0.f, 1.f });
-	rogue_encampment_portal_default_collider->SetCallBack([this, _rogue_encampment_portal_text = rogue_encampment_portal_text.get()](shared_ptr<Collider> const& _src, shared_ptr<Collider> const& _dest, float _time) {
-		auto const& ui_layer = scene()->FindLayer("UI");
-		auto const& map_text = dynamic_pointer_cast<Text>(ui_layer->FindObject("map_text"));
-
-		if (_src->tag() == "PlayerCollider")
-		{
-			_src->object()->set_position({ 4000.f, 8000.f });
-			map_text->set_string("Rogue Encampment");
-		}
-		if (_dest->tag() == "PlayerCollider")
-		{
-			_dest->object()->set_position({ 4000.f, 8000.f });
-			map_text->set_string("Rogue Encampment");
-		}
-
-	}, COLLISION_CALLBACK::ENTER);
-	rogue_encampment_portal_default_collider->SetCallBack([_rogue_encampment_portal_text = rogue_encampment_portal_text.get()](shared_ptr<Collider> const& _src, shared_ptr<Collider> const& _dest, float _time) {
-		if (_src->tag() == "PlayerCollider" || _dest->tag() == "PlayerCollider")
-			AudioManager::GetSingleton()->FindSoundEffect("portalenter")->Play();
-	}, COLLISION_CALLBACK::LEAVE);*/
-
-	// monster , { 14000.f, 8000.f }
 	random_device r;
 	default_random_engine gen(r());
 	uniform_real_distribution uniform_dist_x(13000.f, 15000.f);
-	uniform_real_distribution uniform_dist_y(7000.f, 11000.f);
+	uniform_real_distribution uniform_dist_y(7000.f, 9000.f);
 
-	for (int i = 0; i < 300; ++i)
+	for (int i = 0; i < 200; ++i)
 		_CreateHellBovine({ uniform_dist_x(gen), uniform_dist_y(gen) });
 
 	return true;
@@ -605,8 +551,8 @@ void MainScene::_Input(float _time)
 
 void MainScene::_Update(float _time)
 {
-	//auto const& FPS_text = dynamic_pointer_cast<Text>(scene()->FindLayer("UI")->FindObject("FPS_text"));
-	//FPS_text->set_string("FPS: "s + to_string(Core::GetSingleton()->GetFPS()));
+	auto const& FPS_text = dynamic_pointer_cast<Text>(scene()->FindLayer("UI")->FindObject("FPS_text"));
+	FPS_text->set_string("FPS: "s + to_string(Core::GetSingleton()->GetFPS()));
 }
 
 void MainScene::_LateUpdate(float _time)
@@ -1050,7 +996,6 @@ void MainScene::_CreateHellBovine(Point const& _position)
 			AudioManager::GetSingleton()->FindSoundEffect("hell_bovine_death"s + to_string(number))->Play();
 
 			auto const& player = dynamic_pointer_cast<Player>(scene()->FindLayer("Default")->FindObject("player"));
-			player->AddHp(1.f);
 			player->AddMp(2.f);
 		});
 

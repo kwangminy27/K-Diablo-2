@@ -75,6 +75,8 @@ int Core::Run()
 	MSG message{};
 	while (state() == MESSAGE_LOOP::RUN)
 	{
+		cout << "this: " << this << ", singleton: " << Core::GetSingleton().get() << endl;
+
 		if (PeekMessage(&message, nullptr, 0, 0, PM_REMOVE))
 		{
 			TranslateMessage(&message);
